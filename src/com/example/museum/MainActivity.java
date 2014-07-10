@@ -34,7 +34,7 @@ public class MainActivity extends Activity {
 	List<AbstractElement> listGalleryElements = new ArrayList<AbstractElement>();
 	
 	ScrollViewObject scrollViewGallery;
-	List<ImageObject> listGalleryScrollView = new ArrayList<ImageObject>();
+	List<AbstractElement> listGalleryScrollView = new ArrayList<AbstractElement>();
 	
 	Point screenDimensions = new Point(0, 0);
 	 
@@ -47,7 +47,10 @@ public class MainActivity extends Activity {
         RelativeLayout.LayoutParams linLayoutParams = new RelativeLayout.LayoutParams(
         		RelativeLayout.LayoutParams.MATCH_PARENT, 
         		RelativeLayout.LayoutParams.MATCH_PARENT);
-        //setGameLayout();
+        
+        linLayout.setBackgroundResource(R.drawable.background);
+        
+        setGameLayout();
         setGalleryLayout();
         
         //buttonGallery.getElement().callOnClick();
@@ -96,7 +99,8 @@ public class MainActivity extends Activity {
         textClue.getLayoutParams().setMarginStart(screenDimensions.x/20);
         
         buttonGallery = new ButtonObject("Gallery", this, 105);
-        
+        buttonGallery.addRule(RelativeLayout.BELOW, textClue.getId());
+        buttonGallery.addRule(RelativeLayout.ALIGN_START, textClue.getId());
         addToGame(textTitle);
         addToGame(imageClue);
         addToGame(textStatus);
@@ -113,54 +117,22 @@ public class MainActivity extends Activity {
 	}
 	
 	private void addToGalleryBar(ImageObject i){
-		//listGalleryScrollView.add(i);
+		listGalleryScrollView.add(i);
 		i.setScale(screenDimensions.x/8, screenDimensions.x/8);
 		i.addView(scrollViewGallery.getLayout());
+		i.setVisibility(View.GONE);
 	}
 	
 	private void setGalleryLayout(){
-		
-		//sObject.getLayoutParams().width=300;
-		//sObject.getLayoutParams().height=300;
-		//
-		
 		scrollViewGallery = new ScrollViewObject(this, 109);
 		scrollViewGallery.addView(linLayout);
-		/*
-		scrollViewGallery.getLayoutParams().setMargins(0, 0, 0, 0);
-		ImageObject t1 = new ImageObject(R.drawable.clue1, this, 110);
-		t1.setScale(300, 300);
-		t1.addView(scrollViewGallery.getLayout());
-		
-		ImageObject t2 = new ImageObject(R.drawable.clue1, this, 111);
-		t2.setScale(300, 400);
-		t2.addView(scrollViewGallery.getLayout());
-		ImageObject t3 = new ImageObject(R.drawable.clue1, this, 112);
-		t3.setScale(300, 300);
-		t3.addView(scrollViewGallery.getLayout());
-		
-		
-		t1.addRule(RelativeLayout.ABOVE, t2.getId());
-		*/
-		
-		int newId=200;
-		addToGalleryBar(new ImageObject(R.drawable.clue1, this, newId++));
-		addToGalleryBar(new ImageObject(R.drawable.clue1, this, newId++));
-		addToGalleryBar(new ImageObject(R.drawable.clue1, this, newId++));
-		
-		/*
-		TextObject t1 = new TextObject("11111", this, 110);
-		t1.addView(sObject.getLayout());
-		TextObject t2 = new TextObject("22222", this, 111);
-		t2.addView(sObject.getLayout());
-		TextObject t3 = new TextObject("33333", this, 112);
-		t3.addView(sObject.getLayout());
-		*/
-		
-		
-		//sObject.addElement(this);
-		//sObject.addElement(t2.getElement());
-		//sObject.addElement(t3.getElement());
+		scrollViewGallery.getLayoutParams().width = screenDimensions.x-(screenDimensions.x/20);
+		scrollViewGallery.getLayoutParams().setMarginStart(screenDimensions.x/40);
+		scrollViewGallery.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+		scrollViewGallery.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+
+		int newId=150;
+		addToGalleryBar(new ImageObject(R.drawable.ammo_green, this, newId++));
 	}
 	
 	public void setGalleryButtonClickEvent(){
@@ -174,6 +146,13 @@ public class MainActivity extends Activity {
 						listGameElements.get(i).setVisibility(View.GONE);
 					else
 						listGameElements.get(i).setVisibility(View.VISIBLE);
+				}
+				
+				for (int i = 0; i < listGalleryScrollView.size(); i++){
+					if (!galleryVisible)
+						listGalleryScrollView.get(i).setVisibility(View.GONE);
+					else
+						listGalleryScrollView.get(i).setVisibility(View.VISIBLE);
 				}
 
 			}
