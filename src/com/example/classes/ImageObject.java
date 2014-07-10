@@ -34,6 +34,8 @@ public class ImageObject extends AbstractElement<ImageView>{
         		RelativeLayout.LayoutParams.WRAP_CONTENT);
 		
 		layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+		
+	
 	}
 	
 	public void setImage(int im){

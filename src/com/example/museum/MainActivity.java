@@ -33,6 +33,9 @@ public class MainActivity extends Activity {
 	List<AbstractElement> listGameElements = new ArrayList<AbstractElement>();
 	List<AbstractElement> listGalleryElements = new ArrayList<AbstractElement>();
 	
+	ScrollViewObject scrollViewGallery;
+	List<ImageObject> listGalleryScrollView = new ArrayList<ImageObject>();
+	
 	Point screenDimensions = new Point(0, 0);
 	 
 	@Override
@@ -40,13 +43,15 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
         getWindowManager().getDefaultDisplay().getSize(screenDimensions);
         linLayout = new RelativeLayout(this);        
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
-        
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT);
         RelativeLayout.LayoutParams linLayoutParams = new RelativeLayout.LayoutParams(
         		RelativeLayout.LayoutParams.MATCH_PARENT, 
         		RelativeLayout.LayoutParams.MATCH_PARENT);
-        setGameLayout();
-        //setGalleryLayout();
+        //setGameLayout();
+        setGalleryLayout();
+        
+        //buttonGallery.getElement().callOnClick();
+        
         setContentView(linLayout, linLayoutParams);
     }
 	
@@ -98,8 +103,8 @@ public class MainActivity extends Activity {
         addToGame(imageTransportation);
         addToGame(healthBar);
         addToGame(textClue);
+        addToGame(buttonGallery);
         setGalleryButtonClickEvent();
-
 	}
 	
 	private void addToGame(AbstractElement a){
@@ -107,15 +112,51 @@ public class MainActivity extends Activity {
 		a.addView(linLayout);
 	}
 	
+	private void addToGalleryBar(ImageObject i){
+		//listGalleryScrollView.add(i);
+		i.setScale(screenDimensions.x/8, screenDimensions.x/8);
+		i.addView(scrollViewGallery.getLayout());
+	}
+	
 	private void setGalleryLayout(){
-		ScrollViewObject sObject = new ScrollViewObject(this, 105);
-		sObject.getLayoutParams().height=30;
-		TextObject t1 = new TextObject("Elo", this, 106);
+		
+		//sObject.getLayoutParams().width=300;
+		//sObject.getLayoutParams().height=300;
+		//
+		
+		scrollViewGallery = new ScrollViewObject(this, 109);
+		scrollViewGallery.addView(linLayout);
+		/*
+		scrollViewGallery.getLayoutParams().setMargins(0, 0, 0, 0);
+		ImageObject t1 = new ImageObject(R.drawable.clue1, this, 110);
+		t1.setScale(300, 300);
+		t1.addView(scrollViewGallery.getLayout());
+		
+		ImageObject t2 = new ImageObject(R.drawable.clue1, this, 111);
+		t2.setScale(300, 400);
+		t2.addView(scrollViewGallery.getLayout());
+		ImageObject t3 = new ImageObject(R.drawable.clue1, this, 112);
+		t3.setScale(300, 300);
+		t3.addView(scrollViewGallery.getLayout());
+		
+		
+		t1.addRule(RelativeLayout.ABOVE, t2.getId());
+		*/
+		
+		int newId=200;
+		addToGalleryBar(new ImageObject(R.drawable.clue1, this, newId++));
+		addToGalleryBar(new ImageObject(R.drawable.clue1, this, newId++));
+		addToGalleryBar(new ImageObject(R.drawable.clue1, this, newId++));
+		
+		/*
+		TextObject t1 = new TextObject("11111", this, 110);
 		t1.addView(sObject.getLayout());
-		TextObject t2 = new TextObject("Elo22", this, 107);
+		TextObject t2 = new TextObject("22222", this, 111);
 		t2.addView(sObject.getLayout());
-		TextObject t3 = new TextObject("Elo33", this, 108);
+		TextObject t3 = new TextObject("33333", this, 112);
 		t3.addView(sObject.getLayout());
+		*/
+		
 		
 		//sObject.addElement(this);
 		//sObject.addElement(t2.getElement());

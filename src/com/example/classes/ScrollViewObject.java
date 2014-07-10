@@ -7,6 +7,7 @@ import android.R;
 import android.app.Activity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -16,12 +17,12 @@ import android.widget.TextView;
 import com.example.museum.MainActivity;
 
 
-public class ScrollViewObject extends AbstractElement<ScrollView>{
+public class ScrollViewObject extends AbstractElement<HorizontalScrollView>{
 	LinearLayout scrollLayout;
 	
 	public ScrollViewObject(Activity m, int idIn)
 	{
-		obj = new ScrollView(m);
+		obj = new HorizontalScrollView(m);
 		//type = ScrollView.class;
 		obj.setId(idIn);
 		//layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
@@ -44,10 +45,6 @@ public class ScrollViewObject extends AbstractElement<ScrollView>{
 		scrollLayout.addView(button);
 	}
 	
-	public ScrollView getElement(){
-		return obj;
-	}
-
 	@Override
 	public void setVisibility(int i) {
 		obj.setVisibility(i);
