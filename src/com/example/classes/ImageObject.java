@@ -9,46 +9,39 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class ImageObject extends AbstractElement{
-	private ImageView imageView;
+public class ImageObject extends AbstractElement<ImageView>{
 	private Bitmap bitmap;
-	public ImageObject(int im, Activity m, RelativeLayout r, int idIn)
+	public ImageObject(int im, Activity m, int idIn)
 	{
-		imageView = new ImageView(m);
-		id = idIn;
-		imageView.setId(id);
-		imageView.setImageResource(im);
+		obj = new ImageView(m);
+		obj.setId(idIn);
+		obj.setImageResource(im);
 		bitmap = BitmapFactory.decodeResource(m.getResources(), im);
 		layoutParams = new RelativeLayout.LayoutParams(
         		RelativeLayout.LayoutParams.WRAP_CONTENT, 
         		RelativeLayout.LayoutParams.WRAP_CONTENT);
 		
 		layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-		
-		r.addView(imageView, layoutParams);
 	}
 	
-	public ImageObject(Bitmap im, Activity m, RelativeLayout r, int idIn)
+	public ImageObject(Bitmap im, Activity m, int idIn)
 	{
-		imageView = new ImageView(m);
-		id = idIn;
-		imageView.setId(id);
-		imageView.setImageBitmap(im);
+		obj = new ImageView(m);
+		obj.setId(idIn);
+		obj.setImageBitmap(im);
 		layoutParams = new RelativeLayout.LayoutParams(
         		RelativeLayout.LayoutParams.WRAP_CONTENT, 
         		RelativeLayout.LayoutParams.WRAP_CONTENT);
 		
 		layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-		
-		r.addView(imageView, layoutParams);
 	}
 	
 	public void setImage(int im){
-		imageView.setImageResource(im);
+		((ImageView)obj).setImageResource(im);
 	}
 	
 	public void setScaleX(float x){
-		imageView.setScaleX(x);
+		obj.setScaleX(x);
 	}
 	
 	public int getWidth(){
@@ -56,12 +49,12 @@ public class ImageObject extends AbstractElement{
 	}
 	
 	public void setScaleY(float y){
-		imageView.setScaleY(y);
+		obj.setScaleY(y);
 	}
 	
 	public void setScale(float x, float y){
-		imageView.setScaleX(x);
-		imageView.setScaleY(y);
+		obj.setScaleX(x);
+		obj.setScaleY(y);
 	}
 	
 	public void setAbsScaleX(int x){
@@ -70,7 +63,7 @@ public class ImageObject extends AbstractElement{
 		//float newH = (x/bitmap.getWidth())*bitmap.getHeight();
 		float newH = (x/p)*v;
 		Bitmap b = Bitmap.createScaledBitmap(bitmap, x, (int)newH, true);
-		imageView.setImageBitmap(b);
+		obj.setImageBitmap(b);
 		bitmap = b;
 	}
 	
@@ -80,16 +73,11 @@ public class ImageObject extends AbstractElement{
 		//float newH = (x/bitmap.getWidth())*bitmap.getHeight();
 		float newH = (y/p)*v;
 		Bitmap b = Bitmap.createScaledBitmap(bitmap, (int)newH, y, true);
-		imageView.setImageBitmap(b);
+		obj.setImageBitmap(b);
 		bitmap = b;
 	}
 	
 	public void setScale(int width, int height){
-		imageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, width, height, false));
+		obj.setImageBitmap(Bitmap.createScaledBitmap(bitmap, width, height, false));
 	}
-	
-	public ImageView getElement(){
-		return imageView;
-	}
-	
 }
