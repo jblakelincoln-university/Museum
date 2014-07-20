@@ -1,6 +1,7 @@
 package com.example.museum;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import com.example.classes.*;
@@ -19,6 +20,11 @@ import android.widget.ScrollView;
 
 public class MainActivity extends Activity {
 	
+	public enum ScreenState {
+		MAIN,
+		GALLERY,
+	}
+	
 	RelativeLayout linLayout;
 	TextObject textTitle;
 	TextObject textStatus;
@@ -28,6 +34,8 @@ public class MainActivity extends Activity {
 	ButtonObject buttonGallery;
 	boolean galleryVisible=false;
 	
+	ScreenState screenState = ScreenState.MAIN;
+	
 	ProgressBarObject healthBar;
 	
 	List<AbstractElement> listGameElements = new ArrayList<AbstractElement>();
@@ -35,6 +43,11 @@ public class MainActivity extends Activity {
 	
 	ScrollViewObject scrollViewGallery;
 	List<AbstractElement> listGalleryScrollView = new ArrayList<AbstractElement>();
+	
+	/*
+	R.drawable[] galleryDrawables = {
+			//R.drawable.
+	}*/
 	
 	Point screenDimensions = new Point(0, 0);
 	 
@@ -54,7 +67,7 @@ public class MainActivity extends Activity {
         setGalleryLayout();
         
         //buttonGallery.getElement().callOnClick();
-        
+
         setContentView(linLayout, linLayoutParams);
     }
 	
@@ -116,6 +129,15 @@ public class MainActivity extends Activity {
 		a.addView(linLayout);
 	}
 	
+	@Override
+	public void onBackPressed(){
+		if (screenState == ScreenState.GALLERY)
+			screenState = ScreenState.MAIN;
+		else
+			super.onBackPressed();
+		ToggleVisibility();
+	}
+	
 	private void addToGalleryBar(ImageObject i){
 		listGalleryScrollView.add(i);
 		i.setScale(screenDimensions.x/8, screenDimensions.x/8);
@@ -135,27 +157,32 @@ public class MainActivity extends Activity {
 		addToGalleryBar(new ImageObject(R.drawable.ammo_green, this, newId++));
 	}
 	
+	public void ToggleVisibility(){
+		for (int i = 0; i < listGameElements.size(); i++){
+			if (screenState == ScreenState.MAIN)
+				listGameElements.get(i).setVisibility(View.VISIBLE);
+			else
+				listGameElements.get(i).setVisibility(View.GONE);
+		}
+		for (int i = 0; i < listGalleryScrollView.size(); i++){
+			if (screenState == ScreenState.GALLERY)
+				listGalleryScrollView.get(i).setVisibility(View.VISIBLE);
+			else
+				listGalleryScrollView.get(i).setVisibility(View.GONE);
+		}
+	}
+	
+	public void SetScreenState(ScreenState s){
+		screenState = s;
+		ToggleVisibility();
+	}
+	
 	public void setGalleryButtonClickEvent(){
 		buttonGallery.getElement().setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				galleryVisible = !galleryVisible;
-				
-				for (int i = 0; i < listGameElements.size(); i++){
-					if (galleryVisible)
-						listGameElements.get(i).setVisibility(View.GONE);
-					else
-						listGameElements.get(i).setVisibility(View.VISIBLE);
+				SetScreenState(ScreenState.GALLERY);	
 				}
-				
-				for (int i = 0; i < listGalleryScrollView.size(); i++){
-					if (!galleryVisible)
-						listGalleryScrollView.get(i).setVisibility(View.GONE);
-					else
-						listGalleryScrollView.get(i).setVisibility(View.VISIBLE);
-				}
-
-			}
 		});
 	}
 }

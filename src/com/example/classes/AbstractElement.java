@@ -9,6 +9,15 @@ import android.widget.RelativeLayout.LayoutParams;
 public abstract class AbstractElement<T> {
 	
 	protected T obj;
+	protected int customId;
+	
+	public void setCustomId(int id){
+		customId = id;
+	}
+	
+	public int getCustomId(){
+		return customId;
+	}
 
 	protected RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
     		RelativeLayout.LayoutParams.WRAP_CONTENT, 
