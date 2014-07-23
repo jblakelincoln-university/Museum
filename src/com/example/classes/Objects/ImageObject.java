@@ -3,17 +3,29 @@ package com.example.classes.Objects;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 public class ImageObject extends AbstractElement<ImageView>{
-	private Bitmap bitmap;
-	public ImageObject(int im, Activity m, int idIn)
+	protected Bitmap bitmap;
+	protected int uniqueId;
+	private int drawable;
+	
+	public int getDrawable() { return drawable;}
+	
+	protected ImageObject() {}
+	public ImageObject(int im, Activity m, int idIn, boolean button)
 	{
-		obj = new ImageView(m);
+		drawable = im;
+		
+		obj = (button) ? new ImageButton(m) : new ImageView(m);
+
 		obj.setId(idIn);
 		obj.setImageResource(im);
 		bitmap = BitmapFactory.decodeResource(m.getResources(), im);
+		
 		layoutParams = new RelativeLayout.LayoutParams(
         		RelativeLayout.LayoutParams.WRAP_CONTENT, 
         		RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -21,22 +33,12 @@ public class ImageObject extends AbstractElement<ImageView>{
 		layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
 	}
 	
-	public ImageObject(Bitmap im, Activity m, int idIn)
-	{
-		obj = new ImageView(m);
-		obj.setId(idIn);
-		obj.setImageBitmap(im);
-		layoutParams = new RelativeLayout.LayoutParams(
-        		RelativeLayout.LayoutParams.WRAP_CONTENT, 
-        		RelativeLayout.LayoutParams.WRAP_CONTENT);
-		
-		layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-		
-	
-	}
-	
+
 	public void setImage(int im){
 		((ImageView)obj).setImageResource(im);
+		bitmap = ((BitmapDrawable)obj.getDrawable()).getBitmap();
+
+
 	}
 	
 	public void setScaleX(float x){
@@ -45,6 +47,10 @@ public class ImageObject extends AbstractElement<ImageView>{
 	
 	public int getWidth(){
 		return bitmap.getWidth();
+	}
+	
+	public int getHeight(){
+		return bitmap.getHeight();
 	}
 	
 	public void setScaleY(float y){
@@ -78,5 +84,13 @@ public class ImageObject extends AbstractElement<ImageView>{
 	
 	public void setScale(int width, int height){
 		obj.setImageBitmap(Bitmap.createScaledBitmap(bitmap, width, height, false));
+	}
+
+	public int getUniqueId() {
+		return uniqueId;
+	}
+
+	public void setUniqueId(int uniqueId) {
+		this.uniqueId = uniqueId;
 	}
 }

@@ -35,7 +35,7 @@ public class SceneMain extends Scene{
         //textTitle.getElement().setTextSize(50f);
         textTitle.getElement().setTextSize(TypedValue.COMPLEX_UNIT_SP, 50f);
         
-        imageClue = new ImageObject(R.drawable.clue1, aIn, Globals.newId());
+        imageClue = new ImageObject(R.drawable.clue1, aIn, Globals.newId(), false);
         //imageClue.getElement().getLayoutParams().width = Globals.screenDimensions.y/4;
         imageClue.addRule(RelativeLayout.BELOW, textTitle.getId());
         imageClue.getElement().setPaddingRelative(0, 0, 0, Globals.screenDimensions.y/100);
@@ -47,7 +47,7 @@ public class SceneMain extends Scene{
         textStatus.getElement().setTextSize(TypedValue.COMPLEX_UNIT_SP, 30f);
         textStatus.getElement().setGravity(Gravity.CENTER);
         
-        imageTransportation = new ImageObject(R.drawable.ammo_green, aIn, Globals.newId());
+        imageTransportation = new ImageObject(R.drawable.ammo_green, aIn, Globals.newId(), false);
         imageTransportation.addRule(RelativeLayout.BELOW, textStatus.getId());
         imageTransportation.addRule(RelativeLayout.ALIGN_END, textStatus.getId());
         imageTransportation.getElement().setPaddingRelative(0,Globals.screenDimensions.y/30, Globals.screenDimensions.x/20, 0);

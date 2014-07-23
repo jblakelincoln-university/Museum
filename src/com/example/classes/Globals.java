@@ -8,18 +8,23 @@ import com.example.museum.R;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.graphics.Point;
+import android.os.AsyncTask;
 import android.view.View;
 import android.widget.RelativeLayout;
 
 // Sorry.
 // But I think this is the best course of action!
+
+
 public class Globals {
+	
 	
 	// Application independent.
 	public static RelativeLayout rLayout;
 	public static RelativeLayout.LayoutParams rLayoutParams;
 	public static R.drawable rDrawable;
 	public static Point screenDimensions = new Point(0,0);
+
 	public static void Init(Activity a){
 		a.getWindowManager().getDefaultDisplay().getSize(screenDimensions);
         
@@ -33,8 +38,8 @@ public class Globals {
         
         // Application specific.
         sceneMain = new SceneMain(0, a, true);
-        sceneGallery = new SceneGallery(0, a, false);
         listScenes.add(sceneMain);
+        sceneGallery = new SceneGallery(0, a, false);
         listScenes.add(sceneGallery);
 	}
 	
