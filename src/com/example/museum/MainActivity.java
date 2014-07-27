@@ -1,5 +1,8 @@
 package com.example.museum;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
@@ -52,4 +55,18 @@ public class MainActivity extends Activity {
 	public void onBackPressed(){
 		Globals.onBackPressed();
 	}
+	Timer timer;
+	
+	/*
+	@Override
+	public void onResume(){
+		timer = new Timer();
+		
+		timer.schedule(new TimerTask(){
+			@Override
+			public void run(){
+				
+			}
+		}, 0, 1000);
+	}*/
 }

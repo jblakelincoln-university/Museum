@@ -21,4 +21,8 @@ public class TextObject extends AbstractElement<TextView>{
 	public void setTextColour(int c){
 		obj.setTextColor(c);
 	}
+	
+	public void setText(String s){
+		obj.setText(s);
+	}
 }
