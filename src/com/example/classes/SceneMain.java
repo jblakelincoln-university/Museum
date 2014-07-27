@@ -10,6 +10,8 @@ import java.util.Map.Entry;
 
 import android.app.Activity;
 import android.os.Handler;
+import android.os.RemoteException;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -62,13 +64,27 @@ public static final String TAG = "MainActivity";
 		beaconManager = new BeaconManager(aIn);
 		
 		beaconNameDictionary = new HashMap<String,String>();
-		beaconNameDictionary.put("FE:E7:C6:3B:BC:DE", "Mint");
-		//beaconNameDictionary.put("E5:B9:E4:F5:39:98", "Icy");
-		//beaconNameDictionary.put("EF:A7:AE:AE:4A:3B", "Blueberry");
+		beaconNameDictionary.put("FE:E7:C6:3B:BC:DE", "Mint(1)");
+		beaconNameDictionary.put("E5:B9:E4:F5:39:98", "Icy(2)");
+		beaconNameDictionary.put("EF:A7:AE:AE:4A:3B", "Blueberry(3)");
+		beaconNameDictionary.put("C7:5C:63:DF:2C:E4", "Mint(4)");
+		beaconNameDictionary.put("CD:2F:A5:DE:92:13", "Icy(5)");
+		beaconNameDictionary.put("F8:F6:53:10:8B:B4", "Blueberry(6)");
 		
-		/*
+		beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
+		    @Override 
+		    public void onServiceReady() {
+		      try {
+		        beaconManager.startRanging(ALL_ESTIMOTE_BEACONS);
+		      } catch (RemoteException e) {
+		        Log.e(TAG, "Cannot start ranging", e);
+		      }
+		    }
+		  });
+		
 		beaconManager.setRangingListener(new BeaconManager.RangingListener() {
-		     @Override public void onBeaconsDiscovered(Region region, final List<Beacon> beacons) {
+		     @Override 
+		     public void onBeaconsDiscovered(Region region, final List<Beacon> beacons) {
 		    	 for (int i = 0; i < beacons.size(); i++)
 		    	 {
 		    		 if (!myBeaconsList.containsKey(beacons.get(i).getMacAddress()))
@@ -83,43 +99,21 @@ public static final String TAG = "MainActivity";
 		    		 else
 		    			 myBeaconsList.get(beacons.get(i).getMacAddress()).setBeacon(beacons.get(i));
 		    	 }
+		    	 if (beacons.size() == 0)
+		    		 p++;
+		    	 else
+		    		 p = beacons.size();
 		     }
-		   });*/
+		   });
 		
 		
-		updateHandler = new Handler();
-		updateHandler.postDelayed(runnable,  0);
+		//updateHandler = new Handler();
+		//updateHandler.postDelayed(runnable,  0);
 	}
 	
 	int p = 0;
 	
-	private void update(){
-		
-		textStatus.setText("" + p++);
-	}
-	private Runnable runnable = new Runnable() {	
-		@Override
-		public void run() {
-			
-			//for (Entry<String, MyBeacon> entry : myBeaconsList.entrySet()) {
-			//	entry.getValue().updateDistance();
-			    //startText.append(entry.getValue().getName() + " - " + entry.getValue().getDistance() + "\n");
-			//}			
-			
-			textStatus.setText("ll" + p++);
-			
-			updateHandler.postDelayed(this, 0);
-		} 
-	};
-	
-	
-	@Override
-	protected void sceneInit(Activity aIn, boolean visible) {
-		
-		
-		
-		
-		
+	private void itemSetup(Activity aIn){
 		//textTitle = new TextObject("Transport munitions!", aIn, Globals.newId());
         //textTitle.alignToTop();
         //textTitle.getElement().setPaddingRelative(0, Globals.screenDimensions.y/100, 0, Globals.screenDimensions.y/80);
@@ -171,6 +165,11 @@ public static final String TAG = "MainActivity";
         
         barFinding = new ProgressBarObject(aIn, Globals.newId(), false);
         barFinding.setValue(50);
+	}
+	
+	@Override
+	protected void sceneInit(Activity aIn, boolean visible) {
+		itemSetup(aIn);
         
         //addElementToView(textTitle);
         addElementToView(imageClue);
@@ -186,21 +185,21 @@ public static final String TAG = "MainActivity";
         
         estimoteSetup(aIn);
         
-        /*
-        Timer timer = new Timer();
-		
-		timer.schedule(new TimerTask(){
-			@Override
-			public void run(){
-				try
-				{
-				textClue.setText("" + p++);
-				}
-				catch(Exception e){}
-			}
-		}, 0, 1000);
-        */
         super.sceneInit(aIn, visible);
+	}
+	
+	public void update(){
+		//textClue.setText("aaaa" + p++);
+		
+		String s = "";
+		for (Entry<String, MyBeacon> entry : myBeaconsList.entrySet()) {
+			entry.getValue().updateDistance();
+			String name = entry.getValue().getName();//entry.getValue().getName();
+			String distance = String.format("%.2f", entry.getValue().getDistance());
+			s += name + " - " + distance + "\n";
+		}
+		
+		textClue.setText(s);
 	}
 	
 	public void setGalleryButtonClickEvent(){
@@ -216,7 +215,21 @@ public static final String TAG = "MainActivity";
 		buttonFindClue.getElement().setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Globals.SetScreenState(Globals.ScreenState.GALLERY);	
+				for (Entry<String, MyBeacon> entry : myBeaconsList.entrySet()) {
+					if (entry.getValue().getName() == "Blueberry(6)")
+					{
+						double lowest = 10000;
+						for (int i = 0; i < 500; i++)
+						{
+							if (entry.getValue().getDistance() < lowest)
+								lowest = entry.getValue().getDistance();
+						}
+						if (lowest < 0.8)
+							textStatus.setText("True");
+						else
+							textStatus.setText("False");
+					}
+				}
 			}
 		});		
 	}

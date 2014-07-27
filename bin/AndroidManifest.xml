@@ -7,6 +7,9 @@
     <uses-sdk
         android:minSdkVersion="19"
         android:targetSdkVersion="21" />
+    
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+  	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
 
     <application
         android:hardwareAccelerated="true"
@@ -27,6 +30,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
+        
+        <service android:name="com.estimote.sdk.service.BeaconService"
+            android:exported="false"/>
+        
+        
     </application>
 
 </manifest>

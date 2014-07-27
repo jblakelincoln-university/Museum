@@ -24,6 +24,8 @@ public class Globals {
 	public static RelativeLayout.LayoutParams rLayoutParams;
 	public static R.drawable rDrawable;
 	public static Point screenDimensions = new Point(0,0);
+	
+	public static boolean canUpdate = false;
 
 	public static void Init(Activity a){
 		a.getWindowManager().getDefaultDisplay().getSize(screenDimensions);
@@ -41,6 +43,8 @@ public class Globals {
         listScenes.add(sceneMain);
         sceneGallery = new SceneGallery(0, a, false);
         listScenes.add(sceneGallery);
+        
+        canUpdate = true;
 	}
 	
 	// Call this function for a new unique ID.
@@ -77,7 +81,7 @@ public class Globals {
 	}
 	
 	public static List<Scene> listScenes = new ArrayList<Scene>();
-	public static Scene sceneMain;
+	public static SceneMain sceneMain;
 	public static Scene sceneGallery;
 	public static ScreenState screenState = ScreenState.MAIN;
 	
