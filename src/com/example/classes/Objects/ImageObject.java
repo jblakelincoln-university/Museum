@@ -85,6 +85,10 @@ public class ImageObject extends AbstractElement<ImageView>{
 	public void setScale(int width, int height){
 		obj.setImageBitmap(Bitmap.createScaledBitmap(bitmap, width, height, false));
 	}
+	
+	public void setBackgroundColour(int col){
+		obj.setBackgroundColor(col);
+	}
 
 	public int getUniqueId() {
 		return uniqueId;

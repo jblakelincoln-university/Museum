@@ -3,13 +3,11 @@ package com.example.classes;
 import android.app.Activity;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import com.example.classes.Objects.ButtonObject;
-import com.example.classes.Objects.ImageObject;
-import com.example.classes.Objects.ProgressBarObject;
-import com.example.classes.Objects.TextObject;
+import com.example.classes.Objects.*;
 import com.example.museum.R;
 
 public class SceneMain extends Scene{
@@ -22,6 +20,9 @@ public class SceneMain extends Scene{
 	private ButtonObject buttonGallery;
 	private ProgressBarObject healthBar;
 	
+	private ImageObject buttonFindClue;
+	
+	private ProgressBarObject barFinding;
 	
 	public SceneMain(int idIn, Activity a, boolean visible) {
 		super(idIn, a, visible);
@@ -29,16 +30,17 @@ public class SceneMain extends Scene{
 	
 	@Override
 	protected void sceneInit(Activity aIn, boolean visible) {
-		textTitle = new TextObject("Transport munitions!", aIn, Globals.newId());
-        textTitle.alignToTop();
-        textTitle.getElement().setPaddingRelative(0, Globals.screenDimensions.y/100, 0, Globals.screenDimensions.y/80);
+		//textTitle = new TextObject("Transport munitions!", aIn, Globals.newId());
+        //textTitle.alignToTop();
+        //textTitle.getElement().setPaddingRelative(0, Globals.screenDimensions.y/100, 0, Globals.screenDimensions.y/80);
         //textTitle.getElement().setTextSize(50f);
-        textTitle.getElement().setTextSize(TypedValue.COMPLEX_UNIT_SP, 50f);
+        //textTitle.getElement().setTextSize(TypedValue.COMPLEX_UNIT_SP, 50f);
         
         imageClue = new ImageObject(R.drawable.clue1, aIn, Globals.newId(), false);
         //imageClue.getElement().getLayoutParams().width = Globals.screenDimensions.y/4;
-        imageClue.addRule(RelativeLayout.BELOW, textTitle.getId());
-        imageClue.getElement().setPaddingRelative(0, 0, 0, Globals.screenDimensions.y/100);
+        //imageClue.addRule(RelativeLayout.BELOW, textTitle.getId());
+        imageClue.alignToTop();
+        imageClue.getElement().setPaddingRelative(0, Globals.screenDimensions.y/100, 0, Globals.screenDimensions.y/100);
         imageClue.setAbsScaleY((int)(Globals.screenDimensions.y/2.5f));
     
         textStatus = new TextObject("Mission status text box with long words everywhere", aIn, Globals.newId());
@@ -51,9 +53,9 @@ public class SceneMain extends Scene{
         imageTransportation.addRule(RelativeLayout.BELOW, textStatus.getId());
         imageTransportation.addRule(RelativeLayout.ALIGN_END, textStatus.getId());
         imageTransportation.getElement().setPaddingRelative(0,Globals.screenDimensions.y/30, Globals.screenDimensions.x/20, 0);
-        imageTransportation.setAbsScaleY(Globals.screenDimensions.y/5);
+        imageTransportation.setAbsScaleY(Globals.screenDimensions.y/7);
        
-        healthBar = new ProgressBarObject(aIn, Globals.newId());
+        healthBar = new ProgressBarObject(aIn, Globals.newId(), true);
         healthBar.addRule(RelativeLayout.BELOW, imageTransportation.getId());
         healthBar.addRule(RelativeLayout.ALIGN_START, imageTransportation.getId());
         healthBar.getLayoutParams().setMargins(0, Globals.screenDimensions.y/80, 0, 0);
@@ -70,14 +72,27 @@ public class SceneMain extends Scene{
         buttonGallery = new ButtonObject("Gallery", aIn, Globals.newId());
         buttonGallery.addRule(RelativeLayout.BELOW, textClue.getId());
         buttonGallery.addRule(RelativeLayout.ALIGN_START, textClue.getId());
-        addElementToView(textTitle);
+        
+        buttonFindClue = new ImageObject(R.drawable.find_button, aIn, Globals.newId(), true);
+        buttonFindClue.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        buttonFindClue.setAbsScaleY(Globals.screenDimensions.y/5);
+        buttonFindClue.getLayoutParams().setMargins(0, 0, 0, Globals.screenDimensions.y/10);
+        buttonFindClue.setBackgroundColour(android.R.color.transparent);
+        
+        barFinding = new ProgressBarObject(aIn, Globals.newId(), false);
+        barFinding.setValue(50);
+        
+        //addElementToView(textTitle);
         addElementToView(imageClue);
         addElementToView(textStatus);
         addElementToView(imageTransportation);
         addElementToView(healthBar);
         addElementToView(textClue);
         addElementToView(buttonGallery);
+        addElementToView(buttonFindClue);
+        addElementToView(barFinding);
         setGalleryButtonClickEvent();	
+        setFindButtonClickEvent();
         
         super.sceneInit(aIn, visible);
 	}
@@ -89,6 +104,15 @@ public class SceneMain extends Scene{
 				Globals.SetScreenState(Globals.ScreenState.GALLERY);	
 			}
 		});
+	}
+	
+	public void setFindButtonClickEvent(){
+		buttonFindClue.getElement().setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Globals.SetScreenState(Globals.ScreenState.GALLERY);	
+			}
+		});		
 	}
 
 	@Override

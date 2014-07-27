@@ -5,9 +5,12 @@ import android.widget.ProgressBar;
 
 public class ProgressBarObject extends AbstractElement<ProgressBar>{
 
-	public ProgressBarObject(Activity m, int idIn)
+	public ProgressBarObject(Activity m, int idIn, boolean horizontal)
 	{
-		obj = new ProgressBar(m, null, android.R.attr.progressBarStyleHorizontal);
+		if (horizontal)
+			obj = new ProgressBar(m, null, android.R.attr.progressBarStyleHorizontal);
+		else
+			obj = new ProgressBar(m, null, android.R.attr.progressBarStyle);
 		obj.setId(idIn);
 	}
 	
