@@ -28,19 +28,9 @@ import com.example.museum.*;
 public class SceneMain extends Scene{
 
 	//Estimote
-public static final String TAG = "MainActivity";
+
 	
-	private static final String ESTIMOTE_PROXIMITY_UUID = 
-			"B9407F30-F5F8-466E-AFF9-25556B57FE6D";
-	private static final Region ALL_ESTIMOTE_BEACONS = 
-			new Region("regionId", ESTIMOTE_PROXIMITY_UUID, null, null);
 	
-	private BeaconManager beaconManager;
-	private Handler updateHandler;
-	
-	LinkedHashMap<String,MyBeacon> myBeaconsList = new LinkedHashMap<String, MyBeacon>();
-	
-	private Map<String, String> beaconNameDictionary;
 	
 	//Scene objects
 	private TextObject textTitle;
@@ -59,57 +49,7 @@ public static final String TAG = "MainActivity";
 		
 	}
 	
-	protected void estimoteSetup(Activity aIn){
-		
-		beaconManager = new BeaconManager(aIn);
-		
-		beaconNameDictionary = new HashMap<String,String>();
-		beaconNameDictionary.put("FE:E7:C6:3B:BC:DE", "Mint(1)");
-		beaconNameDictionary.put("E5:B9:E4:F5:39:98", "Icy(2)");
-		beaconNameDictionary.put("EF:A7:AE:AE:4A:3B", "Blueberry(3)");
-		beaconNameDictionary.put("C7:5C:63:DF:2C:E4", "Mint(4)");
-		beaconNameDictionary.put("CD:2F:A5:DE:92:13", "Icy(5)");
-		beaconNameDictionary.put("F8:F6:53:10:8B:B4", "Blueberry(6)");
-		
-		beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
-		    @Override 
-		    public void onServiceReady() {
-		      try {
-		        beaconManager.startRanging(ALL_ESTIMOTE_BEACONS);
-		      } catch (RemoteException e) {
-		        Log.e(TAG, "Cannot start ranging", e);
-		      }
-		    }
-		  });
-		
-		beaconManager.setRangingListener(new BeaconManager.RangingListener() {
-		     @Override 
-		     public void onBeaconsDiscovered(Region region, final List<Beacon> beacons) {
-		    	 for (int i = 0; i < beacons.size(); i++)
-		    	 {
-		    		 if (!myBeaconsList.containsKey(beacons.get(i).getMacAddress()))
-   				 {
-		    			 myBeaconsList.put(beacons.get(i).getMacAddress().toString(), new MyBeacon(beacons.get(i)));
-		    			 if (beaconNameDictionary.containsKey(beacons.get(i).getMacAddress()))
-		    			 {
-		    				 myBeaconsList.get(beacons.get(i).getMacAddress()).setName(beaconNameDictionary.get(beacons.get(i).getMacAddress()));
-		    				 //myBeaconsList.get(beacons.get(i)).setInitialDistance(); 
-		    			 }
-   				 }
-		    		 else
-		    			 myBeaconsList.get(beacons.get(i).getMacAddress()).setBeacon(beacons.get(i));
-		    	 }
-		    	 if (beacons.size() == 0)
-		    		 p++;
-		    	 else
-		    		 p = beacons.size();
-		     }
-		   });
-		
-		
-		//updateHandler = new Handler();
-		//updateHandler.postDelayed(runnable,  0);
-	}
+	
 	
 	int p = 0;
 	
@@ -183,16 +123,16 @@ public static final String TAG = "MainActivity";
         setGalleryButtonClickEvent();	
         setFindButtonClickEvent();
         
-        estimoteSetup(aIn);
+        //estimoteSetup(aIn);
         
         super.sceneInit(aIn, visible);
 	}
 	
-	public void update(){
+	public void update(HashMap<String, MyBeacon> beaconList){
 		//textClue.setText("aaaa" + p++);
 		
 		String s = "";
-		for (Entry<String, MyBeacon> entry : myBeaconsList.entrySet()) {
+		for (Entry<String, MyBeacon> entry : beaconList.entrySet()) {
 			entry.getValue().updateDistance();
 			String name = entry.getValue().getName();//entry.getValue().getName();
 			String distance = String.format("%.2f", entry.getValue().getDistance());
@@ -215,6 +155,7 @@ public static final String TAG = "MainActivity";
 		buttonFindClue.getElement().setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				/*
 				for (Entry<String, MyBeacon> entry : myBeaconsList.entrySet()) {
 					if (entry.getValue().getName() == "Blueberry(6)")
 					{
@@ -229,7 +170,7 @@ public static final String TAG = "MainActivity";
 						else
 							textStatus.setText("False");
 					}
-				}
+				}*/
 			}
 		});		
 	}
