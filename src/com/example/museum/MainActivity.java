@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import com.estimote.sdk.*;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,71 +19,98 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.RemoteException;
 import android.util.Log;
+import android.view.View;
 
 
 import com.example.classes.EstimoteManager;
 import com.example.classes.Globals;
-import com.example.classes.SceneGallery;
+import com.example.classes.Scene;
 
 public class MainActivity extends Activity {
 	
 	EstimoteManager estimoteManager;
-/*
 	
-	*/
+	public static enum ScreenState{
+		DEBUG,
+		MAIN,
+		GALLERY;
+		
+		public static int toInt(ScreenState s){
+			switch(s){
+			case DEBUG:
+				return 0;
+			case MAIN:
+				return 1;
+			case GALLERY:
+				return 2;
+			}
+			return -1;
+		}
+	}
+
 	private Handler handler = new Handler();
-	
-	private Runnable runnable = new Runnable() { // Runnable is an "update" function - runs all the game stuff.
+	private Runnable runnable = new Runnable() {
 	 	   @Override
 	 	   public void run() {
-	 		   if (Globals.canUpdate)
-	 			   Globals.sceneMain.update(estimoteManager.myBeaconsList);
-	 	      handler.postDelayed(this, 100); 
+	 		   if (appLoaded)
+	 			   update();
+	 	       handler.postDelayed(this, 100); 
 	 	   }
 	};
+
+	public static List<Scene> listScenes = new ArrayList<Scene>();
+	private SceneMain sceneMain;
+	private SceneGallery sceneGallery;
+	private SceneDebug sceneDebug;
+	public static ScreenState screenState;
 	
-	private Context context;
+	private boolean appLoaded = false;
 	
+	public static void SetScreenState(ScreenState s){
+		listScenes.get(ScreenState.toInt(screenState)).setVisibility(View.GONE);
+		screenState = s;
+		listScenes.get(ScreenState.toInt(screenState)).setVisibility(View.VISIBLE);
+	}
+	private Context c;
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
-			
-			//estimoteSetup(this);
+
 			Globals.Init(this);
+			c = this;
+			// Create all scenes and then add them to a list;
+			screenState = ScreenState.MAIN;
 			
-			context = this;
-			
+			sceneDebug = new SceneDebug(0, this, false);
+			listScenes.add(sceneDebug);
+			sceneMain = new SceneMain(1, this, false);
+	        listScenes.add(sceneMain);
+	        sceneGallery = new SceneGallery(2, (Activity)c, false);
+	 		listScenes.add(sceneGallery); 
+	 		
+	 		for(Scene s : listScenes){
+	 			if (s.getId() == ScreenState.toInt(screenState))
+	 				s.setVisibility(View.VISIBLE);
+	 		}
+	 		
+	        Globals.canUpdate = true;
 			estimoteManager = new EstimoteManager(this);
-			setContentView(Globals.rLayout, Globals.rLayoutParams);     
-			//new Dddd().execute(this);
 			
+			setContentView(Globals.rLayout, Globals.rLayoutParams);  
+			
+			appLoaded = true;
 			handler.postDelayed(runnable, 100);
     }
 	
+	private void update(){
+		sceneDebug.update(estimoteManager.myBeaconsList);
+	}
 	 @Override
-    public void onConfigurationChanged(Configuration newConfig)
-    {
-		 System.exit(0);
-        //setContentView(Globals.rLayout, Globals.rLayoutParams);
-        //super.onConfigurationChanged(newConfig);
-    }
+    public void onConfigurationChanged(Configuration newConfig){}
 	
 	@Override
 	public void onBackPressed(){
-		Globals.onBackPressed();
+		if (listScenes != null)
+			listScenes.get(ScreenState.toInt(screenState)).onBackPressed();
 	}
-	Timer timer;
-	
-	/*
-	@Override
-	public void onResume(){
-		timer = new Timer();
-		
-		timer.schedule(new TimerTask(){
-			@Override
-			public void run(){
-				
-			}
-		}, 0, 1000);
-	}*/
 }

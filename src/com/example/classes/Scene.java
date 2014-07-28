@@ -11,7 +11,7 @@ public abstract class Scene {
 	@SuppressWarnings("rawtypes")
 	protected List<AbstractElement> sceneElements = new ArrayList<AbstractElement>();
 	protected int id;
-	
+	public int getId(){return id;}
 	public Scene(int idIn, Activity a, boolean visible){
 		id = idIn;
 		sceneInit(a, visible);

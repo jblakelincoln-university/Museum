@@ -64,6 +64,7 @@ public static final String TAG = "MainActivity";
 		     @Override 
 		     public void onBeaconsDiscovered(Region region, final List<Beacon> beacons) {
 		    	 // If detected beacon is not listed, add it to the list.
+		    	 
 		    	 for (int i = 0; i < beacons.size(); i++)
 		    	 {
 		    		 if (!myBeaconsList.containsKey(beacons.get(i).getMacAddress()))

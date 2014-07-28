@@ -1,4 +1,4 @@
-package com.example.classes;
+package com.example.museum;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
+import com.example.classes.Globals;
+import com.example.classes.Scene;
 import com.example.classes.Objects.AbstractElement;
 import com.example.classes.Objects.ImageObject;
 import com.example.classes.Objects.ScrollViewObject;
@@ -105,6 +107,6 @@ public class SceneGallery extends Scene{
 	}
 
 	public void onBackPressed() {
-		Globals.SetScreenState(Globals.ScreenState.MAIN);		
+		MainActivity.SetScreenState(MainActivity.ScreenState.MAIN);		
 	}
 }

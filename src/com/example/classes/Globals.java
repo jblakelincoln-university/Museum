@@ -12,14 +12,7 @@ import android.os.AsyncTask;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-// Sorry.
-// But I think this is the best course of action!
-
-
 public class Globals {
-	
-	
-	// Application independent.
 	public static RelativeLayout rLayout;
 	public static RelativeLayout.LayoutParams rLayoutParams;
 	public static R.drawable rDrawable;
@@ -37,56 +30,9 @@ public class Globals {
         		RelativeLayout.LayoutParams.MATCH_PARENT);
         
         Globals.rLayout.setBackgroundResource(R.drawable.background);
-        
-        // Application specific.
-        sceneMain = new SceneMain(0, a, true);
-        listScenes.add(sceneMain);
-        sceneGallery = new SceneGallery(0, a, false);
-        listScenes.add(sceneGallery);
-        
-        canUpdate = true;
 	}
 	
 	// Call this function for a new unique ID.
 	private static int currentId = 1000;
 	public static int newId() { currentId++; return currentId;}
-	
-	// All following is application specific.
-	public static enum ScreenState{
-		MAIN,
-		GALLERY;
-		
-		public static int toInt(ScreenState s){
-			switch(s){
-			case MAIN:
-				return 0;
-			case GALLERY:
-				return 1;
-			}
-			return -1;
-		}
-	}
-	
-	// Calls function from current scene.
-	public static void onBackPressed(){
-		if (listScenes != null)
-			listScenes.get(ScreenState.toInt(screenState)).onBackPressed();
-	}
-	
-	// Makes the current scene not visible and makes next scene visible.
-	public static void SetScreenState(ScreenState s){
-		listScenes.get(ScreenState.toInt(screenState)).setVisibility(View.GONE);
-		screenState = s;
-		listScenes.get(ScreenState.toInt(screenState)).setVisibility(View.VISIBLE);
-	}
-	
-	public static List<Scene> listScenes = new ArrayList<Scene>();
-	public static SceneMain sceneMain;
-	public static Scene sceneGallery;
-	public static ScreenState screenState = ScreenState.MAIN;
-	
-	
-	
-	
-		
 }

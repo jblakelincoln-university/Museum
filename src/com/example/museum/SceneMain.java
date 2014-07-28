@@ -1,4 +1,4 @@
-package com.example.classes;
+package com.example.museum;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -18,6 +18,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import com.example.classes.Globals;
+import com.example.classes.Scene;
 import com.example.classes.Objects.*;
 import com.example.museum.R;
 
@@ -42,6 +44,7 @@ public class SceneMain extends Scene{
 	private ProgressBarObject healthBar;
 	private ImageObject buttonFindClue;
 	private ProgressBarObject barFinding;
+	private ButtonObject buttonDebug;
 	
 	public SceneMain(int idIn, Activity a, boolean visible) {
 		super(idIn, a, visible);
@@ -103,6 +106,11 @@ public class SceneMain extends Scene{
         buttonFindClue.getLayoutParams().setMargins(0, 0, 0, Globals.screenDimensions.y/10);
         buttonFindClue.setBackgroundColour(android.R.color.transparent);
         
+        buttonDebug = new ButtonObject("Debug", aIn, Globals.newId());
+        buttonDebug.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        buttonDebug.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        buttonDebug.getLayoutParams().setMargins(0, 0, (Globals.screenDimensions.x/12), Globals.screenDimensions.y/20);
+        
         barFinding = new ProgressBarObject(aIn, Globals.newId(), false);
         barFinding.setValue(50);
 	}
@@ -120,33 +128,30 @@ public class SceneMain extends Scene{
         addElementToView(buttonGallery);
         addElementToView(buttonFindClue);
         addElementToView(barFinding);
+        addElementToView(buttonDebug);
         setGalleryButtonClickEvent();	
         setFindButtonClickEvent();
+        setDebugButtonClickEvent();
         
         //estimoteSetup(aIn);
         
         super.sceneInit(aIn, visible);
 	}
-	
-	public void update(HashMap<String, MyBeacon> beaconList){
-		//textClue.setText("aaaa" + p++);
-		
-		String s = "";
-		for (Entry<String, MyBeacon> entry : beaconList.entrySet()) {
-			//entry.getValue().updateDistance();
-			String name = entry.getValue().getName();//entry.getValue().getName();
-			String distance = String.format("%.2f", entry.getValue().getDistance());
-			s += name + " - " + distance + "\n";
-		}
-		
-		textClue.setText(s);
-	}
-	
+
 	public void setGalleryButtonClickEvent(){
 		buttonGallery.getElement().setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Globals.SetScreenState(Globals.ScreenState.GALLERY);	
+				MainActivity.SetScreenState(MainActivity.ScreenState.GALLERY);	
+			}
+		});
+	}
+	
+	public void setDebugButtonClickEvent(){
+		buttonDebug.getElement().setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				MainActivity.SetScreenState(MainActivity.ScreenState.DEBUG);
 			}
 		});
 	}
