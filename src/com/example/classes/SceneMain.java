@@ -133,7 +133,7 @@ public class SceneMain extends Scene{
 		
 		String s = "";
 		for (Entry<String, MyBeacon> entry : beaconList.entrySet()) {
-			entry.getValue().updateDistance();
+			//entry.getValue().updateDistance();
 			String name = entry.getValue().getName();//entry.getValue().getName();
 			String distance = String.format("%.2f", entry.getValue().getDistance());
 			s += name + " - " + distance + "\n";
