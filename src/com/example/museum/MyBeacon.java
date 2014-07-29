@@ -1,5 +1,8 @@
 package com.example.museum;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.estimote.sdk.Beacon;
 import com.estimote.sdk.Utils;
 
@@ -23,13 +26,19 @@ public class MyBeacon {
 	
 	public Beacon getBeacon(){return theBeacon;}
 	
-	private double maxRange = 4.0;//in metres
+	private double maxRange = 10;//in metres
 	
 	private double recordedDistance;
+	
+	private List<Double> distanceList = new ArrayList<Double>(); 
 	void setInitialDistance()
 	{
 		distance = Math.min(Utils.computeAccuracy(theBeacon), maxRange);
 		lastDistance = distance;
+		
+		for (int i = 0; i < 15; i++){
+			distanceList.add(distance);
+		}
 		
 	}
 	public void updateDistance(){
@@ -37,17 +46,31 @@ public class MyBeacon {
 		recordedDistance = Math.min(Utils.computeAccuracy(theBeacon), maxRange);
 		distance = recordedDistance;
 		
+		
 		if (recordedDistance != lastDistance)
 		{
 			lastDistance = distance;
-			distance = lerp();
+			
+			distanceList.remove(0);
+			distanceList.add(distance);
+			double sum = 0;
+			
+			for (int i = 0; i < distanceList.size(); i++){
+				sum += distanceList.get(i);
+			}
+			
+			distance = sum/distanceList.size();
+			
+			
+			//distance = lerp();
 		}
+		
 	}
 	
 	
 	double lerp()
 	{
-		return (lastDistance + ((distance - lastDistance)) * 0.1);
+		return (lastDistance + ((distance - lastDistance)) * 0.01);
 	}
 	//double distance = Math.min(Utils.computeAccuracy(beaconList.get(i)), 6.0);
 }

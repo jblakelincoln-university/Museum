@@ -23,8 +23,8 @@ public static final String TAG = "MainActivity";
 	
 	private BeaconManager beaconManager;
 	
-	public LinkedHashMap<String,MyBeacon> myBeaconsList = new LinkedHashMap<String, MyBeacon>();
-	
+	private LinkedHashMap<String,MyBeacon> myBeaconsList = new LinkedHashMap<String, MyBeacon>();
+	public LinkedHashMap<String,MyBeacon> getBeaconList(){return myBeaconsList;}
 	private Map<String, String> beaconNameDictionary;
 	
 	

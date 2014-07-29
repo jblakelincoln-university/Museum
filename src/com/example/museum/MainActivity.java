@@ -28,7 +28,7 @@ import com.example.classes.Scene;
 
 public class MainActivity extends Activity {
 	
-	EstimoteManager estimoteManager;
+	public static EstimoteManager estimoteManager;
 	
 	public static enum ScreenState{
 		DEBUG,
@@ -103,7 +103,7 @@ public class MainActivity extends Activity {
     }
 	
 	private void update(){
-		sceneDebug.update(estimoteManager.myBeaconsList);
+		sceneDebug.update(estimoteManager.getBeaconList());
 	}
 	 @Override
     public void onConfigurationChanged(Configuration newConfig){}
