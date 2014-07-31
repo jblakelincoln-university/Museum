@@ -30,6 +30,10 @@ public class SceneGallery extends Scene{
 		super(idIn, a, visible);
 	}
 
+	
+	public void onLoad(){}
+	
+	
 	@SuppressWarnings("rawtypes")
 	@Override
 	protected void sceneInit(Activity aIn, boolean visible) {

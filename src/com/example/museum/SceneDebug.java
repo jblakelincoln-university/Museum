@@ -31,6 +31,10 @@ public class SceneDebug extends Scene{
 		textBeaconList.setText(s);
 	}
 	
+	public void onLoad(){
+		transitionOut(sceneElements);
+	}
+	
 	protected void sceneInit(Activity aIn, boolean visible){
 		textBeaconList = new TextObject("", aIn, Globals.newId());
 		

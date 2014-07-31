@@ -9,6 +9,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Map.Entry;
 
+import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.os.Handler;
 import android.os.RemoteException;
@@ -17,6 +18,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import com.example.classes.Globals;
@@ -35,15 +37,18 @@ public class SceneMain extends Scene{
 
 	
 	public static enum ScreenState{
+		NONE,
 		MAIN,
 		CLUE;
 		
 		public static int toInt(ScreenState s){
 			switch(s){
-			case MAIN:
+			case NONE:
 				return 0;
-			case CLUE:
+			case MAIN:
 				return 1;
+			case CLUE:
+				return 2;
 			}
 			return -1;
 		}
@@ -117,14 +122,14 @@ public class SceneMain extends Scene{
         
         textClue = new TextObject("This is the clue text it is clue text that contains a clue of varying length.", aIn, Globals.newId());
         
-        textClue.addRule(RelativeLayout.ALIGN_BOTTOM, imageTransportation.getId());
+        //textClue.addRule(RelativeLayout.ALIGN_BOTTOM, imageTransportation.getId());
         textClue.getElement().setTextSize(TypedValue.COMPLEX_UNIT_SP, 30f);
         textClue.setWidth(Globals.screenDimensions.x/2.2f);
         //textClue.getLayoutParams().setMarginStart(Globals.screenDimensions.x/20);
         
         buttonGallery = new ButtonObject("Gallery", aIn, Globals.newId());
-        buttonGallery.addRule(RelativeLayout.BELOW, textClue.getId());
-        buttonGallery.addRule(RelativeLayout.ALIGN_START, textClue.getId());
+       // buttonGallery.addRule(RelativeLayout.BELOW, textClue.getId());
+       // buttonGallery.addRule(RelativeLayout.ALIGN_START, textClue.getId());
         
         buttonFindClue = new ImageObject(R.drawable.find_button, aIn, Globals.newId(), true);
         buttonFindClue.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
@@ -139,7 +144,6 @@ public class SceneMain extends Scene{
         
         buttonViewClueScreen = new ButtonObject("View Clue", aIn, Globals.newId());
         
-        textClue.addRule(RelativeLayout.ALIGN_RIGHT, buttonFindClue.getId());
 	}
 	
 	@Override
@@ -149,16 +153,22 @@ public class SceneMain extends Scene{
         //addElementToView(textTitle);
         addElementToView(imageClue);
         listMainScreen.add(imageClue);
+        
         addElementToView(textStatus);
         listMainScreen.add(textStatus);
+        
         addElementToView(imageTransportation);
         listMainScreen.add(imageTransportation);
+     
         addElementToView(healthBar);
-        listMainScreen.add(imageTransportation);
+        listMainScreen.add(healthBar);
+        
         addElementToView(textClue);
         listClueScreen.add(textClue);
+        
         addElementToView(buttonGallery);
         listMainScreen.add(buttonGallery);
+        
         addElementToView(buttonFindClue);
         listMainScreen.add(buttonFindClue);
         
@@ -180,18 +190,53 @@ public class SceneMain extends Scene{
         super.sceneInit(aIn, visible);
 	}
 	
+	List<AbstractElement> listOutOfView;
+	List<Boolean> listTransitioning;
+	boolean transitioning = false;
 	private void setScene(ScreenState sIn){
 		screenState = sIn;
-		setVisibility(View.GONE);
-		
+		//setVisibility(View.GONE);
+		List<AbstractElement> l = listMainScreen;
+		listOutOfView = new ArrayList<AbstractElement>();
+		listTransitioning = new ArrayList<Boolean>();
+		transitioning = true;
 		if (sIn == ScreenState.MAIN){
-			for (AbstractElement e : listMainScreen)
-				e.setVisibility(View.VISIBLE);
+			l = listMainScreen;
 		}
 		else if (sIn == ScreenState.CLUE){
-			for (AbstractElement e : listClueScreen)
-				e.setVisibility(View.VISIBLE);
+			l = listClueScreen;
 		}
+		
+		/*
+		Button b;
+		for (AbstractElement e : sceneElements)
+		{
+			((View)(e.getElement())).animate().alpha(0);
+			((View)(e.getElement())).animate().start();
+			
+			if (!l.contains(e)){
+				listOutOfView.add(e);
+				listTransitioning.add(false);
+			}
+			//if (((View)(e.getElement())).getAlpha() == 0)
+				//e.setVisibility(View.GONE);
+					
+		}
+
+		//buttonFindClue.getElement().setEnabled(false);
+		//buttonViewClueScreen.getElement().setEnabled(false);
+		//textStatus.setText("");
+		for (AbstractElement e : l)
+		{
+			((View)(e.getElement())).animate().alpha(1);
+			((View)(e.getElement())).animate().start();
+			e.setVisibility(View.VISIBLE);
+			
+		}
+		
+		*/
+		
+		transitionOut(l);
 	}
 
 	
@@ -213,10 +258,16 @@ public class SceneMain extends Scene{
 		});
 	}
 	
+	public void onLoad(){
+		setScene(ScreenState.MAIN);
+	}
+	
 	public void setDebugButtonClickEvent(){
 		buttonDebug.getElement().setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				//List<AbstractElement> l = new ArrayList<AbstractElement>();
+				//transitionOut(l);
 				MainActivity.SetScreenState(MainActivity.ScreenState.DEBUG);
 			}
 		});
@@ -226,7 +277,7 @@ public class SceneMain extends Scene{
 		buttonFindClue.getElement().setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				
+				/*
 				for (Entry<String, MyBeacon> entry : MainActivity.estimoteManager.getBeaconList().entrySet()) {
 					if (entry.getValue().getName() == "Blueberry(6)")
 					{
@@ -241,9 +292,56 @@ public class SceneMain extends Scene{
 						else
 							textStatus.setText("False");
 					}
-				}
+				}*/
+				
+				
+				
+				/*
+				if (buttonFindClue.getElement().getAlpha() == 1)
+					buttonFindClue.getElement().animate().alpha(0.3f);
+				else
+					buttonFindClue.getElement().animate().alpha(1);
+				
+				textStatus.setText("" + buttonFindClue.getElement().getAlpha());
+				buttonFindClue.getElement().animate().start();
+				
+				if (buttonFindClue.getElement().getAlpha() == 0)
+					buttonFindClue.setVisibility(View.GONE);*/
+				
+				
+				if (screenState == ScreenState.MAIN)
+					setScene(ScreenState.CLUE);
+				else
+					setScene(ScreenState.MAIN);
+				
+				//while (imageTransportation.getElement().getAlpha() != 0){
+					
+				//}
+				//imageTransportation.setVisibility(View.GONE);
 			}
 		});		
+	}
+	
+	protected void update(){
+		/*
+		if (transitioning){
+			for (int i = 0; i < listOutOfView.size(); i++){
+				if (((View)(listOutOfView.get(i).getElement())).getAlpha() == 0){
+					listOutOfView.get(i).setVisibility(View.GONE);
+					listTransitioning.set(i, true);
+				}
+			}
+			
+			for (Boolean b : listTransitioning)
+			{
+				if (!b)
+					return;
+			}
+			
+			transitioning = false;
+		}*/
+		
+
 	}
 
 	@Override

@@ -25,6 +25,7 @@ import android.view.View;
 import com.example.classes.EstimoteManager;
 import com.example.classes.Globals;
 import com.example.classes.Scene;
+import com.example.classes.Objects.AbstractElement;
 
 public class MainActivity extends Activity {
 	
@@ -67,9 +68,12 @@ public class MainActivity extends Activity {
 	private boolean appLoaded = false;
 	
 	public static void SetScreenState(ScreenState s){
-		listScenes.get(ScreenState.toInt(screenState)).setVisibility(View.GONE);
+		//listScenes.get(ScreenState.toInt(screenState)).setVisibility(View.GONE);
+		List<AbstractElement> l = new ArrayList<AbstractElement>();
+		listScenes.get(ScreenState.toInt(screenState)).transitionOut(null);
 		screenState = s;
-		listScenes.get(ScreenState.toInt(screenState)).setVisibility(View.VISIBLE);
+		//listScenes.get(ScreenState.toInt(screenState)).setVisibility(View.VISIBLE);
+		listScenes.get(ScreenState.toInt(screenState)).onLoad();
 	}
 	private Context c;
 	@Override
@@ -88,10 +92,11 @@ public class MainActivity extends Activity {
 	        sceneGallery = new SceneGallery(2, (Activity)c, false);
 	 		listScenes.add(sceneGallery); 
 	 		
-	 		for(Scene s : listScenes){
-	 			if (s.getId() == ScreenState.toInt(screenState))
-	 				s.setVisibility(View.VISIBLE);
-	 		}
+	 		SetScreenState(screenState);
+	 		//for(Scene s : listScenes){
+	 		//	if (s.getId() == ScreenState.toInt(screenState))
+	 		//		s.setVisibility(View.VISIBLE);
+	 		//}
 	 		
 	        Globals.canUpdate = true;
 			estimoteManager = new EstimoteManager(this);
@@ -104,6 +109,7 @@ public class MainActivity extends Activity {
 	
 	private void update(){
 		sceneDebug.update(estimoteManager.getBeaconList());
+		//sceneMain.update();
 	}
 	 @Override
     public void onConfigurationChanged(Configuration newConfig){}
