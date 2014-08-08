@@ -128,7 +128,9 @@ public class SceneMain extends Scene{
         //textClue.getLayoutParams().setMarginStart(Globals.screenDimensions.x/20);
         
         buttonGallery = new ButtonObject("Gallery", aIn, Globals.newId());
-       // buttonGallery.addRule(RelativeLayout.BELOW, textClue.getId());
+        buttonGallery.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        buttonGallery.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        buttonGallery.getLayoutParams().setMargins((Globals.screenDimensions.x/12), 0, 0, Globals.screenDimensions.y/20);
        // buttonGallery.addRule(RelativeLayout.ALIGN_START, textClue.getId());
         
         buttonFindClue = new ImageObject(R.drawable.find_button, aIn, Globals.newId(), true);

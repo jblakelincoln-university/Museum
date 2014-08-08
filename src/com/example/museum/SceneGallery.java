@@ -31,7 +31,10 @@ public class SceneGallery extends Scene{
 	}
 
 	
-	public void onLoad(){}
+	public void onLoad(){
+		super.onLoad();
+		this.setVisibility(RelativeLayout.VISIBLE);
+	}
 	
 	
 	@SuppressWarnings("rawtypes")
@@ -47,7 +50,7 @@ public class SceneGallery extends Scene{
 		scrollView.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 		scrollView.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 		
-		
+		sceneElements.add(scrollView);
 		setImages(aIn);
 		
 		imageLarge = new ImageObject(R.drawable.empty, aIn, Globals.newId(), false);
@@ -57,6 +60,9 @@ public class SceneGallery extends Scene{
 		imageLarge.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		
 		sceneElements.add(imageLarge);
+		
+		//for (AbstractElement a : listScrollViewElements)
+		//	sceneElements.add(a);
 		
 		//if (uniqueImageId > 0)
 			//listScrollViewElements.get(0).getElement().performClick();
@@ -111,6 +117,9 @@ public class SceneGallery extends Scene{
 	}
 
 	public void onBackPressed() {
+		//for (AbstractElement a : listScrollViewElements)
+		//	a.setVisibility(RelativeLayout.GONE);
+		//transitionOut(null);
 		MainActivity.SetScreenState(MainActivity.ScreenState.MAIN);		
 	}
 }

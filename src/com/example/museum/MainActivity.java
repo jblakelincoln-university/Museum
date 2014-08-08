@@ -69,7 +69,6 @@ public class MainActivity extends Activity {
 	
 	public static void SetScreenState(ScreenState s){
 		//listScenes.get(ScreenState.toInt(screenState)).setVisibility(View.GONE);
-		List<AbstractElement> l = new ArrayList<AbstractElement>();
 		listScenes.get(ScreenState.toInt(screenState)).transitionOut(null);
 		screenState = s;
 		//listScenes.get(ScreenState.toInt(screenState)).setVisibility(View.VISIBLE);

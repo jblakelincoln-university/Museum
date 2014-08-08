@@ -39,6 +39,10 @@ public abstract class AbstractElement<T> {
 		layoutParams.addRule(verb);
 	}
 	
+	public View getElementView(){
+		return (View)obj;
+	}
+	
 	public T getElement(){
 		return obj;
 	}

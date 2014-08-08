@@ -6,6 +6,8 @@ import java.util.List;
 import android.app.Activity;
 import android.os.Handler;
 import android.view.View;
+import android.widget.RelativeLayout;
+
 import com.example.classes.Objects.*;
 
 public abstract class Scene {	
@@ -22,20 +24,23 @@ public abstract class Scene {
 	 	   @Override
 	 	   public void run() {
 	 		   if (transitioning){
-	 			  for (int i = 0; i < transitioningElements.size(); i++){
-	 					if (((View)(transitioningElements.get(i).getElement())).getAlpha() == 0){
-	 						transitioningElements.get(i).setVisibility(View.GONE);
-	 						transitioningBooleans.set(i, true);
-	 					}
-	 				}
+	 			   if (transitioningElements != null){
+		 			  for (int i = 0; i < transitioningElements.size(); i++){
+		 					if (((View)(transitioningElements.get(i).getElement())).getAlpha() == 0){
+		 						transitioningElements.get(i).setVisibility(View.GONE);
+		 						transitioningBooleans.set(i, true);
+		 					}
+		 				}
+	 			   }
 	 				
 	 			    boolean carryOn = true;
-	 				for (Boolean b : transitioningBooleans)
-	 				{
-	 					if (!b)
-	 						carryOn = false;
-	 				}
-	 				
+	 			    
+	 			    if (transitioningBooleans != null){
+		 				for (Boolean b : transitioningBooleans){
+		 					if (!b)
+		 						carryOn = false;
+		 				}
+	 			    }
 	 				if(carryOn)
 	 					transitioning = false;
 	 		   }
@@ -69,7 +74,9 @@ public abstract class Scene {
 		aIn.addView(Globals.rLayout);
 	}
 	
-	public abstract void onLoad();
+	public void onLoad(){
+		transitionOut(sceneElements);
+	}
 	
 	public void transitionOut(List<AbstractElement> l){
 		//if (l.isEmpty()){
@@ -82,6 +89,7 @@ public abstract class Scene {
 		else
 			b = true;
 		
+		transitioningElements = new ArrayList<AbstractElement>();
 		transitioningBooleans = new ArrayList<Boolean>();
 		
 		
@@ -90,12 +98,13 @@ public abstract class Scene {
 			
 			if (b || !l.contains(e)){
 				transitioningElements.add(e);
-				((View)(e.getElement())).animate().alpha(0);
+				if (e.getElementView().getVisibility() == RelativeLayout.VISIBLE)
+					((View)(e.getElement())).animate().alpha(0);
 			}
 			else
 			{
-				((View)(e.getElement())).animate().alpha(1);
 				e.setVisibility(View.VISIBLE);
+				((View)(e.getElement())).animate().alpha(1);
 			}
 			
 			//((View)(e.getElement())).animate().start();
