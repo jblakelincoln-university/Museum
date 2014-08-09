@@ -74,10 +74,29 @@ public class SceneMain extends Scene{
 	protected List<AbstractElement> listMainScreen;
 	protected List<AbstractElement> listClueScreen;
 	
+	private TextObject textCurrentElapsedTime;
+	private long startTime;
+	
+	private Handler handler = new Handler();
+	private Runnable runnable = new Runnable() {
+	 	   @Override
+	 	   public void run() {
+	 		   long millis = System.currentTimeMillis() - startTime;
+	           int seconds = (int) (millis / 1000);
+	           int minutes = seconds / 60;
+	           seconds     = seconds % 60;
+
+	           textCurrentElapsedTime.setText(String.format("%d:%02d", minutes, seconds));
+	 		   //textCurrentElapsedTime.setText("Current mission time: "+ (int)currentElapsedTime/600 + ":" + ((currentElapsedTime/10)%60 < 10 ? "0" : "") + (int)(currentElapsedTime/10)%60);
+	 	       handler.postDelayed(this, 100); 
+	 	   }
+	};
+	//currentTimeText.setText("Current mission time: "+ (int)currentElapsedTime/600 + ":" + ((currentElapsedTime/10)%60 < 10 ? "0" : "") + (int)(currentElapsedTime/10)%60);
+	
 	public SceneMain(int idIn, Activity a, boolean visible) {
 		super(idIn, a, visible);
 		
-		
+		handler.postDelayed(runnable, 100);
 	}
 	
 	
@@ -108,10 +127,11 @@ public class SceneMain extends Scene{
         textStatus.getElement().setGravity(Gravity.CENTER);
         
         imageTransportation = new ImageObject(R.drawable.ammo_green, aIn, Globals.newId(), false);
-        imageTransportation.addRule(RelativeLayout.BELOW, textStatus.getId());
-        imageTransportation.addRule(RelativeLayout.ALIGN_END, textStatus.getId());
-        imageTransportation.getElement().setPaddingRelative(0,Globals.screenDimensions.y/30, Globals.screenDimensions.x/20, 0);
-        imageTransportation.setAbsScaleY(Globals.screenDimensions.y/7);
+        //imageTransportation.addRule(RelativeLayout.BELOW, textStatus.getId());
+        imageTransportation.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        imageTransportation.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        imageTransportation.getElement().setPaddingRelative(Globals.screenDimensions.x/20, 0, 0, Globals.screenDimensions.y/30);
+        
        
         healthBar = new ProgressBarObject(aIn, Globals.newId(), true);
         healthBar.addRule(RelativeLayout.BELOW, imageTransportation.getId());
@@ -134,10 +154,12 @@ public class SceneMain extends Scene{
        // buttonGallery.addRule(RelativeLayout.ALIGN_START, textClue.getId());
         
         buttonFindClue = new ImageObject(R.drawable.find_button, aIn, Globals.newId(), true);
+        buttonFindClue.setAbsScaleX((int)(Globals.screenDimensions.x/2.2));
+        buttonFindClue.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         buttonFindClue.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        buttonFindClue.setAbsScaleY(Globals.screenDimensions.y/5);
-        buttonFindClue.getLayoutParams().setMargins(0, 0, 0, Globals.screenDimensions.y/10);
+        buttonFindClue.getElement().setPaddingRelative(0, 0, Globals.screenDimensions.x/20, Globals.screenDimensions.y/30);
         buttonFindClue.setBackgroundColour(android.R.color.transparent);
+        imageTransportation.setAbsScaleX((int)(buttonFindClue.getWidth()/1.1f));
         
         buttonDebug = new ButtonObject("Debug", aIn, Globals.newId());
         buttonDebug.addRule(RelativeLayout.ALIGN_PARENT_TOP);
@@ -146,6 +168,7 @@ public class SceneMain extends Scene{
         
         buttonViewClueScreen = new ButtonObject("View Clue", aIn, Globals.newId());
         
+        textCurrentElapsedTime = new TextObject("Current elapsed time: 0:00", aIn, Globals.newId());
 	}
 	
 	@Override
@@ -180,7 +203,8 @@ public class SceneMain extends Scene{
         addElementToView(buttonViewClueScreen);
         listMainScreen.add(buttonViewClueScreen);
         
-        
+        addElementToView(textCurrentElapsedTime);
+        listMainScreen.add(textCurrentElapsedTime);
         
         setGalleryButtonClickEvent();	
         setFindButtonClickEvent();
@@ -190,6 +214,8 @@ public class SceneMain extends Scene{
         setScene(ScreenState.MAIN);
         
         super.sceneInit(aIn, visible);
+        
+        
 	}
 	
 	List<AbstractElement> listOutOfView;
@@ -262,6 +288,8 @@ public class SceneMain extends Scene{
 	
 	public void onLoad(){
 		setScene(ScreenState.MAIN);
+		if (startTime == 0)
+			startTime = System.currentTimeMillis();
 	}
 	
 	public void setDebugButtonClickEvent(){

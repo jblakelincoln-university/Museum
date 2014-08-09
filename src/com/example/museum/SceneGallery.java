@@ -71,7 +71,7 @@ public class SceneGallery extends Scene{
 	}
 	
 	private void setImages(Activity a){
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < 1; i++)
 		{
 			addThumbnailToScrollView(new ImageObject(R.drawable.background, a, Globals.newId(), true));
 			addThumbnailToScrollView(new ImageObject(R.drawable.ammo_green, a, Globals.newId(), true));
