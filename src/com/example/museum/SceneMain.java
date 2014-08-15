@@ -1,40 +1,28 @@
 package com.example.museum;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.Map.Entry;
+import java.util.Random;
 
-import android.animation.LayoutTransition;
 import android.app.Activity;
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff.Mode;
 import android.os.Handler;
-import android.os.RemoteException;
-import android.util.Log;
-import android.util.TypedValue;
+import android.os.Vibrator;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 
+import com.example.classes.AccelerometerManager;
 import com.example.classes.Globals;
 import com.example.classes.Scene;
 import com.example.classes.Objects.*;
 import com.example.museum.R;
 
-import com.estimote.sdk.*;
-
-import com.example.museum.*;
-import com.example.museum.MainActivity.ScreenState;
-
+@SuppressWarnings("rawtypes")
 public class SceneMain extends Scene{
-
-	//Estimote
-
 	
 	public static enum ScreenState{
 		NONE,
@@ -64,10 +52,9 @@ public class SceneMain extends Scene{
 	
 	private ProgressBarObject healthBar;
 	private ImageObject buttonFindClue;
-	private ProgressBarObject barFinding;
 	private ButtonObject buttonDebug;
 	
-	private ButtonObject buttonViewClueScreen;
+	private ButtonObject buttonToggleClue;
 	
 	private ScreenState screenState = ScreenState.MAIN;
 	
@@ -77,29 +64,138 @@ public class SceneMain extends Scene{
 	private TextObject textCurrentElapsedTime;
 	private long startTime;
 	
+	private Vibrator vibrator;
+	
 	private Handler handler = new Handler();
+	
+	private String[] missionTitles = {	"Loco", 
+										"Tank", 
+										"FieldGun", 
+										"Sylvie", 
+										"PlanePropellers", 
+										"Crawler" };
+	
+	private String[] missionClues = { "Loco Mission Descript",
+												"Tank Mission Descript",
+												"Field Gun Mission Descript",
+												"Sylvie Mission Descript",
+												"Plane Propellers Mission Descript",
+												"Crawler Mission Descript" };
+	
+	private int[] missionCompletionTimes = new int[6];
+	
+	private int currentMission = -1;
+	
+	private boolean[] missionCompletion = new boolean[6];
+	
+	private int currentVibration = 5;
+	
+	private long vibrationPatterns[][] =  { {0, 1000, 0},  // 0
+											{ 200, 150},  // 20
+											{ 500, 150},  // 50
+											{ 800, 200},  // 80
+											{ 2000, 200} // 100
+											};
+	
+	private boolean playing = true;
+	
+	private Random random = new Random();
+	
+	private int health = 100;
+	
 	private Runnable runnable = new Runnable() {
 	 	   @Override
 	 	   public void run() {
-	 		   long millis = System.currentTimeMillis() - startTime;
-	           int seconds = (int) (millis / 1000);
-	           int minutes = seconds / 60;
-	           seconds     = seconds % 60;
-
-	           textCurrentElapsedTime.setText(String.format("%d:%02d", minutes, seconds));
-	 		   //textCurrentElapsedTime.setText("Current mission time: "+ (int)currentElapsedTime/600 + ":" + ((currentElapsedTime/10)%60 < 10 ? "0" : "") + (int)(currentElapsedTime/10)%60);
+	 		   
+	           
+	           if (playing)
+	        	   gameplay();
+	 		   
 	 	       handler.postDelayed(this, 100); 
 	 	   }
 	};
-	//currentTimeText.setText("Current mission time: "+ (int)currentElapsedTime/600 + ":" + ((currentElapsedTime/10)%60 < 10 ? "0" : "") + (int)(currentElapsedTime/10)%60);
 	
+	private void gameplay(){
+		
+		//Vibration patterns
+		if (windowHasFocus){
+			if (health <= 0 && currentVibration != 0){
+				currentVibration = 0;
+				vibrator.vibrate(vibrationPatterns[0], -1);
+			}
+			if (health > 0 && health <= 20 && currentVibration != 20){
+				currentVibration = 1;
+				vibrator.vibrate(vibrationPatterns[1], 0);
+			}
+			else if (health > 20 && health <= 50 && currentVibration != 50){
+				currentVibration = 50;
+				vibrator.vibrate(vibrationPatterns[2], 0);
+			}
+			else if (health > 50 && health <= 80 && currentVibration != 80){
+				currentVibration = 80;
+				vibrator.vibrate(vibrationPatterns[3], 0);
+			}
+			else if (health > 80 && health <= 100 && currentVibration != 100){
+				currentVibration = 100;
+				vibrator.vibrate(vibrationPatterns[4], 0);
+			}
+		}
+		
+		// Health effects
+		if (Math.abs(AccelerometerManager.getX()) > 2 ||
+				Math.abs(AccelerometerManager.getY()) > 2.3){
+			health -= Math.max(Math.abs(AccelerometerManager.getX()), Math.abs(AccelerometerManager.getY()));
+		}
+		else if (health < 100)
+			health++;
+		
+		if (health < 0)
+			health = 0;
+		
+		healthBar.setValue(health);
+		
+        
+		long millis = System.currentTimeMillis() - startTime;
+        int seconds = (int) (millis / 1000);
+        int minutes = seconds / 60;
+        seconds     = seconds % 60;
+        textCurrentElapsedTime.setText(String.format("Current elapsed \ntime: %d:%02d", minutes, seconds));
+	}
+
 	public SceneMain(int idIn, Activity a, boolean visible) {
 		super(idIn, a, visible);
 		
+		Arrays.fill(missionCompletionTimes, Integer.MAX_VALUE);
+		Arrays.fill(missionCompletion, false);
+		vibrator = (Vibrator)a.getSystemService(Context.VIBRATOR_SERVICE);
+		
+		missionSetup();
 		handler.postDelayed(runnable, 100);
 	}
 	
-	
+	private void missionSetup(){
+		if (currentMission >= 0)
+			missionCompletion[currentMission] = true;
+		
+		boolean allComplete = true;
+		for (boolean x : missionCompletion)
+			if (!x){
+				allComplete = false;
+				break;
+			}
+		
+		if (allComplete){
+			textStatus.setText("All missions complete!");
+			return;
+		}
+		
+		do{
+			currentMission = random.nextInt(6);
+		} while (missionCompletion[currentMission] == true);
+		
+		textClue.setText(missionClues[currentMission]);
+		
+	}
 	
 	int p = 0;
 	
@@ -123,7 +219,7 @@ public class SceneMain extends Scene{
         textStatus = new TextObject("Mission status text box with long words everywhere", aIn, Globals.newId());
         textStatus.addRule(RelativeLayout.BELOW, imageClue.getId());
         textStatus.getElement().setWidth(Globals.screenDimensions.x-(Globals.screenDimensions.x/10));
-        textStatus.getElement().setTextSize(TypedValue.COMPLEX_UNIT_SP, 30f);
+        textStatus.getElement().setTextSize(Globals.getTextSize());
         textStatus.getElement().setGravity(Gravity.CENTER);
         
         imageTransportation = new ImageObject(R.drawable.ammo_green, aIn, Globals.newId(), false);
@@ -134,17 +230,13 @@ public class SceneMain extends Scene{
         
        
         healthBar = new ProgressBarObject(aIn, Globals.newId(), true);
-        healthBar.addRule(RelativeLayout.BELOW, imageTransportation.getId());
-        healthBar.addRule(RelativeLayout.ALIGN_START, imageTransportation.getId());
-        healthBar.getLayoutParams().setMargins(0, Globals.screenDimensions.y/80, 0, 0);
+        healthBar.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+       // healthBar.addRule(RelativeLayout.ALIGN_START, imageTransportation.getId());
+        healthBar.getLayoutParams().setMargins(0, 0, 0, Globals.screenDimensions.y/120);
         healthBar.setWidth(imageTransportation.getWidth());
         healthBar.setValue(50);
+        healthBar.setMode(Mode.LIGHTEN);
         
-        textClue = new TextObject("This is the clue text it is clue text that contains a clue of varying length.", aIn, Globals.newId());
-        
-        //textClue.addRule(RelativeLayout.ALIGN_BOTTOM, imageTransportation.getId());
-        textClue.getElement().setTextSize(TypedValue.COMPLEX_UNIT_SP, 30f);
-        textClue.setWidth(Globals.screenDimensions.x/2.2f);
         //textClue.getLayoutParams().setMarginStart(Globals.screenDimensions.x/20);
         
         buttonGallery = new ButtonObject("Gallery", aIn, Globals.newId());
@@ -166,9 +258,24 @@ public class SceneMain extends Scene{
         buttonDebug.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         buttonDebug.getLayoutParams().setMargins(0, 0, (Globals.screenDimensions.x/12), Globals.screenDimensions.y/20);
         
-        buttonViewClueScreen = new ButtonObject("View Clue", aIn, Globals.newId());
+        buttonToggleClue = new ButtonObject("Toggle Clue", aIn, Globals.newId());
+        buttonToggleClue.addRule(RelativeLayout.ALIGN_TOP, textStatus.getId());
+        buttonToggleClue.getLayoutParams().setMargins(0, Globals.screenDimensions.y/14, 0, 0);
+        buttonToggleClue.getElement().setTextSize(Globals.getTextSize());
+        buttonToggleClue.setWidth(Globals.screenDimensions.x/4);
         
         textCurrentElapsedTime = new TextObject("Current elapsed time: 0:00", aIn, Globals.newId());
+        textCurrentElapsedTime.addRule(RelativeLayout.ALIGN_TOP, buttonToggleClue.getId());
+        textCurrentElapsedTime.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        textCurrentElapsedTime.getLayoutParams().setMargins(Globals.screenDimensions.x/12, 0, 0, 0);
+        textCurrentElapsedTime.getElement().setGravity(Gravity.CENTER);
+        
+        textClue = new TextObject("This is the clue text it is clue text that contains a clue of varying length.", aIn, Globals.newId());
+        textClue.addRule(RelativeLayout.ALIGN_TOP, buttonToggleClue.getId());
+        textClue.getElement().setTextSize(Globals.getTextSize()*1.4f);
+        textClue.setWidth(Globals.screenDimensions.x/2.2f);
+        textClue.getLayoutParams().setMargins(0, Globals.screenDimensions.y/10, 0, 0);
+        textClue.getElement().setGravity(Gravity.CENTER);
 	}
 	
 	@Override
@@ -177,39 +284,36 @@ public class SceneMain extends Scene{
         
         //addElementToView(textTitle);
         addElementToView(imageClue);
-        listMainScreen.add(imageClue);
-        
         addElementToView(textStatus);
-        listMainScreen.add(textStatus);
-        
         addElementToView(imageTransportation);
-        listMainScreen.add(imageTransportation);
-     
         addElementToView(healthBar);
-        listMainScreen.add(healthBar);
-        
         addElementToView(textClue);
-        listClueScreen.add(textClue);
-        
         addElementToView(buttonGallery);
-        listMainScreen.add(buttonGallery);
-        
         addElementToView(buttonFindClue);
-        listMainScreen.add(buttonFindClue);
-        
         addElementToView(buttonDebug);
-        listMainScreen.add(buttonDebug);
-        
-        addElementToView(buttonViewClueScreen);
-        listMainScreen.add(buttonViewClueScreen);
-        
+        addElementToView(buttonToggleClue);
         addElementToView(textCurrentElapsedTime);
+        
+        listMainScreen.add(imageClue);
+        listMainScreen.add(textStatus);
+        listMainScreen.add(imageTransportation);
+        listMainScreen.add(healthBar);
+        listMainScreen.add(buttonGallery);
+        listMainScreen.add(buttonFindClue);
+        listMainScreen.add(buttonDebug);
+        listMainScreen.add(buttonToggleClue);
         listMainScreen.add(textCurrentElapsedTime);
         
-        setGalleryButtonClickEvent();	
-        setFindButtonClickEvent();
-        setDebugButtonClickEvent();
-        setViewClueScreenClickEvent();
+        listClueScreen.add(imageClue);
+        listClueScreen.add(textStatus);
+        listClueScreen.add(buttonGallery);
+        listClueScreen.add(buttonDebug);
+        listClueScreen.add(buttonToggleClue);
+        listClueScreen.add(textCurrentElapsedTime);
+        listClueScreen.add(textClue);
+        listClueScreen.add(healthBar);
+        
+        setClickEvents();
         //estimoteSetup(aIn);
         setScene(ScreenState.MAIN);
         
@@ -218,161 +322,72 @@ public class SceneMain extends Scene{
         
 	}
 	
-	List<AbstractElement> listOutOfView;
-	List<Boolean> listTransitioning;
-	boolean transitioning = false;
 	private void setScene(ScreenState sIn){
 		screenState = sIn;
 		//setVisibility(View.GONE);
 		List<AbstractElement> l = listMainScreen;
-		listOutOfView = new ArrayList<AbstractElement>();
-		listTransitioning = new ArrayList<Boolean>();
-		transitioning = true;
+
 		if (sIn == ScreenState.MAIN){
-			l = listMainScreen;
+			//l = listMainScreen;
 		}
 		else if (sIn == ScreenState.CLUE){
 			l = listClueScreen;
 		}
-		
-		/*
-		Button b;
-		for (AbstractElement e : sceneElements)
-		{
-			((View)(e.getElement())).animate().alpha(0);
-			((View)(e.getElement())).animate().start();
-			
-			if (!l.contains(e)){
-				listOutOfView.add(e);
-				listTransitioning.add(false);
-			}
-			//if (((View)(e.getElement())).getAlpha() == 0)
-				//e.setVisibility(View.GONE);
-					
-		}
-
-		//buttonFindClue.getElement().setEnabled(false);
-		//buttonViewClueScreen.getElement().setEnabled(false);
-		//textStatus.setText("");
-		for (AbstractElement e : l)
-		{
-			((View)(e.getElement())).animate().alpha(1);
-			((View)(e.getElement())).animate().start();
-			e.setVisibility(View.VISIBLE);
-			
-		}
-		
-		*/
-		
 		transitionOut(l);
 	}
-
 	
-	public void setViewClueScreenClickEvent(){
-		buttonViewClueScreen.getElement().setOnClickListener(new View.OnClickListener() {
+	
+	public void setClickEvents(){
+		buttonToggleClue.getElement().setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				setScene(ScreenState.CLUE);	
+				if (screenState == ScreenState.MAIN)
+					setScene(ScreenState.CLUE);	
+				else
+					setScene(ScreenState.MAIN);
 			}
 		});
-	}
-	
-	public void setGalleryButtonClickEvent(){
+		
 		buttonGallery.getElement().setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				MainActivity.SetScreenState(MainActivity.ScreenState.GALLERY);	
+				activity.SetScreenState(GameActivity.ScreenState.GALLERY);	
 			}
 		});
-	}
-	
-	public void onLoad(){
-		setScene(ScreenState.MAIN);
-		if (startTime == 0)
-			startTime = System.currentTimeMillis();
-	}
-	
-	public void setDebugButtonClickEvent(){
+		
 		buttonDebug.getElement().setOnClickListener(new View.OnClickListener() {
 			@Override
-			public void onClick(View v) {
-				//List<AbstractElement> l = new ArrayList<AbstractElement>();
-				//transitionOut(l);
-				MainActivity.SetScreenState(MainActivity.ScreenState.DEBUG);
+			public void onClick(View v) {;
+				activity.SetScreenState(GameActivity.ScreenState.DEBUG);
 			}
 		});
-	}
-	
-	public void setFindButtonClickEvent(){
+		
 		buttonFindClue.getElement().setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				/*
-				for (Entry<String, MyBeacon> entry : MainActivity.estimoteManager.getBeaconList().entrySet()) {
-					if (entry.getValue().getName() == "Blueberry(6)")
-					{
-						double lowest = 10000;
-						for (int i = 0; i < 500; i++)
-						{
-							if (entry.getValue().getDistance() < lowest)
-								lowest = entry.getValue().getDistance();
-						}
-						if (lowest < 2.00)
-							textStatus.setText("True");
-						else
-							textStatus.setText("False");
-					}
-				}*/
-				
-				
-				
-				/*
-				if (buttonFindClue.getElement().getAlpha() == 1)
-					buttonFindClue.getElement().animate().alpha(0.3f);
-				else
-					buttonFindClue.getElement().animate().alpha(1);
-				
-				textStatus.setText("" + buttonFindClue.getElement().getAlpha());
-				buttonFindClue.getElement().animate().start();
-				
-				if (buttonFindClue.getElement().getAlpha() == 0)
-					buttonFindClue.setVisibility(View.GONE);*/
-				
-				
 				if (screenState == ScreenState.MAIN)
 					setScene(ScreenState.CLUE);
 				else
 					setScene(ScreenState.MAIN);
-				
-				//while (imageTransportation.getElement().getAlpha() != 0){
-					
-				//}
-				//imageTransportation.setVisibility(View.GONE);
 			}
 		});		
 	}
 	
-	protected void update(){
-		/*
-		if (transitioning){
-			for (int i = 0; i < listOutOfView.size(); i++){
-				if (((View)(listOutOfView.get(i).getElement())).getAlpha() == 0){
-					listOutOfView.get(i).setVisibility(View.GONE);
-					listTransitioning.set(i, true);
-				}
-			}
-			
-			for (Boolean b : listTransitioning)
-			{
-				if (!b)
-					return;
-			}
-			
-			transitioning = false;
-		}*/
-		
-
+	public void onLoad(){
+		setScene(screenState);
+		if (startTime == 0)
+			startTime = System.currentTimeMillis();
 	}
+	private boolean windowHasFocus = true;
+	
+	public void toggleVibration(boolean on){
+		currentVibration = -1;
+		
+		windowHasFocus = on;
+		if (!on)
+			vibrator.cancel();
+	}
+	protected void update(){}
 
 	@Override
 	public void onBackPressed() {

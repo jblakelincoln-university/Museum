@@ -1,16 +1,12 @@
 package com.example.classes;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.example.museum.R;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.graphics.Point;
-import android.os.AsyncTask;
-import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 public class Globals {
 	public static RelativeLayout rLayout;
@@ -19,6 +15,10 @@ public class Globals {
 	public static Point screenDimensions = new Point(0,0);
 	
 	public static boolean canUpdate = false;
+	
+	public static TextView textObject;
+	
+	public static float getTextSize() { return textObject.getTextSize();}
 
 	public static void Init(Activity a){
 		a.getWindowManager().getDefaultDisplay().getSize(screenDimensions);
@@ -30,6 +30,8 @@ public class Globals {
         		RelativeLayout.LayoutParams.MATCH_PARENT);
         
         Globals.rLayout.setBackgroundResource(R.drawable.background);
+        
+        textObject = new TextView(a);
 	}
 	
 	// Call this function for a new unique ID.

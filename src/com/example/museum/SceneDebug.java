@@ -1,10 +1,12 @@
 package com.example.museum;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map.Entry;
 
 import android.app.Activity;
 
+import com.example.classes.AccelerometerManager;
 import com.example.classes.Globals;
 import com.example.classes.Scene;
 import com.example.classes.Objects.*;
@@ -20,27 +22,35 @@ public class SceneDebug extends Scene{
 	public void update(HashMap<String, MyBeacon> beaconList){
 		//textClue.setText("aaaa" + p++);
 		
+		textBeaconList.setText("--------------------------------------------------\n");
 		String s = "";
 		for (Entry<String, MyBeacon> entry : beaconList.entrySet()) {
 			//entry.getValue().updateDistance();
 			String name = entry.getValue().getName();//entry.getValue().getName();
-			String distance = String.format("%.2f", entry.getValue().getDistance());
+			String distance = String.format(Locale.UK, "%.2f", entry.getValue().getDistance());
 			s += name + " - " + distance + "\n";
 		}
 		
-		textBeaconList.setText(s);
+		textBeaconList.getElement().append(s);
+		
+		textBeaconList.getElement().append("\n" + "AccX: " + AccelerometerManager.getX() +
+											"\n" + "AccY: " + AccelerometerManager.getY() + 
+											"\n" + "AccZ: " + AccelerometerManager.getZ() + 
+											"\n\n" + "Text size: " + Globals.getTextSize());
+	
+		textBeaconList.getElement().append("\n--------------------------------------------------");
 	}
 	
 	protected void sceneInit(Activity aIn, boolean visible){
 		textBeaconList = new TextObject("", aIn, Globals.newId());
-		
+		textBeaconList.getElement().setTextSize(Globals.getTextSize()*1.8f);
 		addElementToView(textBeaconList);
 		
 		super.sceneInit(aIn, visible);
 	}
 	@Override
 	public void onBackPressed() {
-		MainActivity.SetScreenState(MainActivity.ScreenState.MAIN);
+		activity.SetScreenState(GameActivity.ScreenState.MAIN);
 	}
 
 }

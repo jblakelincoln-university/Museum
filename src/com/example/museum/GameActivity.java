@@ -1,37 +1,24 @@
 package com.example.museum;
 
-import java.util.HashMap;
-
-import com.estimote.sdk.*;
-
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.RemoteException;
-import android.util.Log;
-import android.view.View;
 
-
+import com.example.classes.AccelerometerManager;
 import com.example.classes.EstimoteManager;
 import com.example.classes.Globals;
 import com.example.classes.Scene;
-import com.example.classes.Objects.AbstractElement;
 
-public class MainActivity extends Activity {
+public class GameActivity extends Activity {
 	
 	public static EstimoteManager estimoteManager;
 	
-	public static enum ScreenState{
+	public enum ScreenState{
 		DEBUG,
 		MAIN,
 		GALLERY;
@@ -58,16 +45,20 @@ public class MainActivity extends Activity {
 	 	       handler.postDelayed(this, 100); 
 	 	   }
 	};
+	
+	public void setScreenState(ScreenState s){
+		SetScreenState(s);
+	}
 
-	public static List<Scene> listScenes = new ArrayList<Scene>();
+	public List<Scene> listScenes = new ArrayList<Scene>();
 	private SceneMain sceneMain;
 	private SceneGallery sceneGallery;
 	private SceneDebug sceneDebug;
-	public static ScreenState screenState;
+	public ScreenState screenState;
 	
 	private boolean appLoaded = false;
 	
-	public static void SetScreenState(ScreenState s){
+	public void SetScreenState(ScreenState s){
 		//listScenes.get(ScreenState.toInt(screenState)).setVisibility(View.GONE);
 		listScenes.get(ScreenState.toInt(screenState)).transitionOut(null);
 		screenState = s;
@@ -80,6 +71,7 @@ public class MainActivity extends Activity {
 			super.onCreate(savedInstanceState);
 
 			Globals.Init(this);
+			AccelerometerManager.Init(this);
 			c = this;
 			// Create all scenes and then add them to a list;
 			screenState = ScreenState.MAIN;
@@ -112,6 +104,20 @@ public class MainActivity extends Activity {
 	}
 	 @Override
     public void onConfigurationChanged(Configuration newConfig){}
+	
+	@Override
+	public void onResume(){
+		super.onResume();
+		if (sceneMain != null)
+			sceneMain.toggleVibration(true);
+	}  
+	
+	@Override
+	public void onPause(){
+		super.onPause();
+		if (sceneMain != null)
+			sceneMain.toggleVibration(false);
+	} 
 	
 	@Override
 	public void onBackPressed(){

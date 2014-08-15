@@ -1,6 +1,7 @@
 package com.example.classes;
 
 import java.util.ArrayList;
+
 import java.util.List;
 
 import android.app.Activity;
@@ -9,9 +10,10 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.example.classes.Objects.*;
-
+import com.example.museum.GameActivity;
+@SuppressWarnings("rawtypes")
 public abstract class Scene {	
-	@SuppressWarnings("rawtypes")
+	
 	protected List<AbstractElement> sceneElements = new ArrayList<AbstractElement>();
 	protected List<AbstractElement> transitioningElements;
 	protected List<Boolean> transitioningBooleans;
@@ -19,7 +21,16 @@ public abstract class Scene {
 	public int getId(){return id;}
 	protected Boolean transitioning = false;
 	
+	protected GameActivity activity;
+	
 	private Handler handler = new Handler();
+	
+	protected enum Transition{
+		FADE;
+	}
+	
+	protected Transition transitionType = Transition.FADE;
+	
 	private Runnable runnable = new Runnable() {
 	 	   @Override
 	 	   public void run() {
@@ -52,12 +63,13 @@ public abstract class Scene {
 	
 	public Scene(int idIn, Activity a, boolean visible){
 		id = idIn;
+		activity = (GameActivity) a;
 		sceneInit(a, visible);
 		//transitioningElements = new ArrayList(sceneElements);
 		//transitioningElements = sceneElements;
 		
-		for (AbstractElement e : sceneElements)
-			((View)(e.getElement())).setAlpha(0);
+		for (AbstractElement<View> e : sceneElements)
+			(e.getElement()).setAlpha(0);
 		handler.postDelayed(runnable, 100);
 	}
 	
@@ -68,7 +80,6 @@ public abstract class Scene {
 			setVisibility(View.GONE);
 	}
 	
-	@SuppressWarnings("rawtypes")
 	protected void addElementToView(AbstractElement aIn){
 		sceneElements.add(aIn);
 		aIn.addView(Globals.rLayout);
@@ -93,7 +104,7 @@ public abstract class Scene {
 		transitioningBooleans = new ArrayList<Boolean>();
 		
 		
-		for (AbstractElement e : sceneElements){
+		for (AbstractElement<View> e : sceneElements){
 			//((View)(e.getElement())).animate().alpha(0);
 			
 			if (b || !l.contains(e)){

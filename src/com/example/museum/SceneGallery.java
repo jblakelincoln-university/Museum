@@ -5,12 +5,10 @@ import java.util.List;
 
 import android.app.Activity;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
 import com.example.classes.Globals;
 import com.example.classes.Scene;
-import com.example.classes.Objects.AbstractElement;
 import com.example.classes.Objects.ImageObject;
 import com.example.classes.Objects.ScrollViewObject;
 import com.example.museum.R;
@@ -18,13 +16,11 @@ import com.example.museum.R;
 public class SceneGallery extends Scene{
 
 	private ScrollViewObject scrollView;
-	@SuppressWarnings("rawtypes")
 	private List<ImageObject> listScrollViewElements;
 	
 	private ImageObject imageLarge;
 	private List<Integer> listImages;
 	
-	private int selectedImageIndex = -1;
 	private int uniqueImageId = 0;
 	public SceneGallery(int idIn, Activity a, boolean visible) {
 		super(idIn, a, visible);
@@ -37,7 +33,6 @@ public class SceneGallery extends Scene{
 	}
 	
 	
-	@SuppressWarnings("rawtypes")
 	@Override
 	protected void sceneInit(Activity aIn, boolean visible) {
 		listScrollViewElements = new ArrayList<ImageObject>();
@@ -78,7 +73,6 @@ public class SceneGallery extends Scene{
 		}
 	}
 	
-	@SuppressWarnings("rawtypes")
 	@Override
 	public void setVisibility(int v)
 	{
@@ -120,6 +114,6 @@ public class SceneGallery extends Scene{
 		//for (AbstractElement a : listScrollViewElements)
 		//	a.setVisibility(RelativeLayout.GONE);
 		//transitionOut(null);
-		MainActivity.SetScreenState(MainActivity.ScreenState.MAIN);		
+		activity.SetScreenState(GameActivity.ScreenState.MAIN);		
 	}
 }
