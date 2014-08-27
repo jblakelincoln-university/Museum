@@ -1,22 +1,27 @@
 package com.example.museum;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Window;
 
 import com.example.classes.AccelerometerManager;
 import com.example.classes.EstimoteManager;
 import com.example.classes.Globals;
 import com.example.classes.Scene;
+import com.example.classes.Objects.ImageObject;
 
 public class GameActivity extends Activity {
 	
-	public static EstimoteManager estimoteManager;
+	//public static EstimoteManager estimoteManager;
 	
 	public enum ScreenState{
 		DEBUG,
@@ -72,34 +77,47 @@ public class GameActivity extends Activity {
 
 			Globals.Init(this);
 			AccelerometerManager.Init(this);
+			EstimoteManager.Init(this);
 			c = this;
 			// Create all scenes and then add them to a list;
 			screenState = ScreenState.MAIN;
-			
+			this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 			sceneDebug = new SceneDebug(0, this, false);
 			listScenes.add(sceneDebug);
-			sceneMain = new SceneMain(1, this, false);
+			sceneMain = new SceneMain(1, this, true);
 	        listScenes.add(sceneMain);
 	        sceneGallery = new SceneGallery(2, (Activity)c, false);
 	 		listScenes.add(sceneGallery); 
 	 		
-	 		SetScreenState(screenState);
+	 		//
+	 		
+	 		//SetScreenState(screenState);
+	 		
+	 	    
 	 		//for(Scene s : listScenes){
 	 		//	if (s.getId() == ScreenState.toInt(screenState))
 	 		//		s.setVisibility(View.VISIBLE);
 	 		//}
 	 		
 	        Globals.canUpdate = true;
-			estimoteManager = new EstimoteManager(this);
+	        //Globals.rLayout.setBackgroundColor(getResources().getColor(android.R.color.black));
+	        Globals.rLayout.setBackgroundResource(R.drawable.background_newtoo);
+	        
+			//estimoteManager = new EstimoteManager(this);
 			
 			setContentView(Globals.rLayout, Globals.rLayoutParams);  
 			
-			appLoaded = true;
+			ImageObject i = new ImageObject(R.drawable.background_new, this, Globals.newId(), false);
+			//i.setAbsScaleY(Globals.screenDimensions.x);
+			i.setScale(Globals.screenDimensions.x, Globals.screenDimensions.y-20);
+			//i.addView(Globals.rLayout);
 			handler.postDelayed(runnable, 100);
+			
+			//Globals.rLayout.getBackground().setAlpha(50);
     }
 	
 	private void update(){
-		sceneDebug.update(estimoteManager.getBeaconList());
+		//sceneDebug.update(estimoteManager.getBeaconList());
 		//sceneMain.update();
 	}
 	 @Override

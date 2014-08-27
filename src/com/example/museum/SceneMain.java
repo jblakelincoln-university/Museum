@@ -16,7 +16,9 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.example.classes.AccelerometerManager;
+import com.example.classes.EstimoteManager;
 import com.example.classes.Globals;
+import com.example.classes.MyBeacon;
 import com.example.classes.Scene;
 import com.example.classes.Objects.*;
 import com.example.museum.R;
@@ -27,7 +29,8 @@ public class SceneMain extends Scene{
 	public static enum ScreenState{
 		NONE,
 		MAIN,
-		CLUE;
+		CLUE,
+		MISSION;
 		
 		public static int toInt(ScreenState s){
 			switch(s){
@@ -37,6 +40,8 @@ public class SceneMain extends Scene{
 				return 1;
 			case CLUE:
 				return 2;
+			case MISSION:
+				return 3;
 			}
 			return -1;
 		}
@@ -51,7 +56,6 @@ public class SceneMain extends Scene{
 	private ButtonObject buttonGallery;
 	
 	private ProgressBarObject healthBar;
-	private ImageObject buttonFindClue;
 	private ButtonObject buttonDebug;
 	
 	private ButtonObject buttonToggleClue;
@@ -60,13 +64,14 @@ public class SceneMain extends Scene{
 	
 	protected List<AbstractElement> listMainScreen;
 	protected List<AbstractElement> listClueScreen;
+	protected List<AbstractElement> listMissionScreen;
 	
 	private TextObject textCurrentElapsedTime;
 	private long startTime;
 	
 	private Vibrator vibrator;
 	
-	private Handler handler = new Handler();
+	
 	
 	private String[] missionTitles = {	"Loco", 
 										"Tank", 
@@ -81,6 +86,13 @@ public class SceneMain extends Scene{
 												"Sylvie Mission Descript",
 												"Plane Propellers Mission Descript",
 												"Crawler Mission Descript" };
+	
+	private int[] missionImages = { R.drawable.clue_loco,
+									R.drawable.clue_tank,
+									R.drawable.clue_fieldgun,
+									R.drawable.clue_sylvie,
+									R.drawable.clue_propellers,
+									R.drawable.clue_crawler};
 	
 	private int[] missionCompletionTimes = new int[6];
 	
@@ -103,14 +115,12 @@ public class SceneMain extends Scene{
 	
 	private int health = 100;
 	
+	private Handler handler = new Handler();
 	private Runnable runnable = new Runnable() {
 	 	   @Override
 	 	   public void run() {
-	 		   
-	           
 	           if (playing)
 	        	   gameplay();
-	 		   
 	 	       handler.postDelayed(this, 100); 
 	 	   }
 	};
@@ -165,15 +175,33 @@ public class SceneMain extends Scene{
 	public SceneMain(int idIn, Activity a, boolean visible) {
 		super(idIn, a, visible);
 		
+		onLoad();
 		Arrays.fill(missionCompletionTimes, Integer.MAX_VALUE);
 		Arrays.fill(missionCompletion, false);
 		vibrator = (Vibrator)a.getSystemService(Context.VIBRATOR_SERVICE);
 		
-		missionSetup();
+		
+		
+		//imageMissionGiving.setVisibility(View.GONE);
+		//buttonMissionNext.setVisibility(View.GONE);
+		//textMissionText.setVisibility(View.GONE);
+		
 		handler.postDelayed(runnable, 100);
+		setScene(ScreenState.MISSION);
 	}
 	
+	ImageObject imageMissionGiving;
+	ButtonObject buttonMissionNext;
+	TextObject textMissionText;
 	private void missionSetup(){
+		
+//		setScene(ScreenState.GIVING_MISSION);
+		
+		//imageMissionGiving.getElement().setAlpha(1f);
+		//imageMissionGiving.setVisibility(View.VISIBLE);
+		//buttonMissionNext.setVisibility(View.VISIBLE);
+		//textMissionText.setVisibility(View.VISIBLE);
+		
 		if (currentMission >= 0)
 			missionCompletion[currentMission] = true;
 		
@@ -185,7 +213,10 @@ public class SceneMain extends Scene{
 			}
 		
 		if (allComplete){
-			textStatus.setText("All missions complete!");
+			buttonMissionNext.setVisibility(View.GONE);
+		    listMissionScreen.remove(buttonMissionNext);
+			currentMission = missionCompletion.length+1;
+			
 			return;
 		}
 		
@@ -193,16 +224,14 @@ public class SceneMain extends Scene{
 			currentMission = random.nextInt(6);
 		} while (missionCompletion[currentMission] == true);
 		
-		textClue.setText(missionClues[currentMission]);
 		
 	}
-	
-	int p = 0;
-	
+
 	private void itemSetup(Activity aIn){
 		
 		listMainScreen = new ArrayList<AbstractElement>();
 		listClueScreen = new ArrayList<AbstractElement>();
+		listMissionScreen = new ArrayList<AbstractElement>();
 		//textTitle = new TextObject("Transport munitions!", aIn, Globals.newId());
         //textTitle.alignToTop();
         //textTitle.getElement().setPaddingRelative(0, Globals.screenDimensions.y/100, 0, Globals.screenDimensions.y/80);
@@ -222,20 +251,10 @@ public class SceneMain extends Scene{
         textStatus.getElement().setTextSize(Globals.getTextSize());
         textStatus.getElement().setGravity(Gravity.CENTER);
         
-        imageTransportation = new ImageObject(R.drawable.ammo_green, aIn, Globals.newId(), false);
-        //imageTransportation.addRule(RelativeLayout.BELOW, textStatus.getId());
-        imageTransportation.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-        imageTransportation.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        imageTransportation.getElement().setPaddingRelative(Globals.screenDimensions.x/20, 0, 0, Globals.screenDimensions.y/30);
+        
         
        
-        healthBar = new ProgressBarObject(aIn, Globals.newId(), true);
-        healthBar.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-       // healthBar.addRule(RelativeLayout.ALIGN_START, imageTransportation.getId());
-        healthBar.getLayoutParams().setMargins(0, 0, 0, Globals.screenDimensions.y/120);
-        healthBar.setWidth(imageTransportation.getWidth());
-        healthBar.setValue(50);
-        healthBar.setMode(Mode.LIGHTEN);
+        
         
         //textClue.getLayoutParams().setMarginStart(Globals.screenDimensions.x/20);
         
@@ -244,14 +263,6 @@ public class SceneMain extends Scene{
         buttonGallery.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
         buttonGallery.getLayoutParams().setMargins((Globals.screenDimensions.x/12), 0, 0, Globals.screenDimensions.y/20);
        // buttonGallery.addRule(RelativeLayout.ALIGN_START, textClue.getId());
-        
-        buttonFindClue = new ImageObject(R.drawable.find_button, aIn, Globals.newId(), true);
-        buttonFindClue.setAbsScaleX((int)(Globals.screenDimensions.x/2.2));
-        buttonFindClue.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        buttonFindClue.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        buttonFindClue.getElement().setPaddingRelative(0, 0, Globals.screenDimensions.x/20, Globals.screenDimensions.y/30);
-        buttonFindClue.setBackgroundColour(android.R.color.transparent);
-        imageTransportation.setAbsScaleX((int)(buttonFindClue.getWidth()/1.1f));
         
         buttonDebug = new ButtonObject("Debug", aIn, Globals.newId());
         buttonDebug.addRule(RelativeLayout.ALIGN_PARENT_TOP);
@@ -263,6 +274,22 @@ public class SceneMain extends Scene{
         buttonToggleClue.getLayoutParams().setMargins(0, Globals.screenDimensions.y/14, 0, 0);
         buttonToggleClue.getElement().setTextSize(Globals.getTextSize());
         buttonToggleClue.setWidth(Globals.screenDimensions.x/4);
+        
+        imageTransportation = new ImageObject(R.drawable.ammo_green, aIn, Globals.newId(), true);
+        //imageTransportation.addRule(RelativeLayout.BELOW, textStatus.getId());
+        imageTransportation.setBackgroundColour(Color.TRANSPARENT);
+        imageTransportation.addRule(RelativeLayout.BELOW, buttonToggleClue.getId());
+        imageTransportation.getLayoutParams().setMargins(0, Globals.screenDimensions.y/20, 0, 0);
+        imageTransportation.setAbsScaleY(Globals.screenDimensions.y/4);
+        //imageTransportation.getElement().setPaddingRelative(Globals.screenDimensions.x/20, 0, 0, Globals.screenDimensions.y/30);
+        
+        healthBar = new ProgressBarObject(aIn, Globals.newId(), true);
+        healthBar.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+       // healthBar.addRule(RelativeLayout.ALIGN_START, imageTransportation.getId());
+        healthBar.getLayoutParams().setMargins(0, 0, 0, Globals.screenDimensions.y/120);
+        healthBar.setWidth(imageTransportation.getWidth());
+        healthBar.setValue(50);
+        healthBar.setMode(Mode.LIGHTEN);
         
         textCurrentElapsedTime = new TextObject("Current elapsed time: 0:00", aIn, Globals.newId());
         textCurrentElapsedTime.addRule(RelativeLayout.ALIGN_TOP, buttonToggleClue.getId());
@@ -283,26 +310,44 @@ public class SceneMain extends Scene{
 		itemSetup(aIn);
         
         //addElementToView(textTitle);
+		
+		imageMissionGiving = new ImageObject(R.drawable.background, aIn, Globals.newId(), false);
+		buttonMissionNext = new ButtonObject(">", aIn, Globals.newId());
+		
+		textMissionText = new TextObject("Teashdas", aIn, Globals.newId());
+		textMissionText.getElement().setTextSize(Globals.getTextSize()*1.8f);
+		buttonMissionNext.addRule(RelativeLayout.BELOW, textMissionText.getId());
+		
         addElementToView(imageClue);
         addElementToView(textStatus);
         addElementToView(imageTransportation);
         addElementToView(healthBar);
         addElementToView(textClue);
         addElementToView(buttonGallery);
-        addElementToView(buttonFindClue);
         addElementToView(buttonDebug);
         addElementToView(buttonToggleClue);
         addElementToView(textCurrentElapsedTime);
+        
+        imageMissionGiving.setScale(Globals.screenDimensions.x - (Globals.screenDimensions.x/10), 
+        		Globals.screenDimensions.y - (Globals.screenDimensions.y/10));
+
+
+        addElementToView(imageMissionGiving);
+		addElementToView(buttonMissionNext);
+		addElementToView(textMissionText);
         
         listMainScreen.add(imageClue);
         listMainScreen.add(textStatus);
         listMainScreen.add(imageTransportation);
         listMainScreen.add(healthBar);
         listMainScreen.add(buttonGallery);
-        listMainScreen.add(buttonFindClue);
         listMainScreen.add(buttonDebug);
         listMainScreen.add(buttonToggleClue);
         listMainScreen.add(textCurrentElapsedTime);
+        
+        listMissionScreen.add(imageMissionGiving);
+        listMissionScreen.add(buttonMissionNext);
+        listMissionScreen.add(textMissionText);
         
         listClueScreen.add(imageClue);
         listClueScreen.add(textStatus);
@@ -319,7 +364,9 @@ public class SceneMain extends Scene{
         
         super.sceneInit(aIn, visible);
         
-        
+        //listMainScreen.remove(imageMissionGiving);
+        //listMainScreen.remove(buttonMissionNext);
+        //listMainScreen.remove(textMissionText);
 	}
 	
 	private void setScene(ScreenState sIn){
@@ -328,16 +375,34 @@ public class SceneMain extends Scene{
 		List<AbstractElement> l = listMainScreen;
 
 		if (sIn == ScreenState.MAIN){
-			//l = listMainScreen;
+			//listl = listMainScreen;
 		}
 		else if (sIn == ScreenState.CLUE){
 			l = listClueScreen;
+		}
+		else if (sIn == ScreenState.MISSION){
+			l = listMissionScreen;
+				//textStatus.setText("Mission complete! You did it!");
+				//missionCompletion[currentMission] = true;
+				missionSetup();
 		}
 		transitionOut(l);
 	}
 	
 	
 	public void setClickEvents(){
+		
+		buttonMissionNext.getElement().setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				setScene(ScreenState.MAIN);
+				//textClue.setText(missionClues[currentMission]);
+				textStatus.setText("New mission given. Look at your new clue!");
+				imageClue.setImage(missionImages[currentMission]);
+				imageClue.setAbsScaleY((int)(Globals.screenDimensions.y/2.5f));
+			}
+		});
+		
 		buttonToggleClue.getElement().setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -362,13 +427,20 @@ public class SceneMain extends Scene{
 			}
 		});
 		
-		buttonFindClue.getElement().setOnClickListener(new View.OnClickListener() {
+		imageTransportation.getElement().setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (screenState == ScreenState.MAIN)
-					setScene(ScreenState.CLUE);
-				else
-					setScene(ScreenState.MAIN);
+				
+				if (!missionCompletion[currentMission]){
+					MyBeacon d = EstimoteManager.contains(missionTitles[currentMission]);
+					if (d != null && d.getDistance() < 2.3f){
+						setScene(ScreenState.MISSION);
+					}
+					else
+						textStatus.setText("Hm, not in the right place. Keep looking!");
+				}
+				//else
+				//	missionSetup();
 			}
 		});		
 	}

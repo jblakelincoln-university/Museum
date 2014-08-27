@@ -5,26 +5,43 @@ import java.util.Locale;
 import java.util.Map.Entry;
 
 import android.app.Activity;
+import android.os.Handler;
 
 import com.example.classes.AccelerometerManager;
+import com.example.classes.EstimoteManager;
 import com.example.classes.Globals;
+import com.example.classes.MyBeacon;
 import com.example.classes.Scene;
 import com.example.classes.Objects.*;
 
 public class SceneDebug extends Scene{
 
+	private Handler handler = new Handler();
+	private Runnable runnable = new Runnable() {
+	 	   @Override
+	 	   public void run() {
+	 		   update();
+	 	       handler.postDelayed(this, 100); 
+	 	   }
+	};
+	
 	private TextObject textBeaconList;
 	public SceneDebug(int idIn, Activity a, boolean visible) {
 		super(idIn, a, visible);
 		
+		handler.postDelayed(runnable, 100);
+		
 	}
-	
-	public void update(HashMap<String, MyBeacon> beaconList){
+	HashMap<String,MyBeacon> beaconList = new HashMap<String,MyBeacon>();
+	public void update(){
 		//textClue.setText("aaaa" + p++);
 		
 		textBeaconList.setText("--------------------------------------------------\n");
 		String s = "";
-		for (Entry<String, MyBeacon> entry : beaconList.entrySet()) {
+		
+		//beaconList = EstimoteManager.getBeaconList();
+		
+		for (Entry<String, MyBeacon> entry : EstimoteManager.getBeaconList().entrySet()) {
 			//entry.getValue().updateDistance();
 			String name = entry.getValue().getName();//entry.getValue().getName();
 			String distance = String.format(Locale.UK, "%.2f", entry.getValue().getDistance());

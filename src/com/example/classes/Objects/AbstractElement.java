@@ -35,6 +35,10 @@ public abstract class AbstractElement<T> {
 	
 	public RelativeLayout.LayoutParams getLayoutParams() { return layoutParams;}
 	
+	public void setLayoutParams(RelativeLayout.LayoutParams l){
+		layoutParams = l;
+	}
+	
 	public void addRule(int verb){
 		layoutParams.addRule(verb);
 	}

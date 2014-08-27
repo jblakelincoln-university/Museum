@@ -14,8 +14,7 @@ public class ImageObject extends AbstractElement<ImageView>{
 	private int drawable;
 	
 	public int getDrawable() { return drawable;}
-	
-	protected ImageObject() {}
+
 	public ImageObject(int im, Activity m, int idIn, boolean button)
 	{
 		drawable = im;
@@ -26,11 +25,11 @@ public class ImageObject extends AbstractElement<ImageView>{
 		obj.setImageResource(im);
 		bitmap = BitmapFactory.decodeResource(m.getResources(), im);
 		
-		layoutParams = new RelativeLayout.LayoutParams(
-        		RelativeLayout.LayoutParams.WRAP_CONTENT, 
-        		RelativeLayout.LayoutParams.WRAP_CONTENT);
+		//layoutParams = new RelativeLayout.LayoutParams(
+       // 		RelativeLayout.LayoutParams.WRAP_CONTENT, 
+        //		RelativeLayout.LayoutParams.WRAP_CONTENT);
 		
-		layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+		//layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
 	}
 	
 
@@ -56,8 +55,8 @@ public class ImageObject extends AbstractElement<ImageView>{
 	public void setScaleY(float y){
 		obj.setScaleY(y);
 	}
-	
-	public void setScale(float x, float y){
+	//nope
+	public void setScaleF(float x, float y){
 		obj.setScaleX(x);
 		obj.setScaleY(y);
 	}

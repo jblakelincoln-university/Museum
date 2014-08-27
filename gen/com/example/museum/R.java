@@ -13,10 +13,18 @@ public final class R {
     public static final class drawable {
         public static final int ammo_green=0x7f020000;
         public static final int background=0x7f020001;
-        public static final int clue1=0x7f020002;
-        public static final int empty=0x7f020003;
-        public static final int find_button=0x7f020004;
-        public static final int ic_launcher=0x7f020005;
+        public static final int background_new=0x7f020002;
+        public static final int background_newtoo=0x7f020003;
+        public static final int clue1=0x7f020004;
+        public static final int clue_crawler=0x7f020005;
+        public static final int clue_fieldgun=0x7f020006;
+        public static final int clue_loco=0x7f020007;
+        public static final int clue_propellers=0x7f020008;
+        public static final int clue_sylvie=0x7f020009;
+        public static final int clue_tank=0x7f02000a;
+        public static final int empty=0x7f02000b;
+        public static final int find_button=0x7f02000c;
+        public static final int ic_launcher=0x7f02000d;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;

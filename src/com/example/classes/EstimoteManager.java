@@ -11,7 +11,6 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import com.estimote.sdk.*;
-import com.example.museum.MyBeacon;
 
 public class EstimoteManager {
 public static final String TAG = "MainActivity";
@@ -21,34 +20,41 @@ public static final String TAG = "MainActivity";
 	private static final Region ALL_ESTIMOTE_BEACONS = 
 			new Region("regionId", ESTIMOTE_PROXIMITY_UUID, null, null);
 	
-	private BeaconManager beaconManager;
+	private static BeaconManager beaconManager;
 	
-	private LinkedHashMap<String,MyBeacon> myBeaconsList = new LinkedHashMap<String, MyBeacon>();
-	public LinkedHashMap<String,MyBeacon> getBeaconList(){return myBeaconsList;}
-	private Map<String, String> beaconNameDictionary;
+	private static LinkedHashMap<String,MyBeacon> myBeaconsList = new LinkedHashMap<String, MyBeacon>();
+	public static LinkedHashMap<String,MyBeacon> getBeaconList(){return myBeaconsList;}
+	private static Map<String, String> beaconNameDictionary;
 	
 	
 	
-	public EstimoteManager(Activity aIn)
+	public static void Init(Activity aIn)
 	{
 		fillDictionary(aIn);
 		estimoteSetup();
 	}
 	
 	// Use this class to attach names to MAC addresses.
-	protected void fillDictionary(Activity aIn){
+	protected static void fillDictionary(Activity aIn){
 		beaconManager = new BeaconManager(aIn);
 		beaconNameDictionary = new HashMap<String,String>();
 		
-		beaconNameDictionary.put("FE:E7:C6:3B:BC:DE", "Mint(1)");
-		beaconNameDictionary.put("E5:B9:E4:F5:39:98", "Icy(2)");
-		beaconNameDictionary.put("EF:A7:AE:AE:4A:3B", "Blueberry(3)");
-		beaconNameDictionary.put("C7:5C:63:DF:2C:E4", "Mint(4)");
-		beaconNameDictionary.put("CD:2F:A5:DE:92:13", "Icy(5)");
-		beaconNameDictionary.put("F8:F6:53:10:8B:B4", "Blueberry(6)");
+		beaconNameDictionary.put("FE:E7:C6:3B:BC:DE", "Loco");
+		beaconNameDictionary.put("E5:B9:E4:F5:39:98", "Tank");
+		beaconNameDictionary.put("EF:A7:AE:AE:4A:3B", "FieldGun");
+		beaconNameDictionary.put("C7:5C:63:DF:2C:E4", "Sylvie");
+		beaconNameDictionary.put("CD:2F:A5:DE:92:13", "PlanePropellers");
+		beaconNameDictionary.put("F8:F6:53:10:8B:B4", "Crawler");
 	}
 	
-	protected void estimoteSetup(){
+	public static MyBeacon contains(String s){
+		for (Entry<String, MyBeacon> b : myBeaconsList.entrySet())
+			if (b.getValue().getName() == s)
+				return b.getValue();
+		return null;
+	}
+	
+	protected static void estimoteSetup(){
 		beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
 		    @Override 
 		    public void onServiceReady() {

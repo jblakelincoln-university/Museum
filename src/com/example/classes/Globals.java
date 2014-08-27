@@ -21,15 +21,15 @@ public class Globals {
 	public static float getTextSize() { return textObject.getTextSize();}
 
 	public static void Init(Activity a){
-		a.getWindowManager().getDefaultDisplay().getSize(screenDimensions);
+		a.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT);
+		a.getWindowManager().getDefaultDisplay().getRealSize(screenDimensions);
         
         Globals.rLayout = new RelativeLayout(a);        
-        a.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT);
+        
+        
         Globals.rLayoutParams = new RelativeLayout.LayoutParams(
         		RelativeLayout.LayoutParams.MATCH_PARENT, 
         		RelativeLayout.LayoutParams.MATCH_PARENT);
-        
-        Globals.rLayout.setBackgroundResource(R.drawable.background);
         
         textObject = new TextView(a);
 	}
