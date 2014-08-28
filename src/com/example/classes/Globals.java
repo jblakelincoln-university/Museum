@@ -21,7 +21,7 @@ public class Globals {
 	public static float getTextSize() { return textObject.getTextSize();}
 
 	public static void Init(Activity a){
-		a.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT);
+		a.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		a.getWindowManager().getDefaultDisplay().getSize(screenDimensions);
         
         Globals.rLayout = new RelativeLayout(a);        

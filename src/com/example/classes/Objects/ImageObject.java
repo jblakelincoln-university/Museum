@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -24,6 +25,21 @@ public class ImageObject extends AbstractElement<ImageView>{
 		obj.setId(idIn);
 		obj.setImageResource(im);
 		bitmap = BitmapFactory.decodeResource(m.getResources(), im);
+		
+		//layoutParams = new RelativeLayout.LayoutParams(
+       // 		RelativeLayout.LayoutParams.WRAP_CONTENT, 
+        //		RelativeLayout.LayoutParams.WRAP_CONTENT);
+		
+		//layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+	}
+	
+	public ImageObject(Bitmap im, Activity m, int idIn, boolean button)
+	{
+		obj = (button) ? new ImageButton(m) : new ImageView(m);
+
+		obj.setId(idIn);
+		obj.setImageBitmap(im);
+		bitmap = im;
 		
 		//layoutParams = new RelativeLayout.LayoutParams(
        // 		RelativeLayout.LayoutParams.WRAP_CONTENT, 

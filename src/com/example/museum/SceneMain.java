@@ -7,9 +7,12 @@ import java.util.Random;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Vibrator;
@@ -18,7 +21,9 @@ import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView.ScaleType;
 import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 
 import com.example.classes.AccelerometerManager;
 import com.example.classes.EstimoteManager;
@@ -92,11 +97,30 @@ public class SceneMain extends Scene{
 												"Plane Propellers Mission Descript",
 												"Crawler Mission Descript" };
 	
-	private String[] missionIntroductions = { "Loco Mission Beginning Dialogue",
-												"Tank Mission Beginning Dialogue",
+	private String[] missionIntroductions = { //Loco
+												"The Ruston Proctor Petrol Loco is working at the Holton Heath Gunpowder Mill" +
+												" - wartime explosives are made there!\n\nIt's run out of fuel and your job is to" +
+												" deliver more. You'll need to be careful not to spill it, though!\n\nHold your" +
+												" device straight up with the screen facing you to keep the petrol upright" +
+												" - don't spill any!",
+												
+												//Tank
+												"The year is 1917. Training is commencing for F battalion in France" +
+												", and the tank \"Daphne\" is an integral part of the action." +
+												"\n\nHowever, they've run out of ammo for firing training, and they can't" +
+												" go without it! \n\nThe ammo should be carried carefully! Hold your device" +
+												" flat with the screen facing the ceiling and keep it steady!",
+												
+												//Field gun
 												"Field Gun Mission Beginning Dialogue",
+												
+												//Sylvie
 												"Sylvie Mission Beginning Dialogue",
+												
+												//Plane
 												"Plane Propellers Mission Beginning Dialogue",
+												
+												//Crawler
 												"Crawler Mission Beginning Dialogue" };
 	
 	private int[] missionImages = { R.drawable.clue_loco,
@@ -130,13 +154,41 @@ public class SceneMain extends Scene{
 	
 	private Handler handler = new Handler();
 	private Runnable runnable = new Runnable() {
+		int xx = Globals.screenDimensions.x/24;
+		int yy = Globals.screenDimensions.y/24;
+		float prevX = 0;
+		float prevY = 0;
 	 	   @Override
 	 	   public void run() {
+	 		   
+	 		   if (screenState == ScreenState.MISSION){
+	 			   float cX = xx * AccelerometerManager.getX();
+	 			   
+	 			   cX = -cX;
+	 			   cX += crosshairOffsetX + imageCrosshair.getElement().getX();
+	 			   
+	 			  float cY = yy * AccelerometerManager.getY();
+	 			   cY += crosshairOffsetX + imageCrosshair.getElement().getY();
+	 			   
+	 			   cX = lerp(prevX, cX, 0.3f);
+	 			  cY = lerp(prevY, cY, 0.3f);
+	 			  //imageCrosshairTarget.getElement().setPadding((int)w, (int)(crosshairOffset+q), 0, 0);
+	 			  imageCrosshairTarget.getElement().setPadding((int)(cX), (int)(cY), 0, 0);
+	 			  
+	 			  prevX = cX;
+	 			  prevY = cY;
+	 			 // imageCrosshairTarget.addView(Globals.rLayout);
+	 		   }
 	           if (playing)
 	        	   gameplay();
 	 	       handler.postDelayed(this, 100); 
 	 	   }
 	};
+	
+	float lerp(float lastVal, float currentVal, float multiplier)
+	{
+		return (lastVal + ((currentVal - lastVal)) * multiplier);
+	}
 	
 	private void gameplay(){
 		
@@ -194,6 +246,8 @@ public class SceneMain extends Scene{
 	ImageObject imageMissionGiving;
 	ButtonObject buttonMissionNext;
 	TextObject textMissionText;
+	ImageObject imageCrosshair;
+	ImageObject imageCrosshairTarget;
 	
 	private void missionSetup(){
 		playing = false;
@@ -236,7 +290,7 @@ public class SceneMain extends Scene{
 		
 		missionCount++;
 		startTime = System.currentTimeMillis();
-		textMissionText.setText(missionIntroductions[currentMission]);
+		textMissionText.setText(missionIntroductions[currentMission] + "\n\n");
 	}
 
 	
@@ -308,6 +362,8 @@ public class SceneMain extends Scene{
 		imageTransportation.getElement().setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				if (menuOverlay.getElement().getVisibility() == View.VISIBLE)
+					return;
 				
 				if (!missionCompletion[currentMission]){
 					MyBeacon d = EstimoteManager.contains(missionTitles[currentMission]);
@@ -433,22 +489,46 @@ public class SceneMain extends Scene{
 		buttonMissionNext = new ButtonObject(">", aIn, Globals.newId());
 		
 		textMissionText = new TextObject("Teashdas", aIn, Globals.newId());
-		textMissionText.getElement().setTextSize(Globals.getTextSize()*1.8f);
+		textMissionText.getElement().setTextSize(Globals.getTextSize()*1.4f);
 		textMissionText.getLayoutParams().setMargins(Globals.screenDimensions.x/10, 0, Globals.screenDimensions.x/10, 0);
 		
-		buttonMissionNext.addRule(RelativeLayout.BELOW, textMissionText.getId());
+		
 		
 		imageMissionGiving.setScale(Globals.screenDimensions.x - (Globals.screenDimensions.x/10), 
         		Globals.screenDimensions.y - (Globals.screenDimensions.y/10));
+		
+		imageCrosshair = new ImageObject(R.drawable.crosshair_red, aIn, Globals.newId(), false);
+		
+		imageCrosshair.addRule(RelativeLayout.BELOW, textMissionText.getId());
+		imageCrosshair.setAbsScaleX(Globals.screenDimensions.x/6);
+		buttonMissionNext.addRule(RelativeLayout.BELOW, imageCrosshair.getId());
+		
+		imageCrosshairTarget = new ImageObject(R.drawable.crosshair_red, aIn, Globals.newId(), false);
+		
+		//imageCrosshairTarget.addRule(RelativeLayout.ALIGN_TOP, imageCrosshair.getId());
+		imageCrosshairTarget.alignToTop();
+		imageCrosshairTarget.alignToLeft();
+		imageCrosshairTarget.setAbsScaleX(Globals.screenDimensions.x/26);
 	}
 	
+	float crosshairOffsetX = 0;
+	float crosshairOffsetY = 0;
+	ImageObject menuOverlay;
 	@Override
 	public void sceneInit(Activity aIn, boolean visible) {
 		itemSetup(aIn);
         
         //addElementToView(textTitle);
+		int[] aaa = new int[1];
 		
-		
+		// a r g b
+		aaa[0] = (100 << 24) | (0 << 16) | (0 << 8) | 0;
+		Bitmap b = Bitmap.createBitmap(aaa, 1, 1, Bitmap.Config.ARGB_8888);
+		menuOverlay = new ImageObject(b, aIn, Globals.newId(), false);
+		menuOverlay.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT,
+															RelativeLayout.LayoutParams.FILL_PARENT));
+		menuOverlay.getElement().setScaleType(ScaleType.FIT_XY);
+		menuOverlay.getElement().setClickable(false);
 		
         addElementToView(imageClue);
         addElementToView(textStatus);
@@ -460,12 +540,16 @@ public class SceneMain extends Scene{
         addElementToView(buttonToggleClue);
         addElementToView(textCurrentElapsedTime);
         
-        
+        addElementToView(menuOverlay);
+        listMainScreen.add(menuOverlay);
 
 
         addElementToView(imageMissionGiving);
 		addElementToView(buttonMissionNext);
 		addElementToView(textMissionText);
+		
+		addElementToView(imageCrosshair);
+		addElementToView(imageCrosshairTarget);
         
         listMainScreen.add(imageClue);
         listMainScreen.add(textStatus);
@@ -479,6 +563,8 @@ public class SceneMain extends Scene{
         listMissionScreen.add(imageMissionGiving);
         listMissionScreen.add(buttonMissionNext);
         listMissionScreen.add(textMissionText);
+        listMissionScreen.add(imageCrosshair);
+        listMissionScreen.add(imageCrosshairTarget);
         
         listClueScreen.add(imageClue);
         listClueScreen.add(textStatus);
@@ -507,11 +593,21 @@ public class SceneMain extends Scene{
 		//buttonMissionNext.setVisibility(View.GONE);
 		//textMissionText.setVisibility(View.GONE);
 		
+		crosshairOffsetX = imageCrosshair.getHeight()/2;
+		crosshairOffsetX -= imageCrosshairTarget.getHeight()/2;
+		
+		crosshairOffsetY = imageCrosshair.getWidth()/2;
+		crosshairOffsetY -= imageCrosshairTarget.getWidth()/2;
+		//crosshairOffset += imageCrosshair.getElement().getY();
+		//imageCrosshairTarget.getLayoutParams().setMargins(0, (int)crosshairOffset, 0, 0);
 		handler.postDelayed(runnable, 100);
 		setScene(ScreenState.MISSION);
         
         //listMainScreen.remove(imageMissionGiving);
         //listMainScreen.remove(buttonMissionNext);
         //listMainScreen.remove(textMissionText);
+		
+		
+		
 	}
 }
