@@ -34,7 +34,7 @@ public class SceneGallery extends Scene{
 	
 	
 	@Override
-	protected void sceneInit(Activity aIn, boolean visible) {
+	public void sceneInit(Activity aIn, boolean visible) {
 		listScrollViewElements = new ArrayList<ImageObject>();
 		listImages = new ArrayList<Integer>();
 		

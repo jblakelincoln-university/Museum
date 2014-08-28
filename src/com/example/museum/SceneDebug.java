@@ -29,7 +29,7 @@ public class SceneDebug extends Scene{
 	public SceneDebug(int idIn, Activity a, boolean visible) {
 		super(idIn, a, visible);
 		
-		handler.postDelayed(runnable, 100);
+		
 		
 	}
 	HashMap<String,MyBeacon> beaconList = new HashMap<String,MyBeacon>();
@@ -58,12 +58,14 @@ public class SceneDebug extends Scene{
 		textBeaconList.getElement().append("\n--------------------------------------------------");
 	}
 	
-	protected void sceneInit(Activity aIn, boolean visible){
+	public void sceneInit(Activity aIn, boolean visible){
 		textBeaconList = new TextObject("", aIn, Globals.newId());
 		textBeaconList.getElement().setTextSize(Globals.getTextSize()*1.8f);
 		addElementToView(textBeaconList);
 		
 		super.sceneInit(aIn, visible);
+		
+		handler.postDelayed(runnable, 100);
 	}
 	@Override
 	public void onBackPressed() {

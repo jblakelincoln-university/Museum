@@ -29,6 +29,7 @@ public abstract class Scene {
 		FADE;
 	}
 	
+	public boolean initialised = false;
 	protected Transition transitionType = Transition.FADE;
 	
 	private Runnable runnable = new Runnable() {
@@ -64,7 +65,7 @@ public abstract class Scene {
 	public Scene(int idIn, Activity a, boolean visible){
 		id = idIn;
 		activity = (GameActivity) a;
-		sceneInit(a, visible);
+		//sceneInit(a, visible);
 		//transitioningElements = new ArrayList(sceneElements);
 		//transitioningElements = sceneElements;
 		
@@ -73,11 +74,13 @@ public abstract class Scene {
 		handler.postDelayed(runnable, 100);
 	}
 	
-	protected void sceneInit(Activity a, boolean visible){
+	public void sceneInit(Activity a, boolean visible){
 		if (visible)
 			setVisibility(View.VISIBLE);
 		else
 			setVisibility(View.GONE);
+		
+		initialised = true;
 	}
 	
 	protected void addElementToView(AbstractElement aIn){

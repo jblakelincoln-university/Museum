@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Window;
+import android.widget.ProgressBar;
 
 import com.example.classes.AccelerometerManager;
 import com.example.classes.EstimoteManager;
@@ -67,6 +68,10 @@ public class GameActivity extends Activity {
 		//listScenes.get(ScreenState.toInt(screenState)).setVisibility(View.GONE);
 		listScenes.get(ScreenState.toInt(screenState)).transitionOut(null);
 		screenState = s;
+		if (!listScenes.get(ScreenState.toInt(screenState)).initialised){
+			listScenes.get(ScreenState.toInt(screenState)).sceneInit((Activity)c, true);
+		}
+		
 		//listScenes.get(ScreenState.toInt(screenState)).setVisibility(View.VISIBLE);
 		listScenes.get(ScreenState.toInt(screenState)).onLoad();
 	}
@@ -78,6 +83,7 @@ public class GameActivity extends Activity {
 			Globals.Init(this);
 			AccelerometerManager.Init(this);
 			EstimoteManager.Init(this);
+			
 			c = this;
 			// Create all scenes and then add them to a list;
 			screenState = ScreenState.MAIN;
@@ -89,9 +95,10 @@ public class GameActivity extends Activity {
 	        sceneGallery = new SceneGallery(2, (Activity)c, false);
 	 		listScenes.add(sceneGallery); 
 	 		
+	 		//listScenes.get(1).sceneInit(this, true);
 	 		//
 	 		
-	 		//SetScreenState(screenState);
+	 		
 	 		
 	 	    
 	 		//for(Scene s : listScenes){
@@ -105,8 +112,9 @@ public class GameActivity extends Activity {
 	        
 			//estimoteManager = new EstimoteManager(this);
 			
-			setContentView(Globals.rLayout, Globals.rLayoutParams);  
-			
+	        setContentView(Globals.rLayout, Globals.rLayoutParams);  
+	        SetScreenState(screenState);
+	        
 			ImageObject i = new ImageObject(R.drawable.background_new, this, Globals.newId(), false);
 			//i.setAbsScaleY(Globals.screenDimensions.x);
 			i.setScale(Globals.screenDimensions.x, Globals.screenDimensions.y-20);
