@@ -84,8 +84,10 @@ public abstract class Scene {
 	}
 	
 	protected void addElementToView(AbstractElement aIn){
-		sceneElements.add(aIn);
-		aIn.addView(Globals.rLayout);
+		if (!sceneElements.contains(aIn)){
+			sceneElements.add(aIn);
+			aIn.addView(Globals.rLayout);
+		}
 	}
 	
 	public void onLoad(){

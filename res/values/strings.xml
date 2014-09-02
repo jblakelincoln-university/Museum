@@ -4,5 +4,11 @@
     <string name="app_name">Museum</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_intro">IntroActivity</string>
+    <string name="factsheet_title_loco">Ruston Proctor Petrol Loco</string>
+    <string name="factsheet_title_tank">WW1 Tank</string>
+    <string name="factsheet_title_fieldgun">German Field Gun</string>
+    <string name="factsheet_title_sylvie">Steam Engine "Sylvie"</string>
+    <string name="factsheet_title_plane">Air Plane Propellers</string>
+    <string name="factsheet_title_crawler">Clayton Crawler Tractor</string>
 
 </resources>

@@ -27,7 +27,8 @@ public class GameActivity extends Activity {
 	public enum ScreenState{
 		DEBUG,
 		MAIN,
-		GALLERY;
+		GALLERY,
+		FACTSHEET;
 		
 		public static int toInt(ScreenState s){
 			switch(s){
@@ -37,6 +38,8 @@ public class GameActivity extends Activity {
 				return 1;
 			case GALLERY:
 				return 2;
+			case FACTSHEET:
+				return 3;
 			}
 			return -1;
 		}
@@ -60,6 +63,8 @@ public class GameActivity extends Activity {
 	private SceneMain sceneMain;
 	private SceneGallery sceneGallery;
 	private SceneDebug sceneDebug;
+	private SceneFactsheet sceneFactsheet;
+	public SceneFactsheet getFactsheet() {return sceneFactsheet;}
 	public ScreenState screenState;
 	
 	private boolean appLoaded = false;
@@ -94,6 +99,8 @@ public class GameActivity extends Activity {
 	        listScenes.add(sceneMain);
 	        sceneGallery = new SceneGallery(2, (Activity)c, false);
 	 		listScenes.add(sceneGallery); 
+	 		sceneFactsheet = new SceneFactsheet(3, this, false);
+	 		listScenes.add(sceneFactsheet);
 	 		
 	 		//listScenes.get(1).sceneInit(this, true);
 	 		//
@@ -123,6 +130,7 @@ public class GameActivity extends Activity {
 			
 			//Globals.rLayout.getBackground().setAlpha(50);
     }
+	
 	
 	private void update(){
 		//sceneDebug.update(estimoteManager.getBeaconList());

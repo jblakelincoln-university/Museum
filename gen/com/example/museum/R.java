@@ -24,8 +24,21 @@ public final class R {
         public static final int clue_tank=0x7f02000a;
         public static final int crosshair_red=0x7f02000b;
         public static final int empty=0x7f02000c;
-        public static final int find_button=0x7f02000d;
-        public static final int ic_launcher=0x7f02000e;
+        public static final int factsheet_background=0x7f02000d;
+        public static final int factsheet_crawler_left=0x7f02000e;
+        public static final int factsheet_crawler_right=0x7f02000f;
+        public static final int factsheet_fieldgun_left=0x7f020010;
+        public static final int factsheet_fieldgun_right=0x7f020011;
+        public static final int factsheet_loco_left=0x7f020012;
+        public static final int factsheet_loco_right=0x7f020013;
+        public static final int factsheet_plane_left=0x7f020014;
+        public static final int factsheet_plane_right=0x7f020015;
+        public static final int factsheet_sylvie_left=0x7f020016;
+        public static final int factsheet_sylvie_right=0x7f020017;
+        public static final int factsheet_tank=0x7f020018;
+        public static final int factsheet_temp=0x7f020019;
+        public static final int find_button=0x7f02001a;
+        public static final int ic_launcher=0x7f02001b;
     }
     public static final class id {
         public static final int textView1=0x7f060001;
@@ -37,6 +50,12 @@ public final class R {
     }
     public static final class string {
         public static final int app_name=0x7f040000;
+        public static final int factsheet_title_crawler=0x7f040008;
+        public static final int factsheet_title_fieldgun=0x7f040005;
+        public static final int factsheet_title_loco=0x7f040003;
+        public static final int factsheet_title_plane=0x7f040007;
+        public static final int factsheet_title_sylvie=0x7f040006;
+        public static final int factsheet_title_tank=0x7f040004;
         public static final int hello_world=0x7f040001;
         public static final int title_activity_intro=0x7f040002;
     }

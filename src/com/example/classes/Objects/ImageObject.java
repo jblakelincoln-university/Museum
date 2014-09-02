@@ -50,7 +50,7 @@ public class ImageObject extends AbstractElement<ImageView>{
 	
 
 	public void setImage(int im){
-		((ImageView)obj).setImageResource(im);
+		obj.setImageResource(im);
 		bitmap = ((BitmapDrawable)obj.getDrawable()).getBitmap();
 
 
@@ -91,7 +91,7 @@ public class ImageObject extends AbstractElement<ImageView>{
 		float p = bitmap.getWidth();
 		float v = bitmap.getHeight();
 		//float newH = (x/bitmap.getWidth())*bitmap.getHeight();
-		float newH = (y/p)*v;
+		float newH = (y/v)*p;
 		Bitmap b = Bitmap.createScaledBitmap(bitmap, (int)newH, y, true);
 		obj.setImageBitmap(b);
 		bitmap = b;

@@ -6,10 +6,13 @@ import java.util.List;
 import java.util.Random;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff.Mode;
+import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
@@ -24,8 +27,10 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView.ScaleType;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
+import android.widget.TableLayout;
 
 import com.example.classes.AccelerometerManager;
+import com.example.classes.Colour;
 import com.example.classes.EstimoteManager;
 import com.example.classes.Globals;
 import com.example.classes.MyBeacon;
@@ -40,7 +45,8 @@ public class SceneMain extends Scene{
 		NONE,
 		MAIN,
 		CLUE,
-		MISSION;
+		MISSION,
+		MENU;
 		
 		public static int toInt(ScreenState s){
 			switch(s){
@@ -52,6 +58,8 @@ public class SceneMain extends Scene{
 				return 2;
 			case MISSION:
 				return 3;
+			case MENU:
+				return 4;
 			}
 			return -1;
 		}
@@ -63,7 +71,7 @@ public class SceneMain extends Scene{
 	private TextObject textClue;
 	private ImageObject imageClue;
 	private ImageObject imageTransportation;
-	private ButtonObject buttonGallery;
+	private ButtonObject buttonMenu;
 	
 	private ProgressBarObject healthBar;
 	private ButtonObject buttonDebug;
@@ -75,6 +83,7 @@ public class SceneMain extends Scene{
 	protected List<AbstractElement> listMainScreen;
 	protected List<AbstractElement> listClueScreen;
 	protected List<AbstractElement> listMissionScreen;
+	protected List<AbstractElement> listMenuScreen;
 	
 	private TextObject textCurrentElapsedTime;
 	private long startTime;
@@ -338,6 +347,10 @@ public class SceneMain extends Scene{
 		buttonToggleClue.getElement().setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				
+				if (menuOverlay.getElement().getVisibility() == View.VISIBLE)
+					return;
+				
 				if (screenState == ScreenState.MAIN)
 					setScene(ScreenState.CLUE);	
 				else
@@ -345,17 +358,50 @@ public class SceneMain extends Scene{
 			}
 		});
 		
-		buttonGallery.getElement().setOnClickListener(new View.OnClickListener() {
+		menuGallery.getElement().setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				//if (screenState == ScreenState.MAIN)
+				//{
+				
+				
+					//menuOverlay.setVisibility(View.VISIBLE);
+					//menuOverlay.getElement().animate().alpha(1.0f);
+				//}
+
 				activity.SetScreenState(GameActivity.ScreenState.GALLERY);	
+				
+				
+			}
+		});
+		
+		buttonMenu.getElement().setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				//if (screenState == ScreenState.MAIN)
+				//{
+				setScene(ScreenState.MAIN);
+				screenState = ScreenState.MENU;
+				
+				for (AbstractElement a: listMenuScreen){
+					a.setVisibility(View.VISIBLE);
+					a.getElementView().animate().alpha(1.0f);
+				}
+					screenState = ScreenState.MENU;
+				//}
+				//activity.SetScreenState(GameActivity.ScreenState.GALLERY);	
 			}
 		});
 		
 		buttonDebug.getElement().setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {;
-				activity.SetScreenState(GameActivity.ScreenState.DEBUG);
+			
+			
+				if (menuOverlay.getElement().getVisibility() == View.VISIBLE)
+					return;
+			
+				activity.SetScreenState(GameActivity.ScreenState.FACTSHEET);
 			}
 		});
 		
@@ -377,9 +423,98 @@ public class SceneMain extends Scene{
 				//	missionSetup();
 			}
 		});		
+		
+		
+		menuFactsLoco.getElement().setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				
+				activity.SetScreenState(GameActivity.ScreenState.FACTSHEET);
+				activity.getFactsheet().setScene(SceneFactsheet.ScreenState.LOCO);
+				//sheetLockedDialog("Loco");
+				//else
+				//	missionSetup();
+			}
+		});		
+		
+		menuFactsTank.getElement().setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				
+				activity.SetScreenState(GameActivity.ScreenState.FACTSHEET);
+				activity.getFactsheet().setScene(SceneFactsheet.ScreenState.TANK);
+				//sheetLockedDialog("Tanks");
+				//else
+				//	missionSetup();
+			}
+		});	
+		
+		menuFactsFieldGun.getElement().setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				activity.SetScreenState(GameActivity.ScreenState.FACTSHEET);
+				activity.getFactsheet().setScene(SceneFactsheet.ScreenState.FIELDGUN);
+				
+				//sheetLockedDialog("Field Gun");
+				//else
+				//	missionSetup();
+			}
+		});	
+		
+		menuFactsSylvie.getElement().setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				
+				activity.SetScreenState(GameActivity.ScreenState.FACTSHEET);
+				activity.getFactsheet().setScene(SceneFactsheet.ScreenState.SYLVIE);
+				//sheetLockedDialog("Sylvie");
+				//else
+				//	missionSetup();
+			}
+		});	
+		
+		menuFactsPlanePropellers.getElement().setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				
+				activity.SetScreenState(GameActivity.ScreenState.FACTSHEET);
+				activity.getFactsheet().setScene(SceneFactsheet.ScreenState.PLANE);
+				//sheetLockedDialog("Plane");
+				//else
+				//	missionSetup();
+			}
+		});	
+		
+		menuFactsCrawler.getElement().setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				//sheetLockedDialog("Crawler");
+				
+				activity.SetScreenState(GameActivity.ScreenState.FACTSHEET);
+				activity.getFactsheet().setScene(SceneFactsheet.ScreenState.CRAWLER);
+				//else
+				//	missionSetup();
+			}
+		});	
+	}
+	
+	public void sheetLockedDialog(String s){
+		AlertDialog.Builder builder1 = new AlertDialog.Builder(activity);
+        builder1.setMessage("Complete the " + s + " mission to unlock this factsheet!");
+        builder1.setCancelable(true);
+        builder1.setPositiveButton("OK!",
+                new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
 	}
 	
 	public void onLoad(){
+		Globals.rLayout.setBackgroundResource(R.drawable.background_newtoo);
 		setScene(screenState);
 		if (startTime == 0)
 			startTime = System.currentTimeMillis();
@@ -401,13 +536,30 @@ public class SceneMain extends Scene{
 			System.exit(0);
 		else if (screenState == ScreenState.CLUE)
 			setScene(ScreenState.MAIN);
+		else if (screenState == ScreenState.MENU)
+			setScene(ScreenState.MAIN);
 	}
+	
+	
+	ButtonObject menuGallery;
+	//ButtonObject menuFactsLoco;
+	//ButtonObject menuFactsTank;
+	//ButtonObject menuFactsFieldGun;
+	//ButtonObject menuFactsPlanePropellers;
+	//ButtonObject menuFactsCrawler;
+	ImageObject menuFactsLoco;
+	ImageObject menuFactsTank;
+	ImageObject menuFactsFieldGun;
+	ImageObject menuFactsSylvie;
+	ImageObject menuFactsPlanePropellers;
+	ImageObject menuFactsCrawler;
 	
 	private void itemSetup(Activity aIn){
 		
 		listMainScreen = new ArrayList<AbstractElement>();
 		listClueScreen = new ArrayList<AbstractElement>();
 		listMissionScreen = new ArrayList<AbstractElement>();
+		listMenuScreen = new ArrayList<AbstractElement>();
 		//textTitle = new TextObject("Transport munitions!", aIn, Globals.newId());
         //textTitle.alignToTop();
         //textTitle.getElement().setPaddingRelative(0, Globals.screenDimensions.y/100, 0, Globals.screenDimensions.y/80);
@@ -434,10 +586,10 @@ public class SceneMain extends Scene{
         
         //textClue.getLayoutParams().setMarginStart(Globals.screenDimensions.x/20);
         
-        buttonGallery = new ButtonObject("Gallery", aIn, Globals.newId());
-        buttonGallery.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-        buttonGallery.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-        buttonGallery.getLayoutParams().setMargins((Globals.screenDimensions.x/12), 0, 0, Globals.screenDimensions.y/20);
+        buttonMenu = new ButtonObject("Menu", aIn, Globals.newId());
+        buttonMenu.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        buttonMenu.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        buttonMenu.getLayoutParams().setMargins((Globals.screenDimensions.x/12), 0, 0, Globals.screenDimensions.y/20);
        // buttonGallery.addRule(RelativeLayout.ALIGN_START, textClue.getId());
         
         buttonDebug = new ButtonObject("Debug", aIn, Globals.newId());
@@ -509,53 +661,114 @@ public class SceneMain extends Scene{
 		imageCrosshairTarget.alignToTop();
 		imageCrosshairTarget.alignToLeft();
 		imageCrosshairTarget.setAbsScaleX(Globals.screenDimensions.x/26);
+		
+		menuGallery = new ButtonObject("Gallery", aIn, Globals.newId());
+		
+		menuFactsLoco = new ImageObject(R.drawable.factsheet_temp, aIn, Globals.newId(), true);
+		menuFactsTank = new ImageObject(R.drawable.factsheet_temp, aIn, Globals.newId(), true);
+		menuFactsFieldGun = new ImageObject(R.drawable.background_newtoo, aIn, Globals.newId(), true);
+		menuFactsSylvie = new ImageObject(R.drawable.background_new, aIn, Globals.newId(), true);
+		menuFactsPlanePropellers = new ImageObject(R.drawable.factsheet_temp, aIn, Globals.newId(), true);
+		menuFactsCrawler = new ImageObject(R.drawable.factsheet_temp, aIn, Globals.newId(), true);
+		
+		menuFactsLoco.setAbsScaleY(Globals.screenDimensions.y/6);
+		menuFactsTank.setAbsScaleY(Globals.screenDimensions.y/6);
+		menuFactsFieldGun.setAbsScaleY(Globals.screenDimensions.y/6);
+		menuFactsSylvie.setAbsScaleY(Globals.screenDimensions.y/6);
+		menuFactsPlanePropellers.setAbsScaleY(Globals.screenDimensions.y/6);
+		menuFactsCrawler.setAbsScaleY(Globals.screenDimensions.y/6);
+		
+		
+		
+		
+		
+		
+		
+		
+		//menuFactsLoco.addRule(RelativeLayout.LEFT_OF, menuFactsTank.getId());
+		
+		//menuFactsPlanePropellers.addRule(RelativeLayout.LEFT_OF, menuFactsCrawler.getId());
+		
+		
+		//menuFactsTank.addRule(RelativeLayout.RIGHT_OF, menuFactsLoco.getId());
 	}
+	TextObject textInvisible;
+	
 	
 	float crosshairOffsetX = 0;
 	float crosshairOffsetY = 0;
 	ImageObject menuOverlay;
+	
+	ButtonObject menuContinue;
 	@Override
 	public void sceneInit(Activity aIn, boolean visible) {
 		itemSetup(aIn);
         
         //addElementToView(textTitle);
-		int[] aaa = new int[1];
-		
-		// a r g b
-		aaa[0] = (100 << 24) | (0 << 16) | (0 << 8) | 0;
-		Bitmap b = Bitmap.createBitmap(aaa, 1, 1, Bitmap.Config.ARGB_8888);
+
+		Bitmap b = Bitmap.createBitmap(Colour.ArrFromRGB(0,0,0,240), 1, 1, Bitmap.Config.ARGB_8888);
 		menuOverlay = new ImageObject(b, aIn, Globals.newId(), false);
 		menuOverlay.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT,
 															RelativeLayout.LayoutParams.FILL_PARENT));
 		menuOverlay.getElement().setScaleType(ScaleType.FIT_XY);
 		menuOverlay.getElement().setClickable(false);
+		menuOverlay.setVisibility(View.GONE);
 		
-        addElementToView(imageClue);
-        addElementToView(textStatus);
-        addElementToView(imageTransportation);
-        addElementToView(healthBar);
-        addElementToView(textClue);
-        addElementToView(buttonGallery);
-        addElementToView(buttonDebug);
-        addElementToView(buttonToggleClue);
-        addElementToView(textCurrentElapsedTime);
-        
-        addElementToView(menuOverlay);
-        listMainScreen.add(menuOverlay);
-
-
-        addElementToView(imageMissionGiving);
-		addElementToView(buttonMissionNext);
-		addElementToView(textMissionText);
+		int marginWidth = (int)(Globals.screenDimensions.x/2 - (menuFactsSylvie.getWidth()*1.3f));
 		
-		addElementToView(imageCrosshair);
-		addElementToView(imageCrosshairTarget);
-        
+		menuFactsFieldGun.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+		menuFactsFieldGun.getLayoutParams().setMargins(marginWidth, 0, 0, 0);
+		
+		menuFactsSylvie.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		menuFactsSylvie.getLayoutParams().setMargins(0, 0, marginWidth, 0);
+		
+		menuFactsLoco.getLayoutParams().setMargins(marginWidth, 0, 0, 0);
+		menuFactsLoco.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+		menuFactsLoco.addRule(RelativeLayout.ABOVE, menuFactsFieldGun.getId());
+		
+		menuFactsTank.getLayoutParams().setMargins(0, 0, marginWidth, 0);
+		menuFactsTank.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		menuFactsTank.addRule(RelativeLayout.ABOVE, menuFactsSylvie.getId());
+		
+		menuFactsPlanePropellers.getLayoutParams().setMargins(marginWidth, 0, 0, 0);
+		menuFactsPlanePropellers.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+		menuFactsPlanePropellers.addRule(RelativeLayout.BELOW, menuFactsFieldGun.getId());
+		
+		menuFactsCrawler.getLayoutParams().setMargins(0, 0, marginWidth, 0);
+		menuFactsCrawler.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		menuFactsCrawler.addRule(RelativeLayout.BELOW, menuFactsSylvie.getId());
+		
+		menuContinue = new ButtonObject("CONTINUE\nPLAYING", aIn, Globals.newId());
+		
+		menuContinue.getElement().setTypeface(Globals.Fonts.MajorShift());
+		menuContinue.getLayoutParams().setMargins(0, Globals.screenDimensions.y/36, 0, 0);
+		menuContinue.getElement().setTextSize(Globals.getTextSize()*1.7f);
+		menuContinue.getElement().setBackgroundColor(android.graphics.Color.TRANSPARENT);
+		menuContinue.addRule(RelativeLayout.BELOW, menuFactsPlanePropellers.getId());
+		
+		menuGallery = new ButtonObject("VIEW\nGALLERY", aIn, Globals.newId());
+		menuGallery.getElement().setTypeface(Globals.Fonts.MajorShift());
+		menuGallery.getLayoutParams().setMargins(0, 0, 0, Globals.screenDimensions.y/36);
+		menuGallery.getElement().setTextSize(Globals.getTextSize()*1.7f);
+		menuGallery.getElement().setBackgroundColor(android.graphics.Color.TRANSPARENT);
+		menuGallery.addRule(RelativeLayout.ABOVE, menuFactsLoco.getId());
+		
+		
+        listMenuScreen.add(menuOverlay);
+        listMenuScreen.add(menuGallery);
+		listMenuScreen.add(menuFactsLoco);
+		listMenuScreen.add(menuFactsTank);
+		listMenuScreen.add(menuFactsFieldGun);
+		listMenuScreen.add(menuFactsSylvie);
+		listMenuScreen.add(menuFactsPlanePropellers);
+		listMenuScreen.add(menuFactsCrawler);
+		listMenuScreen.add(menuContinue);
+
         listMainScreen.add(imageClue);
         listMainScreen.add(textStatus);
         listMainScreen.add(imageTransportation);
         listMainScreen.add(healthBar);
-        listMainScreen.add(buttonGallery);
+        listMainScreen.add(buttonMenu);
         listMainScreen.add(buttonDebug);
         listMainScreen.add(buttonToggleClue);
         listMainScreen.add(textCurrentElapsedTime);
@@ -568,12 +781,24 @@ public class SceneMain extends Scene{
         
         listClueScreen.add(imageClue);
         listClueScreen.add(textStatus);
-        listClueScreen.add(buttonGallery);
+        listClueScreen.add(buttonMenu);
         listClueScreen.add(buttonDebug);
         listClueScreen.add(buttonToggleClue);
         listClueScreen.add(textCurrentElapsedTime);
         listClueScreen.add(textClue);
         listClueScreen.add(healthBar);
+        
+        for (AbstractElement a : listMainScreen)
+        	addElementToView(a);
+        
+        for (AbstractElement a : listMenuScreen)
+        	addElementToView(a);
+        
+        for (AbstractElement a : listClueScreen)
+        	addElementToView(a);
+        
+        for (AbstractElement a : listMissionScreen)
+        	addElementToView(a);
         
         setClickEvents();
         //estimoteSetup(aIn);
@@ -586,6 +811,9 @@ public class SceneMain extends Scene{
 		Arrays.fill(missionCompletionTimes, Integer.MAX_VALUE);
 		Arrays.fill(missionCompletion, false);
 		vibrator = (Vibrator)aIn.getSystemService(Context.VIBRATOR_SERVICE);
+		
+		
+		
 		
 		
 		
@@ -602,7 +830,6 @@ public class SceneMain extends Scene{
 		//imageCrosshairTarget.getLayoutParams().setMargins(0, (int)crosshairOffset, 0, 0);
 		handler.postDelayed(runnable, 100);
 		setScene(ScreenState.MISSION);
-        
         //listMainScreen.remove(imageMissionGiving);
         //listMainScreen.remove(buttonMissionNext);
         //listMainScreen.remove(textMissionText);
