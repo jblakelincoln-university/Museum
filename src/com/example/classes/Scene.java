@@ -114,8 +114,11 @@ public abstract class Scene {
 			
 			if (b || !l.contains(e)){
 				transitioningElements.add(e);
-				if (e.getElementView().getVisibility() == RelativeLayout.VISIBLE)
+				if (e.getElementView().getVisibility() == RelativeLayout.VISIBLE){
+					e.getElementView().animate().setStartDelay(0);
 					((View)(e.getElement())).animate().alpha(0);
+					
+				}
 			}
 			else
 			{

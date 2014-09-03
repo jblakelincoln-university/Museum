@@ -60,11 +60,11 @@ public class SceneFactsheet extends Scene {
 		
 		String s = "";
 		
-		for (int i = 0; i < 5001; i++)
-			s += "Hi ";
+		//for (int i = 0; i < 5001; i++)
+		//	s += "Hi ";
 		textBody = new TextObject(s, aIn, Globals.newId());
 		textBody.getElement().setTypeface(Globals.Fonts.ExoRegular());
-		textBody.getElement().setTextSize(Globals.getTextSize()*1.3f);
+		textBody.getElement().setTextSize(Globals.getTextSize()*1.5f);
 		textBody.getElement().setLineSpacing(Globals.screenDimensions.y/200, 0.71f);
 		
 		

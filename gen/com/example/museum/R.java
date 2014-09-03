@@ -50,12 +50,25 @@ public final class R {
         public static final int factsheet_tank_unlocked=0x7f020024;
         public static final int factsheet_temp=0x7f020025;
         public static final int find_button=0x7f020026;
-        public static final int ic_launcher=0x7f020027;
-        public static final int press_me=0x7f020028;
-        public static final int transportation_crawler=0x7f020029;
-        public static final int transportation_crawler_green=0x7f02002a;
-        public static final int transportation_crawler_red=0x7f02002b;
-        public static final int transportation_horizontal_green=0x7f02002c;
+        public static final int gallery_eight=0x7f020027;
+        public static final int gallery_eleven=0x7f020028;
+        public static final int gallery_five=0x7f020029;
+        public static final int gallery_four=0x7f02002a;
+        public static final int gallery_nine=0x7f02002b;
+        public static final int gallery_one=0x7f02002c;
+        public static final int gallery_seven=0x7f02002d;
+        public static final int gallery_six=0x7f02002e;
+        public static final int gallery_ten=0x7f02002f;
+        public static final int gallery_three=0x7f020030;
+        public static final int gallery_twelve=0x7f020031;
+        public static final int gallery_two=0x7f020032;
+        public static final int ic_launcher=0x7f020033;
+        public static final int press_me=0x7f020034;
+        public static final int transportation_crawler=0x7f020035;
+        public static final int transportation_crawler_green=0x7f020036;
+        public static final int transportation_crawler_red=0x7f020037;
+        public static final int transportation_horizontal_green=0x7f020038;
+        public static final int transportation_sylvie=0x7f020039;
     }
     public static final class id {
         public static final int textView1=0x7f060001;

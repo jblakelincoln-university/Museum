@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.RelativeLayout;
 
@@ -11,6 +12,7 @@ import com.example.classes.Globals;
 import com.example.classes.Scene;
 import com.example.classes.Objects.ImageObject;
 import com.example.classes.Objects.ScrollViewObject;
+import com.example.classes.Objects.TextObject;
 import com.example.museum.R;
 
 public class SceneGallery extends Scene{
@@ -19,7 +21,9 @@ public class SceneGallery extends Scene{
 	private List<ImageObject> listScrollViewElements;
 	
 	private ImageObject imageLarge;
+	private TextObject textDescription;
 	private List<Integer> listImages;
+	private List<String> listDescriptions;
 	
 	private int uniqueImageId = 0;
 	public SceneGallery(int idIn, Activity a, boolean visible) {
@@ -37,6 +41,7 @@ public class SceneGallery extends Scene{
 	public void sceneInit(Activity aIn, boolean visible) {
 		listScrollViewElements = new ArrayList<ImageObject>();
 		listImages = new ArrayList<Integer>();
+		listDescriptions = new ArrayList<String>();
 		
 		scrollView = new ScrollViewObject(aIn, Globals.newId());
 		scrollView.addView(Globals.rLayout);
@@ -54,7 +59,16 @@ public class SceneGallery extends Scene{
 		//imageLarge.addRule(RelativeLayout.ALIGN_BOTTOM, scrollView.getId());
 		imageLarge.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		
+		textDescription = new TextObject("", aIn, Globals.newId());
+		textDescription.addRule(RelativeLayout.ABOVE, scrollView.getId());
+		textDescription.getElement().setTextSize(Globals.getTextSize()*1.8f);
+		textDescription.getElement().setTypeface(Globals.Fonts.ExoRegular());
+		textDescription.getLayoutParams().setMargins(Globals.screenDimensions.x/12, 0, Globals.screenDimensions.x/12, Globals.screenDimensions.y/20);
+		textDescription.getElement().setGravity(Gravity.CENTER);
+		
+		
 		sceneElements.add(imageLarge);
+		addElementToView(textDescription);
 		
 		//for (AbstractElement a : listScrollViewElements)
 		//	sceneElements.add(a);
@@ -68,8 +82,18 @@ public class SceneGallery extends Scene{
 	private void setImages(Activity a){
 		for (int i = 0; i < 1; i++)
 		{
-			addThumbnailToScrollView(new ImageObject(R.drawable.background, a, Globals.newId(), true));
-			addThumbnailToScrollView(new ImageObject(R.drawable.ammo_green, a, Globals.newId(), true));
+			addThumbnailToScrollView(new ImageObject(R.drawable.gallery_one, a, Globals.newId(), true), "Ruston Loco (place and date unknown)");
+			addThumbnailToScrollView(new ImageObject(R.drawable.gallery_two, a, Globals.newId(), true), "Ruston Loco at Waltham Abbey Gun Power Works");
+			addThumbnailToScrollView(new ImageObject(R.drawable.gallery_three, a, Globals.newId(), true), "1000th plane made by Ruston Proctor (1918)");
+			addThumbnailToScrollView(new ImageObject(R.drawable.gallery_four, a, Globals.newId(), true), "Ruston Proctor aircraft production (1910)");
+			addThumbnailToScrollView(new ImageObject(R.drawable.gallery_five, a, Globals.newId(), true), "Field gun outside Monks Abbey");
+			addThumbnailToScrollView(new ImageObject(R.drawable.gallery_six, a, Globals.newId(), true), "Field gun on train");
+			addThumbnailToScrollView(new ImageObject(R.drawable.gallery_seven, a, Globals.newId(), true), "Ruston Loco (place and date unknwon)");
+			addThumbnailToScrollView(new ImageObject(R.drawable.gallery_eight, a, Globals.newId(), true), "Sylvie threshing at Church Farm Museum");
+			addThumbnailToScrollView(new ImageObject(R.drawable.gallery_nine, a, Globals.newId(), true), "Crawler tractor towing plane");
+			addThumbnailToScrollView(new ImageObject(R.drawable.gallery_ten, a, Globals.newId(), true), "Crawler tractor towing plane");
+			addThumbnailToScrollView(new ImageObject(R.drawable.gallery_eleven, a, Globals.newId(), true), "Strutter plane in  factory");
+			addThumbnailToScrollView(new ImageObject(R.drawable.gallery_twelve, a, Globals.newId(), true), "Strutter plane assembly");
 		}
 	}
 	
@@ -81,13 +105,14 @@ public class SceneGallery extends Scene{
 			x.setVisibility(v);
 	}
 	
-	private void addThumbnailToScrollView(ImageObject i){
+	private void addThumbnailToScrollView(ImageObject i, String s){
 		listScrollViewElements.add(i);
 		listImages.add(i.getDrawable());
 		i.setScale(Globals.screenDimensions.x/8, Globals.screenDimensions.x/8);
 		i.addView(scrollView.getLayout());
 		i.setVisibility(View.GONE);
 		i.setUniqueId(uniqueImageId++);
+		listDescriptions.add(s);
 		setThumbnailClickEvent(i);
 	}
 	
@@ -97,6 +122,7 @@ public class SceneGallery extends Scene{
 			public void onClick(View v) {
 				
 				imageLarge.setImage(listImages.get(i.getUniqueId()));
+				textDescription.setText(listDescriptions.get(i.getUniqueId()));
 				if (imageLarge.getWidth() > Globals.screenDimensions.x-(Globals.screenDimensions.x/10))
 					imageLarge.setAbsScaleX(Globals.screenDimensions.x - (Globals.screenDimensions.x/10));
 				

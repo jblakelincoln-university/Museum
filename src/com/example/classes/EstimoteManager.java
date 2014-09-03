@@ -41,9 +41,9 @@ public static final String TAG = "MainActivity";
 		
 		beaconNameDictionary.put("FE:E7:C6:3B:BC:DE", "Loco");
 		beaconNameDictionary.put("E5:B9:E4:F5:39:98", "Tank");
-		beaconNameDictionary.put("EF:A7:AE:AE:4A:3B", "FieldGun");
+		beaconNameDictionary.put("EF:A7:AE:AE:4A:3B", "Field Gun");
 		beaconNameDictionary.put("C7:5C:63:DF:2C:E4", "Sylvie");
-		beaconNameDictionary.put("CD:2F:A5:DE:92:13", "PlanePropellers");
+		beaconNameDictionary.put("CD:2F:A5:DE:92:13", "Plane");
 		beaconNameDictionary.put("F8:F6:53:10:8B:B4", "Crawler");
 	}
 	

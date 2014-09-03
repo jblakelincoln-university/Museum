@@ -100,17 +100,17 @@ public class SceneMain extends Scene{
 	
 	private String[] missionTitles = {	"Loco", 
 										"Tank", 
-										"FieldGun", 
+										"Field Gun", 
 										"Sylvie", 
-										"PlanePropellers", 
+										"Plane", 
 										"Crawler" };
 	
-	private String[] missionClues = { "Loco Mission Descript",
-												"Tank Mission Descript",
-												"Field Gun Mission Descript",
-												"Sylvie Mission Descript",
-												"Plane Propellers Mission Descript",
-												"Crawler Mission Descript" };
+	private String[] missionClues = { "You'll recognise this distinctive piece by its big red wheel at the side!",
+												"This great big tank should be pretty hard to miss!",
+												"The piece of German artillery might be at home near a war bunker",
+												"The smokestack of this steam locomotive should be clearly visible from anywhere",
+												"There isn't a whole plane nearby, but you'll be able to find an important spinning part!",
+												"This Crawler tractor has some pretty distinctive (and large) tracks!" };
 	
 	private String[] missionIntroductions = { //Loco
 												"The Ruston Proctor Petrol Loco is working at the Holton Heath Gunpowder Mill" +
@@ -127,16 +127,25 @@ public class SceneMain extends Scene{
 												" flat with the screen facing the ceiling and keep it steady!",
 												
 												//Field gun
-												"Field Gun Mission Beginning Dialogue",
+												"8th September, 1914 - a battalion of German field guns has been captured by a Lincolnshire Regiment." +
+												" The Battle of Marne has been long and tough, so we need to test the guns still work. Deliver some" +
+												" ammunition to them and we can try them out.\n\nThe ammo is volatile, so be careful! Hold your device" +
+												" with the screen facing the ceiling, and don't move too fast!",
 												
 												//Sylvie
-												"Sylvie Mission Beginning Dialogue",
+												"This Ruston Proctor creation is working a farm in France, helping the war effort by driving" +
+												" agricultural machinery. It could do with some more fuel, so your job is to deliver coal" +
+												" to it!\n\nHold your device upright with the screen facing you, and don't tip the cart!",
 												
 												//Plane
-												"Plane Propellers Mission Beginning Dialogue",
+												"We've got a Sopwith 1 1/2 Strutter, a Ruston aircraft, almost ready to contribute to the war effort." +
+												" However, we haven't stocked up on ammunition for its mounted gun. It's on you to deliver it!" +
+												"\n\nHold your device with the screen facing the ceiling, and don't tip the box of ammunition!",
 												
 												//Crawler
-												"Crawler Mission Beginning Dialogue" };
+												"We've got a Crawler Tractor hauling a gun carriage out on the battlefield. Its four cylinder" +
+												" petrol engine burns through fuel, so you need to take some to it." +
+												"\n\nHold your device with the screen facing you and don't spill any fuel - a vital resource! " };
 	
 	private int[] missionImages = { R.drawable.clue_loco,
 									R.drawable.clue_tank,
@@ -279,7 +288,7 @@ public class SceneMain extends Scene{
 		
 		if (health < 0){
 			health = 0;
-			missionGivenStatus.setText("You died! Try again!");
+			missionGivenStatus.setText("You failed! Try again!");
 			if (screenState == ScreenState.MAIN || screenState == ScreenState.CLUE)
 				setScene(ScreenState.MISSION);
 			return;
@@ -374,8 +383,6 @@ public class SceneMain extends Scene{
 			
 			imageCrosshair.setVisibility(View.GONE);
 			imageCrosshairTarget.setVisibility(View.GONE);
-			buttonMissionNext.getLayoutParams().removeRule(RelativeLayout.BELOW);
-			buttonMissionNext.addRule(RelativeLayout.BELOW, textMissionText.getId());
 			
 			return;
 		}
@@ -386,13 +393,18 @@ public class SceneMain extends Scene{
 		
 		if (currentMission == 0 || currentMission == 3 || currentMission == 5){
 			missionType = MissionType.VERTICAL;
-			imageTransportation.setImage(R.drawable.transportation_crawler_green);
+			if (missionTitles[currentMission] == "Sylvie")
+				imageTransportation.setImage(R.drawable.transportation_sylvie);
+			else
+				imageTransportation.setImage(R.drawable.transportation_crawler_green);
 		}
 		else{
 			missionType = MissionType.HORIZONTAL;
 			imageTransportation.setImage(R.drawable.transportation_horizontal_green);
 		}
 		
+		imageTransportation.setAbsScaleY(Globals.screenDimensions.y/4);
+		textClue.setText(missionClues[currentMission]);
 		imageCrosshairTarget.setVisibility(View.VISIBLE);
 		missionCount++;
 		startTime = System.currentTimeMillis();
@@ -449,12 +461,13 @@ public class SceneMain extends Scene{
 			@Override
 			public void onClick(View v) {
 				if (!allMissionsCompleted){
+					imageTransportation.getElement().setEnabled(true);
 					Globals.rLayout.getBackground().setAlpha(255);
 					setScene(ScreenState.MAIN);
 					
 					if (health != 0){
 						//textClue.setText(missionClues[currentMission]);
-						textStatus.setText("New mission given. Look at your new clue!");
+						textStatus.setTimedText("New mission given. Look at your new clue!");
 						imageClue.setImage(missionImages[currentMission]);
 						imageClue.setAbsScaleY((int)(Globals.screenDimensions.y/2.5f));
 						
@@ -537,11 +550,12 @@ public class SceneMain extends Scene{
 				if (!missionCompletion[currentMission]){
 					MyBeacon d = EstimoteManager.contains(missionTitles[currentMission]);
 					if (d != null && d.getDistance() < 2.3f){
+						imageTransportation.getElement().setEnabled(false);
 						missionSetup();	
 						setScene(ScreenState.MISSION);	
 					}
 					else
-						textStatus.setText("Hm, not in the right place. Keep looking!");
+						textStatus.setTimedText("Hm, not in the right place. Keep looking!");
 				}
 				//else
 				//	missionSetup();
@@ -552,8 +566,12 @@ public class SceneMain extends Scene{
 			@Override
 			public void onClick(View v) {
 				
-				if (allMissionsCompleted)
+				if (allMissionsCompleted){
+					activity.setScreenState(GameActivity.ScreenState.MAIN);
+					setScene(ScreenState.MISSION);
 					return;
+				}
+					
 				
 				setScene(ScreenState.MAIN);
 				//sheetLockedDialog("Loco");
@@ -746,7 +764,7 @@ public class SceneMain extends Scene{
         textStatus.getElement().setWidth(Globals.screenDimensions.x-(Globals.screenDimensions.x/10));
         textStatus.getElement().setTextSize(Globals.getTextSize());
         textStatus.getElement().setGravity(Gravity.CENTER);
-        
+        textStatus.getElement().setTypeface(Globals.Fonts.ExoRegular());
         
         
        
@@ -757,7 +775,11 @@ public class SceneMain extends Scene{
         buttonMenu = new ButtonObject("Menu", aIn, Globals.newId());
         buttonMenu.addRule(RelativeLayout.ALIGN_PARENT_TOP);
         buttonMenu.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-        buttonMenu.getLayoutParams().setMargins((Globals.screenDimensions.x/12), 0, 0, Globals.screenDimensions.y/20);
+        buttonMenu.getLayoutParams().setMargins((Globals.screenDimensions.x/60), Globals.screenDimensions.y/40, 0, Globals.screenDimensions.y/20);
+        
+        buttonMenu.getElement().setBackgroundColor(Colour.Transparent);
+        buttonMenu.getElement().setTypeface(Globals.Fonts.MajorShift());
+        buttonMenu.getElement().setTextSize(Globals.getTextSize()*2.2f);
        // buttonGallery.addRule(RelativeLayout.ALIGN_START, textClue.getId());
         
         buttonDebug = new ButtonObject("Debug", aIn, Globals.newId());
@@ -819,11 +841,11 @@ public class SceneMain extends Scene{
         textClue.setWidth(Globals.screenDimensions.x/2.2f);
         textClue.getLayoutParams().setMargins(0, Globals.screenDimensions.y/10, 0, 0);
         textClue.getElement().setGravity(Gravity.CENTER);
-        
+        textClue.getElement().setTypeface(Globals.Fonts.ExoRegular());
         
         
         imageMissionGiving = new ImageObject(R.drawable.background, aIn, Globals.newId(), false);
-		buttonMissionNext = new ButtonObject(">", aIn, Globals.newId());
+		buttonMissionNext = new ButtonObject("Continue", aIn, Globals.newId());
 		
 		missionGivenStatus = new TextObject("", aIn, Globals.newId());
 		missionGivenStatus.addRule(RelativeLayout.ALIGN_PARENT_TOP);
@@ -844,9 +866,13 @@ public class SceneMain extends Scene{
 		
 		imageCrosshair = new ImageObject(R.drawable.crosshair_red, aIn, Globals.newId(), false);
 		
-		imageCrosshair.addRule(RelativeLayout.BELOW, textMissionText.getId());
+		
 		imageCrosshair.setAbsScaleX(Globals.screenDimensions.x/6);
-		buttonMissionNext.addRule(RelativeLayout.BELOW, imageCrosshair.getId());
+		
+		buttonMissionNext.getLayoutParams().setMargins(0, 0, 0, Globals.screenDimensions.y/15);
+		buttonMissionNext.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+		
+		imageCrosshair.addRule(RelativeLayout.ABOVE, buttonMissionNext.getId());
 		
 		imageCrosshairTarget = new ImageObject(R.drawable.crosshair_red, aIn, Globals.newId(), false);
 		
@@ -946,14 +972,14 @@ public class SceneMain extends Scene{
 		
 		menuContinue.getElement().setTypeface(Globals.Fonts.MajorShift());
 		menuContinue.getLayoutParams().setMargins(0, Globals.screenDimensions.y/36, 0, 0);
-		menuContinue.getElement().setTextSize(Globals.getTextSize()*1.7f);
+		menuContinue.getElement().setTextSize(Globals.getTextSize()*2.8f);
 		menuContinue.getElement().setBackgroundColor(android.graphics.Color.TRANSPARENT);
 		menuContinue.addRule(RelativeLayout.BELOW, menuFactsPlanePropellers.getId());
 		
 		menuGallery = new ButtonObject("VIEW\nGALLERY", aIn, Globals.newId());
 		menuGallery.getElement().setTypeface(Globals.Fonts.MajorShift());
 		menuGallery.getLayoutParams().setMargins(0, 0, 0, Globals.screenDimensions.y/36);
-		menuGallery.getElement().setTextSize(Globals.getTextSize()*1.7f);
+		menuGallery.getElement().setTextSize(Globals.getTextSize()*2.8f);
 		menuGallery.getElement().setBackgroundColor(android.graphics.Color.TRANSPARENT);
 		menuGallery.addRule(RelativeLayout.ABOVE, menuFactsLoco.getId());
 		
@@ -1011,11 +1037,11 @@ public class SceneMain extends Scene{
         
         for (AbstractElement a : listMainScreen)
         	addElementToView(a);
-        
-        for (AbstractElement a : listMenuScreen)
+
+        for (AbstractElement a : listClueScreen)
         	addElementToView(a);
         
-        for (AbstractElement a : listClueScreen)
+        for (AbstractElement a : listMenuScreen)
         	addElementToView(a);
         
         for (AbstractElement a : listMissionScreen)

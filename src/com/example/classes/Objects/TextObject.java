@@ -1,6 +1,7 @@
 package com.example.classes.Objects;
 
 import android.app.Activity;
+import android.view.View;
 import android.widget.TextView;
 
 
@@ -20,6 +21,12 @@ public class TextObject extends AbstractElement<TextView>{
 	
 	public void setTextColour(int c){
 		obj.setTextColor(c);
+	}
+	
+	public void setTimedText(String s){
+		obj.setAlpha(1.0f);
+		obj.setText(s);
+		obj.animate().alpha(0.0f).setStartDelay(4000);
 	}
 	
 	public void setText(String s){
