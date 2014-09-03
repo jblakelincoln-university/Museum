@@ -29,12 +29,6 @@ public class ScrollViewObject extends AbstractElement<HorizontalScrollView>{
 		return scrollLayout;
 	}
 	
-	public void addElement(Activity m){
-		Button button = new Button(m);
-		button.setText("Some text");
-		scrollLayout.addView(button);
-	}
-	
 	@Override
 	public void setVisibility(int i) {
 		obj.setVisibility(i);
@@ -43,3 +37,5 @@ public class ScrollViewObject extends AbstractElement<HorizontalScrollView>{
 	
 	
 }
+
+

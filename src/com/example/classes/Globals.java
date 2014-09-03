@@ -51,10 +51,21 @@ public class Globals {
 		private static Typeface sofiaRegular;
 		public static Typeface SofiaRegular() {return sofiaRegular;}
 		
+		private static Typeface chunkFive;
+		public static Typeface ChunkFive() {return chunkFive;}
+		
+		private static Typeface robotoThin;
+		public static Typeface RobotoThin() {return robotoThin;}
+		
+		private static Typeface exoRegular;
+		public static Typeface ExoRegular() {return exoRegular;}
 		
 		public static void Init(Activity aIn){
 			majorShift = Typeface.createFromAsset(aIn.getAssets(),"fonts/major_shift.ttf");
 			sofiaRegular = Typeface.createFromAsset(aIn.getAssets(),"fonts/sofia_regular.otf");
+			chunkFive = Typeface.createFromAsset(aIn.getAssets(),"fonts/chunk_five.otf");
+			robotoThin = Typeface.createFromAsset(aIn.getAssets(),"fonts/roboto_thin.ttf");
+			exoRegular = Typeface.createFromAsset(aIn.getAssets(),"fonts/exo_regular.otf");
 		}
 	}
 }

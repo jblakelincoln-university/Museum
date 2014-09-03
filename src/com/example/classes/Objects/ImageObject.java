@@ -3,11 +3,13 @@ package com.example.classes.Objects;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.ImageView.ScaleType;
 
 public class ImageObject extends AbstractElement<ImageView>{
 	protected Bitmap bitmap;
@@ -24,6 +26,7 @@ public class ImageObject extends AbstractElement<ImageView>{
 
 		obj.setId(idIn);
 		obj.setImageResource(im);
+		obj.setScaleType(ScaleType.MATRIX);
 		bitmap = BitmapFactory.decodeResource(m.getResources(), im);
 		
 		//layoutParams = new RelativeLayout.LayoutParams(
@@ -54,6 +57,13 @@ public class ImageObject extends AbstractElement<ImageView>{
 		bitmap = ((BitmapDrawable)obj.getDrawable()).getBitmap();
 
 
+	}
+	
+	Matrix m = new Matrix();
+	public void rotate(float r){
+		m.postRotate(r, getWidth()/2, getHeight()/2);
+		obj.setImageMatrix(m);
+		m.postRotate(-r, getWidth()/2, getHeight()/2);
 	}
 	
 	public void setScaleX(float x){

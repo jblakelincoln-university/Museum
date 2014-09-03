@@ -1,12 +1,24 @@
 package com.example.classes;
 
 public class Colour {
+	
 
+	public static int clamp(int i){
+		if (i > 255)
+			return 255;
+		else if (i < 0)
+			return 0;
+		
+		return i;
+	}
 	public static int FromRGB(int r, int g, int b, int a){
 		return (a << 24) | (r << 16) | (g << 8) | b;
 	}
 	
 	public static int FromRGB(int r, int g, int b){
+		r = clamp(r);
+		g = clamp(g);
+		b = clamp(b);
 		return (255 << 24) | (r << 16) | (g << 8) | b;
 	}
 	
