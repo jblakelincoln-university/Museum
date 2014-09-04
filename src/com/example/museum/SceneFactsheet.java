@@ -184,8 +184,8 @@ public class SceneFactsheet extends Scene {
 		
 		//imageLeft.addRule(RelativeLayout.ALIGN_BASELINE, imageRight.getId());
 		
-		Globals.rLayout.setBackgroundResource(background);
-		Globals.rLayout.getBackground().setAlpha(255);
+		activity.getLayout().get().setBackgroundResource(background);
+		activity.getLayout().get().getBackground().setAlpha(255);
 	}
 	
 	@Override
@@ -193,7 +193,7 @@ public class SceneFactsheet extends Scene {
 		itemSetup(aIn);
 		
 		super.sceneInit(aIn, false);
-		Globals.rLayout.setBackgroundResource(R.drawable.factsheet_background);
+		activity.getLayout().get().setBackgroundResource(R.drawable.factsheet_background);
 	}
 
 	@Override

@@ -23,11 +23,6 @@ public class TextObject extends AbstractElement<TextView>{
 		obj.setTextColor(c);
 	}
 	
-	public void setTimedText(String s){
-		obj.setAlpha(1.0f);
-		obj.setText(s);
-		obj.animate().alpha(0.0f).setStartDelay(4000);
-	}
 	
 	public void setText(String s){
 		obj.setText(s);

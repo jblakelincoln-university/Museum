@@ -44,7 +44,7 @@ public class SceneGallery extends Scene{
 		listDescriptions = new ArrayList<String>();
 		
 		scrollView = new ScrollViewObject(aIn, Globals.newId());
-		scrollView.addView(Globals.rLayout);
+		scrollView.addView(activity.getLayout().get());
 		scrollView.getLayoutParams().width = Globals.screenDimensions.x-(Globals.screenDimensions.x/20);
 		scrollView.getLayoutParams().setMarginStart(Globals.screenDimensions.x/40);
 		scrollView.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
@@ -55,7 +55,7 @@ public class SceneGallery extends Scene{
 		
 		imageLarge = new ImageObject(R.drawable.empty, aIn, Globals.newId(), false);
 		//imageLarge.setAbsScaleX(200);
-		imageLarge.addView(Globals.rLayout);
+		imageLarge.addView(activity.getLayout().get());
 		//imageLarge.addRule(RelativeLayout.ALIGN_BOTTOM, scrollView.getId());
 		imageLarge.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		

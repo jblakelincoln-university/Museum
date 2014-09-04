@@ -11,15 +11,7 @@ import android.widget.TextView;
 
 public class Globals {
 	
-	
-	
-	public static RelativeLayout rLayout;
-	public static RelativeLayout.LayoutParams rLayoutParams;
-	public static R.drawable rDrawable;
 	public static Point screenDimensions = new Point(0,0);
-	
-	public static boolean canUpdate = false;
-	
 	public static TextView textObject;
 	
 	
@@ -27,16 +19,7 @@ public class Globals {
 
 	public static void Init(Activity a){
 		Fonts.Init(a);
-		a.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		a.getWindowManager().getDefaultDisplay().getSize(screenDimensions);
-        
-        Globals.rLayout = new RelativeLayout(a);        
-        
-        
-        Globals.rLayoutParams = new RelativeLayout.LayoutParams(
-        		RelativeLayout.LayoutParams.MATCH_PARENT, 
-        		RelativeLayout.LayoutParams.MATCH_PARENT);
-        
         textObject = new TextView(a);
 	}
 	

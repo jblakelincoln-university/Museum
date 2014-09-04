@@ -230,7 +230,7 @@ public class SceneMain extends Scene{
 	 				  imageCrosshair.getElement().setColorFilter(Colour.FromRGB(255, 0, 0), PorterDuff.Mode.MULTIPLY);
 	 			  
 	 			  
-	 			 // imageCrosshairTarget.addView(Globals.rLayout);
+	 			 // imageCrosshairTarget.addView(activity.getLayout().get());
 	 		   }
 	           if (playing){
 	        	   gameplay();
@@ -247,7 +247,7 @@ public class SceneMain extends Scene{
 	}
 	
 	private void gameplay(){
-		
+		vibrator.cancel();
 		//Vibration patterns
 		if (windowHasFocus){
 			if (health <= 0 && currentVibration != 0){
@@ -334,7 +334,7 @@ public class SceneMain extends Scene{
 	private void missionSetup(){
 		playing = false;
 
-		//((AnimationDrawable)Globals.rLayout.getBackground()).
+		//((AnimationDrawable)activity.getLayout().get().getBackground()).
 //		setScene(ScreenState.GIVING_MISSION);
 		
 		//imageMissionGiving.getElement().setAlpha(1f);
@@ -439,7 +439,7 @@ public class SceneMain extends Scene{
 				//	return;
 				//}
 			//}
-				Globals.rLayout.getBackground().setAlpha(120);
+				activity.getLayout().get().getBackground().setAlpha(120);
 		}
 		transitionOut(l);
 		
@@ -462,12 +462,12 @@ public class SceneMain extends Scene{
 			public void onClick(View v) {
 				if (!allMissionsCompleted){
 					imageTransportation.getElement().setEnabled(true);
-					Globals.rLayout.getBackground().setAlpha(255);
+					activity.getLayout().get().getBackground().setAlpha(255);
 					setScene(ScreenState.MAIN);
 					
 					if (health != 0){
 						//textClue.setText(missionClues[currentMission]);
-						textStatus.setTimedText("New mission given. Look at your new clue!");
+						textStatus.setText("New mission given. Look at your new clue!");
 						imageClue.setImage(missionImages[currentMission]);
 						imageClue.setAbsScaleY((int)(Globals.screenDimensions.y/2.5f));
 						
@@ -505,7 +505,7 @@ public class SceneMain extends Scene{
 					//menuOverlay.setVisibility(View.VISIBLE);
 					//menuOverlay.getElement().animate().alpha(1.0f);
 				//}
-				Globals.rLayout.getBackground().setAlpha(255);
+				activity.getLayout().get().getBackground().setAlpha(255);
 				activity.SetScreenState(GameActivity.ScreenState.GALLERY);	
 				
 				
@@ -548,6 +548,9 @@ public class SceneMain extends Scene{
 					return;
 				
 				if (!missionCompletion[currentMission]){
+					if (EstimoteManager.getBeaconList().size() == 0){
+						textStatus.setText("Your Bluetooth may not be turned on, or your device is not supported.");
+					}
 					MyBeacon d = EstimoteManager.contains(missionTitles[currentMission]);
 					if (d != null && d.getDistance() < 2.3f){
 						imageTransportation.getElement().setEnabled(false);
@@ -555,7 +558,7 @@ public class SceneMain extends Scene{
 						setScene(ScreenState.MISSION);	
 					}
 					else
-						textStatus.setTimedText("Hm, not in the right place. Keep looking!");
+						textStatus.setText("Hm, not in the right place. Keep looking!");
 				}
 				//else
 				//	missionSetup();
@@ -687,7 +690,7 @@ public class SceneMain extends Scene{
 	}
 	
 	public void onLoad(){
-		Globals.rLayout.setBackgroundResource(R.drawable.background_newtoo);
+		activity.getLayout().get().setBackgroundResource(R.drawable.background_newtoo);
 		setScene(screenState);
 		if (startTime == 0)
 			startTime = System.currentTimeMillis();
@@ -776,7 +779,7 @@ public class SceneMain extends Scene{
         buttonMenu.addRule(RelativeLayout.ALIGN_PARENT_TOP);
         buttonMenu.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
         buttonMenu.getLayoutParams().setMargins((Globals.screenDimensions.x/60), Globals.screenDimensions.y/40, 0, Globals.screenDimensions.y/20);
-        
+        buttonMenu.getElement().setTextColor(Colour.FromRGB(10, 0, 10));
         buttonMenu.getElement().setBackgroundColor(Colour.Transparent);
         buttonMenu.getElement().setTypeface(Globals.Fonts.MajorShift());
         buttonMenu.getElement().setTextSize(Globals.getTextSize()*2.2f);
@@ -821,7 +824,7 @@ public class SceneMain extends Scene{
         healthBar = new ProgressBarObject(aIn, Globals.newId(), true);
         healthBar.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
        // healthBar.addRule(RelativeLayout.ALIGN_START, imageTransportation.getId());
-        healthBar.getLayoutParams().setMargins(0, 0, 0, Globals.screenDimensions.y/120);
+        healthBar.getLayoutParams().setMargins(0, 0, 0, Globals.screenDimensions.y/40);
         healthBar.setWidth(imageTransportation.getWidth());
         healthBar.setValue(50);
         //healthBar.setMode(Mode.LIGHTEN);
@@ -834,6 +837,8 @@ public class SceneMain extends Scene{
         textCurrentElapsedTime.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
         textCurrentElapsedTime.getLayoutParams().setMargins(Globals.screenDimensions.x/12, 0, 0, 0);
         textCurrentElapsedTime.getElement().setGravity(Gravity.CENTER);
+        textCurrentElapsedTime.getElement().setTypeface(Globals.Fonts.ExoRegular());
+        textCurrentElapsedTime.getElement().setTextSize(Globals.getTextSize()*0.8f);
         
         textClue = new TextObject("This is the clue text it is clue text that contains a clue of varying length.", aIn, Globals.newId());
         textClue.addRule(RelativeLayout.ALIGN_TOP, buttonToggleClue.getId());

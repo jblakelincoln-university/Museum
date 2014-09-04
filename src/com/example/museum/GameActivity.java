@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import com.example.classes.AccelerometerManager;
 import com.example.classes.EstimoteManager;
 import com.example.classes.Globals;
+import com.example.classes.LayoutManager;
 import com.example.classes.Scene;
 import com.example.classes.Objects.ImageObject;
 
@@ -45,16 +46,6 @@ public class GameActivity extends Activity {
 		}
 	}
 
-	private Handler handler = new Handler();
-	private Runnable runnable = new Runnable() {
-	 	   @Override
-	 	   public void run() {
-	 		   if (appLoaded)
-	 			   update();
-	 	       handler.postDelayed(this, 100); 
-	 	   }
-	};
-	
 	public void setScreenState(ScreenState s){
 		SetScreenState(s);
 	}
@@ -67,7 +58,8 @@ public class GameActivity extends Activity {
 	public SceneFactsheet getFactsheet() {return sceneFactsheet;}
 	public ScreenState screenState;
 	
-	private boolean appLoaded = false;
+	private LayoutManager layout;
+	public LayoutManager getLayout() {return layout;}
 	
 	public void SetScreenState(ScreenState s){
 		//listScenes.get(ScreenState.toInt(screenState)).setVisibility(View.GONE);
@@ -85,9 +77,9 @@ public class GameActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
 
-			Globals.Init(this);
-			AccelerometerManager.Init(this);
-			EstimoteManager.Init(this);
+			
+			layout = new LayoutManager(this);
+			
 			
 			c = this;
 			// Create all scenes and then add them to a list;
@@ -102,6 +94,9 @@ public class GameActivity extends Activity {
 	 		sceneFactsheet = new SceneFactsheet(3, this, false);
 	 		listScenes.add(sceneFactsheet);
 	 		
+	 		for (Scene s : listScenes)
+	 			s.sceneInit(this, false);
+	 		
 	 		//listScenes.get(1).sceneInit(this, true);
 	 		//
 	 		
@@ -113,13 +108,12 @@ public class GameActivity extends Activity {
 	 		//		s.setVisibility(View.VISIBLE);
 	 		//}
 	 		
-	        Globals.canUpdate = true;
 	        //Globals.rLayout.setBackgroundColor(getResources().getColor(android.R.color.black));
-	        Globals.rLayout.setBackgroundResource(R.drawable.background_newtoo);
+	        layout.get().setBackgroundResource(R.drawable.background_newtoo);
 	        
 			//estimoteManager = new EstimoteManager(this);
 			
-	        setContentView(Globals.rLayout, Globals.rLayoutParams);  
+	        setContentView(layout.get(), layout.getParams());  
 	        SetScreenState(screenState);
 	        
 			ImageObject i = new ImageObject(R.drawable.background_new, this, Globals.newId(), false);
@@ -131,12 +125,7 @@ public class GameActivity extends Activity {
 			//Globals.rLayout.getBackground().setAlpha(50);
     }
 	
-	
-	private void update(){
-		//sceneDebug.update(estimoteManager.getBeaconList());
-		//sceneMain.update();
-	}
-	 @Override
+	@Override
     public void onConfigurationChanged(Configuration newConfig){}
 	
 	@Override

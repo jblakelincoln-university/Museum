@@ -86,7 +86,7 @@ public abstract class Scene {
 	protected void addElementToView(AbstractElement aIn){
 		if (!sceneElements.contains(aIn)){
 			sceneElements.add(aIn);
-			aIn.addView(Globals.rLayout);
+			aIn.addView(activity.getLayout().get());
 		}
 	}
 	

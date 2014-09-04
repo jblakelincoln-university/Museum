@@ -16,7 +16,7 @@ public class VScrollViewObject extends AbstractElement<ScrollView>{
 		//layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
 		
 		scrollLayout = new LinearLayout(m);
-		//scrollLayout.setOrientation(LinearLayout.HORIZONTAL);
+		scrollLayout.setOrientation(LinearLayout.VERTICAL);
 		// Add Buttons
 
 		// Add the LinearLayout element to the ScrollView
