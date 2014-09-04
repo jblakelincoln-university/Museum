@@ -49,7 +49,7 @@ public static final String TAG = "MainActivity";
 	
 	public static MyBeacon contains(String s){
 		for (Entry<String, MyBeacon> b : myBeaconsList.entrySet())
-			if (b.getValue().getName() == s)
+			if (b.getValue().getName().compareTo(s) == 0)
 				return b.getValue();
 		return null;
 	}

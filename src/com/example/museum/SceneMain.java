@@ -98,54 +98,11 @@ public class SceneMain extends Scene{
 	
 	
 	
-	private String[] missionTitles = {	"Loco", 
-										"Tank", 
-										"Field Gun", 
-										"Sylvie", 
-										"Plane", 
-										"Crawler" };
+	private String[] missionTitles;
 	
-	private String[] missionClues = { "You'll recognise this distinctive piece by its big red wheel at the side!",
-												"This great big tank should be pretty hard to miss!",
-												"The piece of German artillery might be at home near a war bunker",
-												"The smokestack of this steam locomotive should be clearly visible from anywhere",
-												"There isn't a whole plane nearby, but you'll be able to find an important spinning part!",
-												"This Crawler tractor has some pretty distinctive (and large) tracks!" };
+	private String[] missionClues;
 	
-	private String[] missionIntroductions = { //Loco
-												"The Ruston Proctor Petrol Loco is working at the Holton Heath Gunpowder Mill" +
-												" - wartime explosives are made there!\n\nIt's run out of fuel and your job is to" +
-												" deliver more. You'll need to be careful not to spill it, though!\n\nHold your" +
-												" device straight up with the screen facing you to keep the petrol upright" +
-												" - don't spill any!",
-												
-												//Tank
-												"The year is 1917. Training is commencing for F battalion in France" +
-												", and the tank \"Daphne\" is an integral part of the action." +
-												"\n\nHowever, they've run out of ammo for firing training, and they can't" +
-												" go without it! \n\nThe ammo should be carried carefully! Hold your device" +
-												" flat with the screen facing the ceiling and keep it steady!",
-												
-												//Field gun
-												"8th September, 1914 - a battalion of German field guns has been captured by a Lincolnshire Regiment." +
-												" The Battle of Marne has been long and tough, so we need to test the guns still work. Deliver some" +
-												" ammunition to them and we can try them out.\n\nThe ammo is volatile, so be careful! Hold your device" +
-												" with the screen facing the ceiling, and don't move too fast!",
-												
-												//Sylvie
-												"This Ruston Proctor creation is working a farm in France, helping the war effort by driving" +
-												" agricultural machinery. It could do with some more fuel, so your job is to deliver coal" +
-												" to it!\n\nHold your device upright with the screen facing you, and don't tip the cart!",
-												
-												//Plane
-												"We've got a Sopwith 1 1/2 Strutter, a Ruston aircraft, almost ready to contribute to the war effort." +
-												" However, we haven't stocked up on ammunition for its mounted gun. It's on you to deliver it!" +
-												"\n\nHold your device with the screen facing the ceiling, and don't tip the box of ammunition!",
-												
-												//Crawler
-												"We've got a Crawler Tractor hauling a gun carriage out on the battlefield. Its four cylinder" +
-												" petrol engine burns through fuel, so you need to take some to it." +
-												"\n\nHold your device with the screen facing you and don't spill any fuel - a vital resource! " };
+	private String[] missionIntroductions;
 	
 	private int[] missionImages = { R.drawable.clue_loco,
 									R.drawable.clue_tank,
@@ -551,7 +508,7 @@ public class SceneMain extends Scene{
 					if (EstimoteManager.getBeaconList().size() == 0){
 						textStatus.setText("Your Bluetooth may not be turned on, or your device is not supported.");
 					}
-					MyBeacon d = EstimoteManager.contains(missionTitles[currentMission]);
+					MyBeacon d = EstimoteManager.contains(missionTitles[currentMission].toString());
 					if (d != null && d.getDistance() < 2.3f){
 						imageTransportation.getElement().setEnabled(false);
 						missionSetup();	
@@ -749,6 +706,10 @@ public class SceneMain extends Scene{
 		listClueScreen = new ArrayList<AbstractElement>();
 		listMissionScreen = new ArrayList<AbstractElement>();
 		listMenuScreen = new ArrayList<AbstractElement>();
+		
+		missionTitles = aIn.getResources().getStringArray(R.array.mission_titles_array);
+		missionClues = aIn.getResources().getStringArray(R.array.mission_clues_array);
+		missionIntroductions = aIn.getResources().getStringArray(R.array.mission_introductions_array);
 		//textTitle = new TextObject("Transport munitions!", aIn, Globals.newId());
         //textTitle.alignToTop();
         //textTitle.getElement().setPaddingRelative(0, Globals.screenDimensions.y/100, 0, Globals.screenDimensions.y/80);

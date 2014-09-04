@@ -35,6 +35,9 @@ public class SceneFactsheet extends Scene {
 	ImageObject imageLeft;
 	ImageObject imageRight;
 	
+	String[] titles;
+	String[] bodies;
+	
 	private void itemSetup(Activity aIn){
 		textTitle = new TextObject("Title", aIn, Globals.newId());
 		textTitle.getElement().setTypeface(Globals.Fonts.ChunkFive());
@@ -57,6 +60,8 @@ public class SceneFactsheet extends Scene {
 		crawlerRight = R.drawable.factsheet_crawler_right;
 		background = R.drawable.factsheet_background;
 		
+		titles = aIn.getResources().getStringArray(R.array.factsheet_titles_array);
+		bodies = aIn.getResources().getStringArray(R.array.factsheet_body_array);
 		
 		String s = "";
 		
@@ -137,42 +142,42 @@ public class SceneFactsheet extends Scene {
 		sV.getElement().scrollTo(0, 0);
 		switch(screenState){
 		case LOCO:
-			textTitle.getElement().setText(R.string.factsheet_title_loco);
-			textBody.getElement().setText(R.string.factsheet_body_loco);
+			textTitle.getElement().setText(titles[0]);
+			textBody.getElement().setText(bodies[0]);
 			//imageRight.setVisibility(View.VISIBLE);
 			imageLeft.setImage(locoLeft);
 			//imageRight.setImage(locoRight);
 			break;
 		case TANK:
-			textTitle.getElement().setText(R.string.factsheet_title_tank);
-			textBody.getElement().setText(R.string.factsheet_body_tank);
+			textTitle.getElement().setText(titles[1]);
+			textBody.getElement().setText(bodies[1]);
 			//imageRight.setVisibility(View.GONE);
 			imageLeft.setImage(tank);
 			break;
 		case FIELDGUN:
-			textTitle.setText(activity.getString(R.string.factsheet_title_fieldgun));
-			textBody.getElement().setText(R.string.factsheet_body_fieldgun);
+			textTitle.setText(titles[2]);
+			textBody.getElement().setText(bodies[2]);
 			//imageRight.setVisibility(View.VISIBLE);
 			imageLeft.setImage(fieldgunLeft);
 			//imageRight.setImage(fieldgunRight);
 			break;
 		case SYLVIE:
-			textTitle.setText(activity.getString(R.string.factsheet_title_sylvie));
-			textBody.getElement().setText(R.string.factsheet_body_sylvie);
+			textTitle.setText(titles[3]);
+			textBody.getElement().setText(bodies[3]);
 			//imageRight.setVisibility(View.VISIBLE);
 			imageLeft.setImage(sylvieLeft);
 			//imageRight.setImage(sylvieRight);
 			break;
 		case PLANE:
-			textTitle.setText(activity.getString(R.string.factsheet_title_plane));
-			textBody.getElement().setText(R.string.factsheet_body_plane);
+			textTitle.setText(titles[4]);
+			textBody.getElement().setText(bodies[4]);
 			//imageRight.setVisibility(View.VISIBLE);
 			imageLeft.setImage(planeLeft);
 			//imageRight.setImage(planeRight);
 			break;
 		case CRAWLER:
-			textTitle.setText(activity.getString(R.string.factsheet_title_crawler));
-			textBody.getElement().setText(R.string.factsheet_body_crawler);
+			textTitle.setText(titles[5]);
+			textBody.getElement().setText(bodies[5]);
 			//imageRight.setVisibility(View.VISIBLE);
 			imageLeft.setImage(crawlerLeft);
 			//imageRight.setImage(crawlerRight);

@@ -8,6 +8,13 @@
 package com.example.museum;
 
 public final class R {
+    public static final class array {
+        public static final int factsheet_body_array=0x7f050001;
+        public static final int factsheet_titles_array=0x7f050000;
+        public static final int mission_clues_array=0x7f050004;
+        public static final int mission_introductions_array=0x7f050003;
+        public static final int mission_titles_array=0x7f050002;
+    }
     public static final class attr {
     }
     public static final class drawable {
@@ -75,8 +82,8 @@ public final class R {
         public static final int transportation_sylvie=0x7f02003d;
     }
     public static final class id {
-        public static final int textView1=0x7f060001;
-        public static final int textView2=0x7f060000;
+        public static final int textView1=0x7f070001;
+        public static final int textView2=0x7f070000;
     }
     public static final class layout {
         public static final int activity_intro=0x7f030000;
@@ -84,22 +91,10 @@ public final class R {
     }
     public static final class string {
         public static final int app_name=0x7f040000;
-        public static final int factsheet_body_crawler=0x7f04000e;
-        public static final int factsheet_body_fieldgun=0x7f04000b;
-        public static final int factsheet_body_loco=0x7f040009;
-        public static final int factsheet_body_plane=0x7f04000d;
-        public static final int factsheet_body_sylvie=0x7f04000c;
-        public static final int factsheet_body_tank=0x7f04000a;
-        public static final int factsheet_title_crawler=0x7f040008;
-        public static final int factsheet_title_fieldgun=0x7f040005;
-        public static final int factsheet_title_loco=0x7f040003;
-        public static final int factsheet_title_plane=0x7f040007;
-        public static final int factsheet_title_sylvie=0x7f040006;
-        public static final int factsheet_title_tank=0x7f040004;
         public static final int hello_world=0x7f040001;
         public static final int title_activity_intro=0x7f040002;
     }
     public static final class style {
-        public static final int Style1=0x7f050000;
+        public static final int Style1=0x7f060000;
     }
 }

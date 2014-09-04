@@ -28,7 +28,9 @@ public class LayoutManager {
 		//a.setContentView(rLayout, rLayoutParams);
 	}
 	
-	
+	public Activity getActivity(){
+		return ((Activity) c);
+	}
 	public void setContentView(){
 		((Activity) c).setContentView(rLayout, rLayoutParams);
 	}

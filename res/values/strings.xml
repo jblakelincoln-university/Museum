@@ -4,18 +4,50 @@
     <string name="app_name">Museum</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_intro">IntroActivity</string>
-    <string name="factsheet_title_loco">Ruston Proctor Petrol Loco</string>
-    <string name="factsheet_title_tank">WW1 Tank</string>
-    <string name="factsheet_title_fieldgun">German Field Gun</string>
-    <string name="factsheet_title_sylvie">Steam Engine "Sylvie"</string>
-    <string name="factsheet_title_plane">Air Plane Propellers</string>
-    <string name="factsheet_title_crawler">Clayton Crawler Tractor</string>
-	
-    <string name="factsheet_body_loco">Manufactured in Lincoln in 1917 (with 28 made in total), this locomotive worked at Holton Heart Gunpower Mill, Dorset, during the first World War. There explosives were produced for the army and navy, therefore it was made spark-proof, and outputs 20 horsepower. It is a direct copy of a German design, aside from the engine which was produced in Lincoln. As a result of using this machine, Holton\'s production rate increased dramatically, helping to aid the war effort. Only two of the original locos survive. It is said to be the oldest internal combustion locomotive in the world. </string>
-	<string name="factsheet_body_tank">Little is known of the wartime history of this tank. She had been used for training by F Battalion when she arrived in France. She was serving with 12th Company D Battalion of the Tanks Corps, and was due to go into action on 22 August 1917, but was hit by German fire the day prior and was handed over to the Salvage Company for recovery. It is suggested that she was hit by plunging fire, such as a mortar, that penetrated her rear roof and exploded over the transmission and radiator. \n\nShe arrived in a Glouster park as one of the nation\'s presentation tanks in 1919. Presentation tanks were awarded to the towns and cities which had raised the most funds for the war effort. During World War Two the tank was sited on Hucclecote Airfield near Gloucester and was most likely used as a pill box. In 1945 she was transported to Bovington Training Camp, Dorset, which later became Bovington Tank Museum. She was set up as a static exhibit at the gates to the camp. Her engine was removed and she gradually deteriorated. \n\nIn the 1970s the Lincoln Tank Group approached Bovington Tank Museum to ask for a loan of a First World War tank for display in the City of Lincoln, the birthplace of the tank. Ruston Gas Turbines agreed to finance the project and permission was granted on the condition that the tank be refurbished and placed on public display. In the early 1980s the tank was restored by apprentices at Ruston\'s. The tank was placed on display at the Museum of Lincolnshire Life, where she currently resides. She was thought to be the tank \&quot;Flirt II\&quot; until November 2013, when her serial number was found inside the tank and her identity as the tank \&quot;Daphne\&quot; was revealed.</string>
-	<string name="factsheet_body_fieldgun">One of a complete battery captured by the 1st Battalion, Lincolnshire Regiment at the Battle of Marne on the 9th September 1914. These were the first guns to be captured from the enemy by the British Expeditionary Forces during the First World War. The Army was one of two guns which stood on Monks Abbey playing field on Monks Road, Lincoln, and then was mounted outisde Sabraon Barracks on Burton Road, until arriving at the museum in 1984.</string>
-	<string name="factsheet_body_sylvie">This steam engine was manufactured by Ruston Proctor (Lincoln) in 1913. She spent all her working life on a farm in Fleurance, France. Named after the farmer\'s granddaughter, she was purchased by the museum in 1972 and returned to Lincoln. She was used to drive agricultural machinery (e.g. threshing drums) and is possibly the only steam engine in the country to have a 1972 Lincoln number plate.</string>
-	<string name="factsheet_body_plane">During the First World War, Lincoln was one of the largest aircraft production centres in the country. Ruston was first Lincoln firm to venture into aircraft production and during the course of the war became the largest producer of aircraft engines in the country. The 110 horsepower Clerget Rotary Engine was used to power aircraft such as the Sopwith 1 1/2 Strutter, an aircraft produced by Ruston between 1915 and 1917. Ruston\'s trademark for aircraft and aircraft parts incorporated the Lincoln Imp.</string>
-	<string name="factsheet_body_crawler">This tractor was manufactured by Clayton Suttleworth of Lincoln in 1917. An early example of a \'Crawler tractor\' used in agriculture, but also for hauling gun carriages on the battlefield, or airplanes on the test sides in Lincoln during WW1. It is fitted with a Dorman of Stafford type 4 cylinder petrol engine. </string>
+    
+    <string-array name="factsheet_titles_array">
+        <item>Ruston Proctor Petrol Loco</item>
+	    <item>WW1 Tank</item>
+	    <item>German Field Gun</item>
+	    <item>Steam Engine "Sylvie"</item>
+	    <item>Air Plane Propellers</item>
+	    <item>Clayton Crawler Tractor</item>  
+    </string-array>
 
+    <string-array name="factsheet_body_array">
+        <item>Manufactured in Lincoln in 1917 (with 28 made in total), this locomotive worked at Holton Heart Gunpower Mill, Dorset, during the first World War. There explosives were produced for the army and navy, therefore it was made spark-proof, and outputs 20 horsepower. It is a direct copy of a German design, aside from the engine which was produced in Lincoln. As a result of using this machine, Holton\'s production rate increased dramatically, helping to aid the war effort. Only two of the original locos survive. It is said to be the oldest internal combustion locomotive in the world. </item>
+		<item>Little is known of the wartime history of this tank. She had been used for training by F Battalion when she arrived in France. She was serving with 12th Company D Battalion of the Tanks Corps, and was due to go into action on 22 August 1917, but was hit by German fire the day prior and was handed over to the Salvage Company for recovery. It is suggested that she was hit by plunging fire, such as a mortar, that penetrated her rear roof and exploded over the transmission and radiator. \n\nShe arrived in a Glouster park as one of the nation\'s presentation tanks in 1919. Presentation tanks were awarded to the towns and cities which had raised the most funds for the war effort. During World War Two the tank was sited on Hucclecote Airfield near Gloucester and was most likely used as a pill box. In 1945 she was transported to Bovington Training Camp, Dorset, which later became Bovington Tank Museum. She was set up as a static exhibit at the gates to the camp. Her engine was removed and she gradually deteriorated. \n\nIn the 1970s the Lincoln Tank Group approached Bovington Tank Museum to ask for a loan of a First World War tank for display in the City of Lincoln, the birthplace of the tank. Ruston Gas Turbines agreed to finance the project and permission was granted on the condition that the tank be refurbished and placed on public display. In the early 1980s the tank was restored by apprentices at Ruston\'s. The tank was placed on display at the Museum of Lincolnshire Life, where she currently resides. She was thought to be the tank \&quot;Flirt II\&quot; until November 2013, when her serial number was found inside the tank and her identity as the tank \&quot;Daphne\&quot; was revealed.</item>
+		<item>One of a complete battery captured by the 1st Battalion, Lincolnshire Regiment at the Battle of Marne on the 9th September 1914. These were the first guns to be captured from the enemy by the British Expeditionary Forces during the First World War. The Army was one of two guns which stood on Monks Abbey playing field on Monks Road, Lincoln, and then was mounted outisde Sabraon Barracks on Burton Road, until arriving at the museum in 1984.</item>
+		<item>This steam engine was manufactured by Ruston Proctor (Lincoln) in 1913. She spent all her working life on a farm in Fleurance, France. Named after the farmer\'s granddaughter, she was purchased by the museum in 1972 and returned to Lincoln. She was used to drive agricultural machinery (e.g. threshing drums) and is possibly the only steam engine in the country to have a 1972 Lincoln number plate.</item>
+		<item>During the First World War, Lincoln was one of the largest aircraft production centres in the country. Ruston was first Lincoln firm to venture into aircraft production and during the course of the war became the largest producer of aircraft engines in the country. The 110 horsepower Clerget Rotary Engine was used to power aircraft such as the Sopwith 1 1/2 Strutter, an aircraft produced by Ruston between 1915 and 1917. Ruston\'s trademark for aircraft and aircraft parts incorporated the Lincoln Imp.</item>
+		<item>This tractor was manufactured by Clayton Suttleworth of Lincoln in 1917. An early example of a \'Crawler tractor\' used in agriculture, but also for hauling gun carriages on the battlefield, or airplanes on the test sides in Lincoln during WW1. It is fitted with a Dorman of Stafford type 4 cylinder petrol engine. </item>  
+    </string-array>
+    
+	<string-array name="mission_titles_array">
+	    <item>Loco</item>
+	    <item>Tank</item>
+	    <item>Field Gun</item>
+	    <item>Sylvie</item>
+	    <item>Plane</item>
+	    <item>Crawler</item>
+	</string-array>
+	
+	<string-array name="mission_introductions_array">
+	    <item>The Ruston Proctor Petrol Loco is working at the Holton Heath Gunpowder Mill - wartime explosives are made there!\n\nIt\'s run out of fuel and your job is to deliver more. You\'ll need to be careful not to spill it, though!\n\nHold your device straight up with the screen facing you to keep the petrol upright don\'t spill any!"</item>
+		<item>The year is 1917. Training is commencing for F battalion in France and the tank \"Daphne\" is an integral part of the action.\n\nHowever, they\'ve run out of ammo for firing training, and they can\'t go without it! \n\nThe ammo should be carried carefully! Hold your device flat with the screen facing the ceiling and keep it steady!</item>
+		<item>8th September, 1914 - a battalion of German field guns has been captured by a Lincolnshire Regiment. The Battle of Marne has been long and tough, so we need to test the guns still work. Deliver some ammunition to them and we can try them out.\n\nThe ammo is volatile, so be careful! Hold your device with the screen facing the ceiling, and don\'t move too fast!</item>
+	    <item>This Ruston Proctor creation is working a farm in France, helping the war effort by driving agricultural machinery. It could do with some more fuel, so your job is to deliver coal to it!\n\nHold your device upright with the screen facing you, and don\'t tip the cart!</item>
+        <item>We\'ve got a Sopwith 1 1/2 Strutter, a Ruston aircraft, almost ready to contribute to the war effort. However, we haven\'t stocked up on ammunition for its mounted gun. It\'s on you to deliver it!\n\nHold your device with the screen facing the ceiling, and don\'t tip the box of ammunition!</item>
+        <item>We\'ve got a Crawler Tractor hauling a gun carriage out on the battlefield. Its four cylinder petrol engine burns through fuel, so you need to take some to it.\n\nHold your device with the screen facing you and don\'t spill any fuel - a vital resource!</item>
+	</string-array>
+	
+	<string-array name="mission_clues_array">
+	    <item>You\'ll recognise this distinctive piece by its big red wheel at the side!</item>
+		<item>This great big tank should be pretty hard to miss!</item>
+		<item>The piece of German artillery might be at home near a war bunker</item>
+		<item>The smokestack of this steam locomotive should be clearly visible from anywhere</item>
+		<item>There isn\'t a whole plane nearby, but you\'ll be able to find an important spinning part!</item>
+		<item>This Crawler tractor has some pretty distinctive (and large) tracks!</item>
+	</string-array>
+	
 </resources>

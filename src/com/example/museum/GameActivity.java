@@ -66,22 +66,18 @@ public class GameActivity extends Activity {
 		listScenes.get(ScreenState.toInt(screenState)).transitionOut(null);
 		screenState = s;
 		if (!listScenes.get(ScreenState.toInt(screenState)).initialised){
-			listScenes.get(ScreenState.toInt(screenState)).sceneInit((Activity)c, true);
+			listScenes.get(ScreenState.toInt(screenState)).sceneInit(layout.getActivity(), true);
 		}
 		
 		//listScenes.get(ScreenState.toInt(screenState)).setVisibility(View.VISIBLE);
 		listScenes.get(ScreenState.toInt(screenState)).onLoad();
 	}
-	private Context c;
+
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
 
-			
 			layout = new LayoutManager(this);
-			
-			
-			c = this;
 			// Create all scenes and then add them to a list;
 			screenState = ScreenState.MAIN;
 			this.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -89,40 +85,18 @@ public class GameActivity extends Activity {
 			listScenes.add(sceneDebug);
 			sceneMain = new SceneMain(1, this, true);
 	        listScenes.add(sceneMain);
-	        sceneGallery = new SceneGallery(2, (Activity)c, false);
+	        sceneGallery = new SceneGallery(2, this, false);
 	 		listScenes.add(sceneGallery); 
 	 		sceneFactsheet = new SceneFactsheet(3, this, false);
 	 		listScenes.add(sceneFactsheet);
 	 		
 	 		for (Scene s : listScenes)
 	 			s.sceneInit(this, false);
-	 		
-	 		//listScenes.get(1).sceneInit(this, true);
-	 		//
-	 		
-	 		
-	 		
-	 	    
-	 		//for(Scene s : listScenes){
-	 		//	if (s.getId() == ScreenState.toInt(screenState))
-	 		//		s.setVisibility(View.VISIBLE);
-	 		//}
-	 		
-	        //Globals.rLayout.setBackgroundColor(getResources().getColor(android.R.color.black));
-	        layout.get().setBackgroundResource(R.drawable.background_newtoo);
-	        
-			//estimoteManager = new EstimoteManager(this);
-			
-	        setContentView(layout.get(), layout.getParams());  
+
+	        layout.setBackgroundResource(R.drawable.background_newtoo);
+
+	        layout.setContentView();  
 	        SetScreenState(screenState);
-	        
-			ImageObject i = new ImageObject(R.drawable.background_new, this, Globals.newId(), false);
-			//i.setAbsScaleY(Globals.screenDimensions.x);
-			i.setScale(Globals.screenDimensions.x, Globals.screenDimensions.y-20);
-			//i.addView(Globals.rLayout);
-			handler.postDelayed(runnable, 100);
-			
-			//Globals.rLayout.getBackground().setAlpha(50);
     }
 	
 	@Override
