@@ -12,23 +12,12 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.PorterDuff.Mode;
-import android.graphics.Typeface;
-import android.graphics.drawable.AnimationDrawable;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.view.Gravity;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView.ScaleType;
 import android.widget.RelativeLayout;
-import android.widget.RelativeLayout.LayoutParams;
-import android.widget.TableLayout;
 
 import com.example.classes.AccelerometerManager;
 import com.example.classes.Colour;
@@ -71,19 +60,51 @@ public class SceneMain extends Scene{
 		VERTICAL;
 	}
 	
-	//Scene objects
-	private TextObject textTitle;
-	private TextObject textStatus;
-	private TextObject textClue;
-	private ImageObject imageClue;
-	private ImageObject imageTransportation;
-	private ButtonObject buttonMenu;
+	private MissionType missionType;
 	
-	private ProgressBarObject healthBar;
-	private ButtonObject buttonDebug;
 	
-	private ButtonObject buttonToggleClue;
 	
+	//Menu
+	private ButtonObject menuGallery;
+	private ImageObject menuFactsLoco,
+						menuFactsTank,
+						menuFactsFieldGun,
+						menuFactsSylvie,
+						menuFactsPlanePropellers,
+						menuFactsCrawler,
+						menuOverlay;
+	
+	private ImageObject[] menuFactsheets = new ImageObject[6];
+	// Main
+	private TextObject mainTextStatus,
+						mainTextClue,
+						mainElapsedTime;
+	
+	private ImageObject mainImagePressMe,
+						mainImageClue,
+						mainImageTransportation;
+	
+	private ButtonObject mainButtonMenu,
+						mainToggleClue,
+						mainDebug;
+	
+	private ProgressBarObject mainHealthBar;
+	
+	// Mission
+	private ImageObject missionBackground,
+						missionCrosshair,
+						crosshairIndicator;
+	
+	private ButtonObject missionButtonNext,
+						menuContinue;
+	
+	private TextObject missionText,
+						missionGivenStatus;
+	
+	
+	private float crosshairOffsetX = 0;
+	private float crosshairOffsetY = 0;
+
 	private ScreenState screenState = ScreenState.MAIN;
 	
 	protected List<AbstractElement> listMainScreen;
@@ -91,18 +112,17 @@ public class SceneMain extends Scene{
 	protected List<AbstractElement> listMissionScreen;
 	protected List<AbstractElement> listMenuScreen;
 	
-	private TextObject textCurrentElapsedTime;
+	
 	private long startTime;
 	
 	private Vibrator vibrator;
 	
 	
+	boolean allMissionsCompleted = false;
 	
-	private String[] missionTitles;
-	
-	private String[] missionClues;
-	
-	private String[] missionIntroductions;
+	private String[] missionTitles,
+					missionClues,
+					missionIntroductions;
 	
 	private int[] missionImages = { R.drawable.clue_loco,
 									R.drawable.clue_tank,
@@ -111,20 +131,16 @@ public class SceneMain extends Scene{
 									R.drawable.clue_plane,
 									R.drawable.clue_crawler};
 	
-	private ImageObject[] missionFactsheets = new ImageObject[6];
+	
 	
 	private int[] missionFactsheetImages = new int[6];
 	
 	private long[] missionStartTimes = new long[6];
 	private long[] missionCompletionTimes = new long[6];
 	
-	private int missionCount = -1;
 	private int currentMission = -1;
-	
 	private boolean[] missionCompletion = new boolean[6];
-	
 	private int currentVibration = 5;
-	
 	private long vibrationPatterns[][] =  { {0, 1000, 0},  // 0
 											{ 200, 150},  // 20
 											{ 500, 150},  // 50
@@ -133,12 +149,13 @@ public class SceneMain extends Scene{
 											};
 	
 	private boolean playing = false;
-	
+	private boolean windowHasFocus = true;
 	private Random random = new Random();
-	
-	private MissionType missionType;
-	
+
 	private int health = 100;
+	
+	private float transportOffsetX;
+	private float transportOffsetY;
 	
 	private Handler handler = new Handler();
 	private Runnable runnable = new Runnable() {
@@ -146,62 +163,58 @@ public class SceneMain extends Scene{
 		int yy = Globals.screenDimensions.y/24;
 		float prevX = 0;
 		float prevY = 0;
-		
 		float cX;
 		float cY;
 		
-		public void calculateCrosshair(ImageObject a, float offsetX, float offsetY){
-			cX = xx * AccelerometerManager.getX();
-			   
-			   cX = -cX;
-			   cX += offsetX + a.getElement().getX();
-			   
-			  cY = 0;
-			  
-			  if (missionType == MissionType.HORIZONTAL)
-				  cY = yy * AccelerometerManager.getY();
-			  else{
-				  cY = yy * AccelerometerManager.getZ();
-				  cY = -cY;
-			  }
-			   cY += offsetY + a.getElement().getY();
-			   
-			   cX = lerp(prevX, cX, 0.3f);
-			  cY = lerp(prevY, cY, 0.3f);
-			  //imageCrosshairTarget.getElement().setPadding((int)w, (int)(crosshairOffset+q), 0, 0);
-			  imageCrosshairTarget.getElement().setPadding((int)(cX), (int)(cY), 0, 0);
-			  
-			  prevX = cX;
- 			  prevY = cY;
+		float lerp(float lastVal, float currentVal, float multiplier){
+			return (lastVal + ((currentVal - lastVal)) * multiplier);
 		}
-	 	   @Override
-	 	   public void run() {
+		
+		public void calculateCrosshair(ImageObject a, float offsetX, float offsetY){
+				cX = xx * AccelerometerManager.getX();
+			   
+				cX = -cX;
+				
+				cX += offsetX + a.getElement().getX();
+			   
+				cY = 0;
+			  
+				if (missionType == MissionType.HORIZONTAL)
+					cY = yy * AccelerometerManager.getY();
+				else{
+					cY = yy * AccelerometerManager.getZ();
+					cY = -cY;
+				}
+				cY += offsetY + a.getElement().getY();
+			   
+				cX = lerp(prevX, cX, 0.3f);
+				cY = lerp(prevY, cY, 0.3f);
+				//imageCrosshairTarget.getElement().setPadding((int)w, (int)(crosshairOffset+q), 0, 0);
+				crosshairIndicator.getElement().setPadding((int)(cX), (int)(cY), 0, 0);
+			  
+				prevX = cX;
+				prevY = cY;
+		}
+		
+		@Override
+		public void run() {
 	 		   
-	 		   if (screenState == ScreenState.MISSION){
-	 			   
-	 			  calculateCrosshair(imageCrosshair, crosshairOffsetX, crosshairOffsetY);
-	 			  if ((cX > imageCrosshair.getElement().getX() && cX < imageCrosshair.getElement().getX() + imageCrosshair.getWidth()) && 
-	 					 (cY > imageCrosshair.getElement().getY() && cY < imageCrosshair.getElement().getY() + imageCrosshair.getHeight()))
-	 				  imageCrosshair.getElement().setColorFilter(Colour.FromRGB(20, 255, 50));
-	 			  else
-	 				  imageCrosshair.getElement().setColorFilter(Colour.FromRGB(255, 0, 0), PorterDuff.Mode.MULTIPLY);
-	 			  
-	 			  
-	 			 // imageCrosshairTarget.addView(activity.getLayout().get());
+			if (screenState == ScreenState.MISSION){
+				calculateCrosshair(missionCrosshair, crosshairOffsetX, crosshairOffsetY);
+				if ((cX > missionCrosshair.getElement().getX() && cX < missionCrosshair.getElement().getX() + missionCrosshair.getWidth()) && 
+					(cY > missionCrosshair.getElement().getY() && cY < missionCrosshair.getElement().getY() + missionCrosshair.getHeight()))
+					missionCrosshair.getElement().setColorFilter(Colour.FromRGB(20, 255, 50));
+				else
+ 				  missionCrosshair.getElement().setColorFilter(Colour.FromRGB(255, 0, 0), PorterDuff.Mode.MULTIPLY);
 	 		   }
 	           if (playing){
 	        	   gameplay();
 	        	   if (screenState == ScreenState.MAIN)
-	        		   calculateCrosshair(imageTransportation, transportOffsetX, transportOffsetY);
+	        		   calculateCrosshair(mainImageTransportation, transportOffsetX, transportOffsetY);
 	           }
 	 	       handler.postDelayed(this, 100); 
 	 	   }
 	};
-	
-	float lerp(float lastVal, float currentVal, float multiplier)
-	{
-		return (lastVal + ((currentVal - lastVal)) * multiplier);
-	}
 	
 	private void gameplay(){
 		vibrator.cancel();
@@ -251,7 +264,7 @@ public class SceneMain extends Scene{
 			return;
 		}
 		
-		healthBar.setValue(health);
+		mainHealthBar.setValue(health);
 		
 		float rotVal= 0;
 		
@@ -259,51 +272,30 @@ public class SceneMain extends Scene{
 			rotVal = -(AccelerometerManager.getX()*4.5f);
 		else if (missionType == MissionType.HORIZONTAL)
 			rotVal = -(AccelerometerManager.getY()*4.5f);
-		imageTransportation.rotate(rotVal);
-		//imageTransportationRed.rotate(rotVal);
-		
-		//102 123 42
-		
+		mainImageTransportation.rotate(rotVal);
+
 		rotVal = Math.abs(rotVal);
-		imageTransportation.getElement().setColorFilter(Colour.FromRGB((int)(102+(rotVal*2.5f)), (int)(123-(rotVal*2.5f)), (int)(42-(rotVal))), PorterDuff.Mode.MULTIPLY);
+		mainImageTransportation.getElement().setColorFilter(Colour.FromRGB((int)(102+(rotVal*2.5f)), (int)(123-(rotVal*2.5f)), (int)(42-(rotVal))), PorterDuff.Mode.MULTIPLY);
 		
-		//imageTransportation.getElement().setAlpha((int)(255-(Math.abs(rotVal*5))));
-        
 		long millis = System.currentTimeMillis() - startTime;
         int seconds = (int) (millis / 1000);
         int minutes = seconds / 60;
         seconds     = seconds % 60;
-        textCurrentElapsedTime.setText(String.format("Current elapsed \ntime: %d:%02d", minutes, seconds));
+        mainElapsedTime.setText(String.format("Current elapsed \ntime: %d:%02d", minutes, seconds));
 	}
 
 	public SceneMain(int idIn, Activity a, boolean visible) {
 		super(idIn, a, visible);
-		
-		
 	}
-	
-	ImageObject imageMissionGiving;
-	ButtonObject buttonMissionNext;
-	TextObject textMissionText;
-	ImageObject imageCrosshair;
-	ImageObject imageCrosshairTarget;
-	
+
 	private void missionSetup(){
 		playing = false;
-
-		//((AnimationDrawable)activity.getLayout().get().getBackground()).
-//		setScene(ScreenState.GIVING_MISSION);
-		
-		//imageMissionGiving.getElement().setAlpha(1f);
-		//imageMissionGiving.setVisibility(View.VISIBLE);
-		//buttonMissionNext.setVisibility(View.VISIBLE);
-		//textMissionText.setVisibility(View.VISIBLE);
 		vibrator.cancel();
 		
 		if (currentMission >= 0){
 			missionCompletionTimes[currentMission] = System.currentTimeMillis();
-			missionFactsheets[currentMission].setImage(missionFactsheetImages[currentMission]);
-			missionFactsheets[currentMission].setAbsScaleY(Globals.screenDimensions.y/6);
+			menuFactsheets[currentMission].setImage(missionFactsheetImages[currentMission]);
+			menuFactsheets[currentMission].setAbsScaleY(Globals.screenDimensions.y/6);
 			missionGivenStatus.setText(missionTitles[currentMission] + " mission complete!\nFactsheet unlocked in menu!");
 			missionCompletion[currentMission] = true;
 		}
@@ -317,30 +309,20 @@ public class SceneMain extends Scene{
 		
 		if (allComplete){
 			allMissionsCompleted = true;
-			
-			//buttonMissionNext.setVisibility(View.GONE);
-		    //listMissionScreen.remove(buttonMissionNext);
+
 			currentMission = missionCompletion.length+1;
-			textMissionText.setText("All missions complete!\n\n");
-			
-			menuContinue.setText("All missions complete!");
-			
-		
-			
+			missionText.setText("All missions complete!\n\n");			
+			menuContinue.setText("All missions complete!");			
 			for (int i = 0; i < 6; i++){
 				long millis = missionCompletionTimes[i] - missionStartTimes[i];
 		        int seconds = (int) (millis / 1000);
 		        int minutes = seconds / 60;
 		        seconds     = seconds % 60;
-				textMissionText.getElement().append(missionTitles[i] + String.format(": %d:%02d\n", minutes, seconds));
+				missionText.getElement().append(missionTitles[i] + String.format(": %d:%02d\n", minutes, seconds));
 			}
-			
-			textMissionText.getElement().append("\nClick the button to go back to menu and view your factsheets!");
-			//setScene(ScreenState.MENU);
-			
-			imageCrosshair.setVisibility(View.GONE);
-			imageCrosshairTarget.setVisibility(View.GONE);
-			
+			missionText.getElement().append("\nClick the button to go back to menu and view your factsheets!");
+			missionCrosshair.setVisibility(View.GONE);
+			crosshairIndicator.setVisibility(View.GONE);
 			return;
 		}
 		
@@ -351,53 +333,38 @@ public class SceneMain extends Scene{
 		if (currentMission == 0 || currentMission == 3 || currentMission == 5){
 			missionType = MissionType.VERTICAL;
 			if (missionTitles[currentMission] == "Sylvie")
-				imageTransportation.setImage(R.drawable.transportation_sylvie);
+				mainImageTransportation.setImage(R.drawable.transportation_sylvie);
 			else
-				imageTransportation.setImage(R.drawable.transportation_crawler_green);
+				mainImageTransportation.setImage(R.drawable.transportation_crawler_green);
 		}
 		else{
 			missionType = MissionType.HORIZONTAL;
-			imageTransportation.setImage(R.drawable.transportation_horizontal_green);
+			mainImageTransportation.setImage(R.drawable.transportation_horizontal_green);
 		}
 		
-		imageTransportation.setAbsScaleY(Globals.screenDimensions.y/4);
-		textClue.setText(missionClues[currentMission]);
-		imageCrosshairTarget.setVisibility(View.VISIBLE);
-		missionCount++;
+		mainImageTransportation.setAbsScaleY(Globals.screenDimensions.y/4);
+		mainTextClue.setText(missionClues[currentMission]);
+		crosshairIndicator.setVisibility(View.VISIBLE);
 		startTime = System.currentTimeMillis();
 		missionStartTimes[currentMission] = startTime;
-		textMissionText.setText(missionIntroductions[currentMission] + "\n\n");
+		missionText.setText(missionIntroductions[currentMission] + "\n\n");
 	}
 
-	
-	
-	boolean allMissionsCompleted = false;
-	
-	
 	private void setScene(ScreenState sIn){
 		screenState = sIn;
-		//setVisibility(View.GONE);
 		List<AbstractElement> l = listMainScreen;
 
 		if (sIn == ScreenState.MAIN){
-			//listl = listMainScreen;
+			//l = listMainScreen;
 		}
 		else if (sIn == ScreenState.CLUE){
 			l = listClueScreen;
 		}
 		else if (sIn == ScreenState.MISSION){
 			l = listMissionScreen;
-				//textStatus.setText("Mission complete! You did it!");
-				//missionCompletion[currentMission] = true;
-			//if (health != 0){
-				//missionSetup();
-				//if (allMissionsCompleted){
-					//setScene(ScreenState.MENU);
-				//	return;
-				//}
-			//}
-				activity.getLayout().get().getBackground().setAlpha(120);
+			activity.getLayout().get().getBackground().setAlpha(120);
 		}
+		
 		transitionOut(l);
 		
 		if (sIn == ScreenState.MENU){
@@ -405,31 +372,27 @@ public class SceneMain extends Scene{
 		}
 		
 		if (sIn == ScreenState.MISSION && allMissionsCompleted){
-			imageCrosshair.setVisibility(View.GONE);
-			imageCrosshairTarget.setVisibility(View.GONE);
-			buttonMissionNext.setVisibility(View.VISIBLE);
+			missionCrosshair.setVisibility(View.GONE);
+			crosshairIndicator.setVisibility(View.GONE);
+			missionButtonNext.setVisibility(View.VISIBLE);
 		}
 	}
-	
-	
+
 	public void setClickEvents(){
 		
-		buttonMissionNext.getElement().setOnClickListener(new View.OnClickListener() {
+		missionButtonNext.getElement().setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				if (!allMissionsCompleted){
-					imageTransportation.getElement().setEnabled(true);
+					mainImageTransportation.getElement().setEnabled(true);
 					activity.getLayout().get().getBackground().setAlpha(255);
 					setScene(ScreenState.MAIN);
 					
 					if (health != 0){
-						//textClue.setText(missionClues[currentMission]);
-						textStatus.setText("New mission given. Look at your new clue!");
-						imageClue.setImage(missionImages[currentMission]);
-						imageClue.setAbsScaleY((int)(Globals.screenDimensions.y/2.5f));
-						
+						mainTextStatus.setText("New mission given. Look at your new clue!");
+						mainImageClue.setImage(missionImages[currentMission]);
+						mainImageClue.setAbsScaleY((int)(Globals.screenDimensions.y/2.5f));
 					}
-					
 					playing = true;
 					health = 100;
 				}
@@ -438,10 +401,9 @@ public class SceneMain extends Scene{
 			}
 		});
 		
-		buttonToggleClue.getElement().setOnClickListener(new View.OnClickListener() {
+		mainToggleClue.getElement().setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				
 				if (menuOverlay.getElement().getVisibility() == View.VISIBLE)
 					return;
 				
@@ -455,42 +417,21 @@ public class SceneMain extends Scene{
 		menuGallery.getElement().setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				//if (screenState == ScreenState.MAIN)
-				//{
-				
-				
-					//menuOverlay.setVisibility(View.VISIBLE);
-					//menuOverlay.getElement().animate().alpha(1.0f);
-				//}
 				activity.getLayout().get().getBackground().setAlpha(255);
 				activity.SetScreenState(GameActivity.ScreenState.GALLERY);	
-				
-				
 			}
 		});
 		
-		buttonMenu.getElement().setOnClickListener(new View.OnClickListener() {
+		mainButtonMenu.getElement().setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				//if (screenState == ScreenState.MAIN)
-				//{
 				setScene(ScreenState.MENU);
-				
-				//for (AbstractElement a: listMenuScreen){
-				//	a.setVisibility(View.VISIBLE);
-				//	a.getElementView().animate().alpha(1.0f);
-				//}
-				//	screenState = ScreenState.MENU;
-				//}
-				//activity.SetScreenState(GameActivity.ScreenState.GALLERY);	
 			}
 		});
 		
-		buttonDebug.getElement().setOnClickListener(new View.OnClickListener() {
+		mainDebug.getElement().setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {;
-			
-			
 				if (menuOverlay.getElement().getVisibility() == View.VISIBLE)
 					return;
 			
@@ -498,7 +439,7 @@ public class SceneMain extends Scene{
 			}
 		});
 		
-		imageTransportation.getElement().setOnClickListener(new View.OnClickListener() {
+		mainImageTransportation.getElement().setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				if (menuOverlay.getElement().getVisibility() == View.VISIBLE)
@@ -506,19 +447,17 @@ public class SceneMain extends Scene{
 				
 				if (!missionCompletion[currentMission]){
 					if (EstimoteManager.getBeaconList().size() == 0){
-						textStatus.setText("Your Bluetooth may not be turned on, or your device is not supported.");
+						mainTextStatus.setText("Your Bluetooth may not be turned on, or your device is not supported.");
 					}
 					MyBeacon d = EstimoteManager.contains(missionTitles[currentMission].toString());
 					if (d != null && d.getDistance() < 2.3f){
-						imageTransportation.getElement().setEnabled(false);
+						mainImageTransportation.getElement().setEnabled(false);
 						missionSetup();	
 						setScene(ScreenState.MISSION);	
 					}
 					else
-						textStatus.setText("Hm, not in the right place. Keep looking!");
+						mainTextStatus.setText("Hm, not in the right place. Keep looking!");
 				}
-				//else
-				//	missionSetup();
 			}
 		});		
 		
@@ -531,12 +470,8 @@ public class SceneMain extends Scene{
 					setScene(ScreenState.MISSION);
 					return;
 				}
-					
-				
+
 				setScene(ScreenState.MAIN);
-				//sheetLockedDialog("Loco");
-				//else
-				//	missionSetup();
 			}
 		});		
 		
@@ -549,9 +484,6 @@ public class SceneMain extends Scene{
 				activity.SetScreenState(GameActivity.ScreenState.FACTSHEET);
 				activity.getFactsheet().setScene(SceneFactsheet.ScreenState.LOCO);
 				}
-				//sheetLockedDialog("Loco");
-				//else
-				//	missionSetup();
 			}
 		});		
 		
@@ -564,9 +496,6 @@ public class SceneMain extends Scene{
 				activity.SetScreenState(GameActivity.ScreenState.FACTSHEET);
 				activity.getFactsheet().setScene(SceneFactsheet.ScreenState.TANK);
 				}
-				//sheetLockedDialog("Tanks");
-				//else
-				//	missionSetup();
 			}
 		});	
 		
@@ -579,9 +508,6 @@ public class SceneMain extends Scene{
 				activity.SetScreenState(GameActivity.ScreenState.FACTSHEET);
 				activity.getFactsheet().setScene(SceneFactsheet.ScreenState.FIELDGUN);
 				}
-				//sheetLockedDialog("Field Gun");
-				//else
-				//	missionSetup();
 			}
 		});	
 		
@@ -594,9 +520,6 @@ public class SceneMain extends Scene{
 				activity.SetScreenState(GameActivity.ScreenState.FACTSHEET);
 				activity.getFactsheet().setScene(SceneFactsheet.ScreenState.SYLVIE);
 				}
-				//sheetLockedDialog("Sylvie");
-				//else
-				//	missionSetup();
 			}
 		});	
 		
@@ -606,27 +529,21 @@ public class SceneMain extends Scene{
 				if (missionCompletionTimes[4] == 0)
 					sheetLockedDialog("Plane Propellers");
 				else{
-				activity.SetScreenState(GameActivity.ScreenState.FACTSHEET);
-				activity.getFactsheet().setScene(SceneFactsheet.ScreenState.PLANE);
+					activity.SetScreenState(GameActivity.ScreenState.FACTSHEET);
+					activity.getFactsheet().setScene(SceneFactsheet.ScreenState.PLANE);
 				}
-				//sheetLockedDialog("Plane");
-				//else
-				//	missionSetup();
 			}
 		});	
 		
 		menuFactsCrawler.getElement().setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				//sheetLockedDialog("Crawler");
 				if (missionCompletionTimes[5] == 0)
 					sheetLockedDialog("Crawler");
 				else{
-				activity.SetScreenState(GameActivity.ScreenState.FACTSHEET);
-				activity.getFactsheet().setScene(SceneFactsheet.ScreenState.CRAWLER);
+					activity.SetScreenState(GameActivity.ScreenState.FACTSHEET);
+					activity.getFactsheet().setScene(SceneFactsheet.ScreenState.CRAWLER);
 				}
-				//else
-				//	missionSetup();
 			}
 		});	
 	}
@@ -651,19 +568,14 @@ public class SceneMain extends Scene{
 		setScene(screenState);
 		if (startTime == 0)
 			startTime = System.currentTimeMillis();
-		
-		
 	}
-	private boolean windowHasFocus = true;
-	
+
 	public void toggleVibration(boolean on){
 		currentVibration = -1;
-		
 		windowHasFocus = on;
 		if (!on)
 			vibrator.cancel();
 	}
-	protected void update(){}
 
 	@Override
 	public void onBackPressed() {
@@ -677,29 +589,10 @@ public class SceneMain extends Scene{
 					setScene(ScreenState.MAIN);
 				else
 					setScene(ScreenState.MISSION);
-			}
-				
+			}	
 		}
 	}
 	
-	
-	ButtonObject menuGallery;
-	//ButtonObject menuFactsLoco;
-	//ButtonObject menuFactsTank;
-	//ButtonObject menuFactsFieldGun;
-	//ButtonObject menuFactsPlanePropellers;
-	//ButtonObject menuFactsCrawler;
-	ImageObject menuFactsLoco;
-	ImageObject menuFactsTank;
-	ImageObject menuFactsFieldGun;
-	ImageObject menuFactsSylvie;
-	ImageObject menuFactsPlanePropellers;
-	ImageObject menuFactsCrawler;
-	
-	ImageObject imageTransportationRed;
-	ImageObject imagePressMe;
-	
-	TextObject missionGivenStatus;
 	private void itemSetup(Activity aIn){
 		
 		listMainScreen = new ArrayList<AbstractElement>();
@@ -710,109 +603,73 @@ public class SceneMain extends Scene{
 		missionTitles = aIn.getResources().getStringArray(R.array.mission_titles_array);
 		missionClues = aIn.getResources().getStringArray(R.array.mission_clues_array);
 		missionIntroductions = aIn.getResources().getStringArray(R.array.mission_introductions_array);
-		//textTitle = new TextObject("Transport munitions!", aIn, Globals.newId());
-        //textTitle.alignToTop();
-        //textTitle.getElement().setPaddingRelative(0, Globals.screenDimensions.y/100, 0, Globals.screenDimensions.y/80);
-        //textTitle.getElement().setTextSize(50f);
-        //textTitle.getElement().setTextSize(TypedValue.COMPLEX_UNIT_SP, 50f);
-        
-        imageClue = new ImageObject(R.drawable.clue1, aIn, Globals.newId(), false);
-        //imageClue.getElement().getLayoutParams().width = Globals.screenDimensions.y/4;
-        //imageClue.addRule(RelativeLayout.BELOW, textTitle.getId());
-        imageClue.alignToTop();
-        imageClue.getElement().setPaddingRelative(0, Globals.screenDimensions.y/100, 0, Globals.screenDimensions.y/100);
-        imageClue.setAbsScaleY((int)(Globals.screenDimensions.y/2.5f));
-    
-        textStatus = new TextObject("Mission status text box with long words everywhere", aIn, Globals.newId());
-        textStatus.addRule(RelativeLayout.BELOW, imageClue.getId());
-        textStatus.getElement().setWidth(Globals.screenDimensions.x-(Globals.screenDimensions.x/10));
-        textStatus.getElement().setTextSize(Globals.getTextSize());
-        textStatus.getElement().setGravity(Gravity.CENTER);
-        textStatus.getElement().setTypeface(Globals.Fonts.ExoRegular());
-        
-        
-       
-        
-        
-        //textClue.getLayoutParams().setMarginStart(Globals.screenDimensions.x/20);
-        
-        buttonMenu = new ButtonObject("Menu", aIn, Globals.newId());
-        buttonMenu.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-        buttonMenu.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-        buttonMenu.getLayoutParams().setMargins((Globals.screenDimensions.x/60), Globals.screenDimensions.y/40, 0, Globals.screenDimensions.y/20);
-        buttonMenu.getElement().setTextColor(Colour.FromRGB(10, 0, 10));
-        buttonMenu.getElement().setBackgroundColor(Colour.Transparent);
-        buttonMenu.getElement().setTypeface(Globals.Fonts.MajorShift());
-        buttonMenu.getElement().setTextSize(Globals.getTextSize()*2.2f);
-       // buttonGallery.addRule(RelativeLayout.ALIGN_START, textClue.getId());
-        
-        buttonDebug = new ButtonObject("Debug", aIn, Globals.newId());
-        buttonDebug.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-        buttonDebug.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        buttonDebug.getLayoutParams().setMargins(0, 0, (Globals.screenDimensions.x/12), Globals.screenDimensions.y/20);
-        
-        buttonToggleClue = new ButtonObject("Toggle Clue", aIn, Globals.newId());
-        buttonToggleClue.addRule(RelativeLayout.ALIGN_TOP, textStatus.getId());
-        buttonToggleClue.getLayoutParams().setMargins(0, Globals.screenDimensions.y/14, 0, 0);
-        buttonToggleClue.getElement().setTextSize(Globals.getTextSize());
-        buttonToggleClue.setWidth(Globals.screenDimensions.x/4);
-        
-        imageTransportation = new ImageObject(R.drawable.transportation_crawler_green, aIn, Globals.newId(), true);
-        //imageTransportation.addRule(RelativeLayout.BELOW, textStatus.getId());
-        imageTransportation.setBackgroundColour(Color.TRANSPARENT);
-        imageTransportation.addRule(RelativeLayout.BELOW, buttonToggleClue.getId());
-        imageTransportation.getLayoutParams().setMargins(0, Globals.screenDimensions.y/20, 0, 0);
-        imageTransportation.setAbsScaleY(Globals.screenDimensions.y/4);
-        
-        imageTransportationRed = new ImageObject(R.drawable.transportation_crawler_red, aIn, Globals.newId(), false);
-        //imageTransportation.addRule(RelativeLayout.BELOW, textStatus.getId());
-        //imageTransportationRed.setBackgroundColour(Color.TRANSPARENT);
-        //imageTransportationRed.addRule(RelativeLayout.BELOW, buttonToggleClue.getId());
-        //imageTransportationRed.getLayoutParams().setMargins(0, Globals.screenDimensions.y/20, 0, 0);
-        imageTransportationRed.getLayoutParams().setMargins(0, Globals.screenDimensions.y/20, 0, 0);
-        imageTransportationRed.setAbsScaleY(Globals.screenDimensions.y/4);
-        
-        imagePressMe = new ImageObject(R.drawable.press_me, aIn, Globals.newId(), false);
-        imagePressMe.setAbsScaleX(Globals.screenDimensions.x/4);
-        imagePressMe.addRule(RelativeLayout.RIGHT_OF, imageTransportation.getId());
 
-        imagePressMe.addRule(RelativeLayout.ALIGN_TOP, imageTransportation.getId());
         
+        mainImageClue = new ImageObject(R.drawable.clue1, aIn, Globals.newId(), false);
+        mainImageClue.alignToTop();
+        mainImageClue.getElement().setPaddingRelative(0, Globals.screenDimensions.y/100, 0, Globals.screenDimensions.y/100);
+        mainImageClue.setAbsScaleY((int)(Globals.screenDimensions.y/2.5f));
+    
+        mainTextStatus = new TextObject("Mission status text box with long words everywhere", aIn, Globals.newId());
+        mainTextStatus.addRule(RelativeLayout.BELOW, mainImageClue.getId());
+        mainTextStatus.getElement().setWidth(Globals.screenDimensions.x-(Globals.screenDimensions.x/10));
+        mainTextStatus.getElement().setTextSize(Globals.getTextSize());
+        mainTextStatus.getElement().setGravity(Gravity.CENTER);
+        mainTextStatus.getElement().setTypeface(Globals.Fonts.ExoRegular());
+
+        mainButtonMenu = new ButtonObject("Menu", aIn, Globals.newId());
+        mainButtonMenu.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        mainButtonMenu.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        mainButtonMenu.getLayoutParams().setMargins((Globals.screenDimensions.x/60), Globals.screenDimensions.y/40, 0, Globals.screenDimensions.y/20);
+        mainButtonMenu.getElement().setTextColor(Colour.FromRGB(10, 0, 10));
+        mainButtonMenu.getElement().setBackgroundColor(Colour.Transparent);
+        mainButtonMenu.getElement().setTypeface(Globals.Fonts.MajorShift());
+        mainButtonMenu.getElement().setTextSize(Globals.getTextSize()*2.2f);
         
-        imageTransportationRed.addRule(RelativeLayout.ALIGN_BOTTOM, imageTransportation.getId());
-        //imageTransportation.getElement().setPaddingRelative(Globals.screenDimensions.x/20, 0, 0, Globals.screenDimensions.y/30);
+        mainDebug = new ButtonObject("Debug", aIn, Globals.newId());
+        mainDebug.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        mainDebug.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        mainDebug.getLayoutParams().setMargins(0, 0, (Globals.screenDimensions.x/12), Globals.screenDimensions.y/20);
         
-        healthBar = new ProgressBarObject(aIn, Globals.newId(), true);
-        healthBar.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-       // healthBar.addRule(RelativeLayout.ALIGN_START, imageTransportation.getId());
-        healthBar.getLayoutParams().setMargins(0, 0, 0, Globals.screenDimensions.y/40);
-        healthBar.setWidth(imageTransportation.getWidth());
-        healthBar.setValue(50);
-        //healthBar.setMode(Mode.LIGHTEN);
-       // healthBar.getElement().setProgressDrawable(aIn.getResources().getDrawable(R.drawable.find_button));
-       // healthBar.getElement().setScaleY(3);
+        mainToggleClue = new ButtonObject("Toggle Clue", aIn, Globals.newId());
+        mainToggleClue.addRule(RelativeLayout.ALIGN_TOP, mainTextStatus.getId());
+        mainToggleClue.getLayoutParams().setMargins(0, Globals.screenDimensions.y/14, 0, 0);
+        mainToggleClue.getElement().setTextSize(Globals.getTextSize());
+        mainToggleClue.setWidth(Globals.screenDimensions.x/4);
         
+        mainImageTransportation = new ImageObject(R.drawable.transportation_crawler_green, aIn, Globals.newId(), true);
+        mainImageTransportation.setBackgroundColour(Color.TRANSPARENT);
+        mainImageTransportation.addRule(RelativeLayout.BELOW, mainToggleClue.getId());
+        mainImageTransportation.getLayoutParams().setMargins(0, Globals.screenDimensions.y/20, 0, 0);
+        mainImageTransportation.setAbsScaleY(Globals.screenDimensions.y/4);
         
-        textCurrentElapsedTime = new TextObject("Current elapsed time: 0:00", aIn, Globals.newId());
-        textCurrentElapsedTime.addRule(RelativeLayout.ALIGN_TOP, buttonToggleClue.getId());
-        textCurrentElapsedTime.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-        textCurrentElapsedTime.getLayoutParams().setMargins(Globals.screenDimensions.x/12, 0, 0, 0);
-        textCurrentElapsedTime.getElement().setGravity(Gravity.CENTER);
-        textCurrentElapsedTime.getElement().setTypeface(Globals.Fonts.ExoRegular());
-        textCurrentElapsedTime.getElement().setTextSize(Globals.getTextSize()*0.8f);
+        mainImagePressMe = new ImageObject(R.drawable.press_me, aIn, Globals.newId(), false);
+        mainImagePressMe.setAbsScaleX(Globals.screenDimensions.x/4);
+        mainImagePressMe.addRule(RelativeLayout.RIGHT_OF, mainImageTransportation.getId());
+        mainImagePressMe.addRule(RelativeLayout.ALIGN_TOP, mainImageTransportation.getId());
+
+        mainHealthBar = new ProgressBarObject(aIn, Globals.newId(), true);
+        mainHealthBar.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        mainHealthBar.getLayoutParams().setMargins(0, 0, 0, Globals.screenDimensions.y/40);
+        mainHealthBar.setWidth(mainImageTransportation.getWidth());
+        mainHealthBar.setValue(50);
+
+        mainElapsedTime = new TextObject("Current elapsed time: 0:00", aIn, Globals.newId());
+        mainElapsedTime.addRule(RelativeLayout.ALIGN_TOP, mainToggleClue.getId());
+        mainElapsedTime.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        mainElapsedTime.getLayoutParams().setMargins(Globals.screenDimensions.x/12, 0, 0, 0);
+        mainElapsedTime.getElement().setGravity(Gravity.CENTER);
+        mainElapsedTime.getElement().setTypeface(Globals.Fonts.ExoRegular());
+        mainElapsedTime.getElement().setTextSize(Globals.getTextSize()*0.8f);
         
-        textClue = new TextObject("This is the clue text it is clue text that contains a clue of varying length.", aIn, Globals.newId());
-        textClue.addRule(RelativeLayout.ALIGN_TOP, buttonToggleClue.getId());
-        textClue.getElement().setTextSize(Globals.getTextSize()*1.4f);
-        textClue.setWidth(Globals.screenDimensions.x/2.2f);
-        textClue.getLayoutParams().setMargins(0, Globals.screenDimensions.y/10, 0, 0);
-        textClue.getElement().setGravity(Gravity.CENTER);
-        textClue.getElement().setTypeface(Globals.Fonts.ExoRegular());
+        mainTextClue = new TextObject("This is the clue text it is clue text that contains a clue of varying length.", aIn, Globals.newId());
+        mainTextClue.addRule(RelativeLayout.ALIGN_TOP, mainToggleClue.getId());
+        mainTextClue.getElement().setTextSize(Globals.getTextSize()*1.4f);
+        mainTextClue.setWidth(Globals.screenDimensions.x/2.2f);
+        mainTextClue.getLayoutParams().setMargins(0, Globals.screenDimensions.y/10, 0, 0);
+        mainTextClue.getElement().setGravity(Gravity.CENTER);
+        mainTextClue.getElement().setTypeface(Globals.Fonts.ExoRegular());
         
-        
-        imageMissionGiving = new ImageObject(R.drawable.background, aIn, Globals.newId(), false);
-		buttonMissionNext = new ButtonObject("Continue", aIn, Globals.newId());
-		
 		missionGivenStatus = new TextObject("", aIn, Globals.newId());
 		missionGivenStatus.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		missionGivenStatus.getLayoutParams().setMargins(0, Globals.screenDimensions.y/20, 0, Globals.screenDimensions.y/20);
@@ -820,35 +677,30 @@ public class SceneMain extends Scene{
 		missionGivenStatus.getElement().setTypeface(Globals.Fonts.ChunkFive());
 		missionGivenStatus.setTextColour(Colour.FromRGB(255, 20, 20));
 		
-		textMissionText = new TextObject("Teashdas", aIn, Globals.newId());
-		textMissionText.getElement().setTextSize(Globals.getTextSize()*1.4f);
-		textMissionText.addRule(RelativeLayout.BELOW, missionGivenStatus.getId());
-		textMissionText.getLayoutParams().setMargins(Globals.screenDimensions.x/10, 0, Globals.screenDimensions.x/10, 0);
-		textMissionText.getElement().setTypeface(Globals.Fonts.ExoRegular());
+		missionText = new TextObject("Teashdas", aIn, Globals.newId());
+		missionText.getElement().setTextSize(Globals.getTextSize()*1.4f);
+		missionText.addRule(RelativeLayout.BELOW, missionGivenStatus.getId());
+		missionText.getLayoutParams().setMargins(Globals.screenDimensions.x/10, 0, Globals.screenDimensions.x/10, 0);
+		missionText.getElement().setTypeface(Globals.Fonts.ExoRegular());
 		
-		
-		imageMissionGiving.setScale(Globals.screenDimensions.x - (Globals.screenDimensions.x/10), 
+		missionBackground = new ImageObject(R.drawable.background, aIn, Globals.newId(), false);
+		missionBackground.setScale(Globals.screenDimensions.x - (Globals.screenDimensions.x/10), 
         		Globals.screenDimensions.y - (Globals.screenDimensions.y/10));
 		
-		imageCrosshair = new ImageObject(R.drawable.crosshair_red, aIn, Globals.newId(), false);
+		missionButtonNext = new ButtonObject("Continue", aIn, Globals.newId());
+		missionButtonNext.getLayoutParams().setMargins(0, 0, 0, Globals.screenDimensions.y/15);
+		missionButtonNext.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 		
+		missionCrosshair = new ImageObject(R.drawable.crosshair_red, aIn, Globals.newId(), false);
+		missionCrosshair.setAbsScaleX(Globals.screenDimensions.x/6);
+		missionCrosshair.addRule(RelativeLayout.ABOVE, missionButtonNext.getId());
 		
-		imageCrosshair.setAbsScaleX(Globals.screenDimensions.x/6);
-		
-		buttonMissionNext.getLayoutParams().setMargins(0, 0, 0, Globals.screenDimensions.y/15);
-		buttonMissionNext.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-		
-		imageCrosshair.addRule(RelativeLayout.ABOVE, buttonMissionNext.getId());
-		
-		imageCrosshairTarget = new ImageObject(R.drawable.crosshair_red, aIn, Globals.newId(), false);
-		
-		//imageCrosshairTarget.addRule(RelativeLayout.ALIGN_TOP, imageCrosshair.getId());
-		imageCrosshairTarget.alignToTop();
-		imageCrosshairTarget.alignToLeft();
-		imageCrosshairTarget.setAbsScaleX(Globals.screenDimensions.x/26);
+		crosshairIndicator = new ImageObject(R.drawable.crosshair_red, aIn, Globals.newId(), false);
+		crosshairIndicator.alignToTop();
+		crosshairIndicator.alignToLeft();
+		crosshairIndicator.setAbsScaleX(Globals.screenDimensions.x/26);
 		
 		menuGallery = new ButtonObject("Gallery", aIn, Globals.newId());
-		
 		menuFactsLoco = new ImageObject(R.drawable.factsheet_loco_locked, aIn, Globals.newId(), true);
 		menuFactsTank = new ImageObject(R.drawable.factsheet_tank_locked, aIn, Globals.newId(), true);
 		menuFactsFieldGun = new ImageObject(R.drawable.factsheet_fieldgun_locked, aIn, Globals.newId(), true);
@@ -863,14 +715,12 @@ public class SceneMain extends Scene{
 		menuFactsPlanePropellers.setAbsScaleY(Globals.screenDimensions.y/6);
 		menuFactsCrawler.setAbsScaleY(Globals.screenDimensions.y/6);
 		
-		
-		
-		missionFactsheets[0] = menuFactsLoco;
-		missionFactsheets[1] = menuFactsTank;
-		missionFactsheets[2] = menuFactsFieldGun;
-		missionFactsheets[3] = menuFactsSylvie;
-		missionFactsheets[4] = menuFactsPlanePropellers;
-		missionFactsheets[5] = menuFactsCrawler;
+		menuFactsheets[0] = menuFactsLoco;
+		menuFactsheets[1] = menuFactsTank;
+		menuFactsheets[2] = menuFactsFieldGun;
+		menuFactsheets[3] = menuFactsSylvie;
+		menuFactsheets[4] = menuFactsPlanePropellers;
+		menuFactsheets[5] = menuFactsCrawler;
 		
 		missionFactsheetImages[0] = R.drawable.factsheet_loco_unlocked;
 		missionFactsheetImages[1] = R.drawable.factsheet_tank_unlocked;
@@ -878,34 +728,15 @@ public class SceneMain extends Scene{
 		missionFactsheetImages[3] = R.drawable.factsheet_sylvie_unlocked;
 		missionFactsheetImages[4] = R.drawable.factsheet_plane_unlocked;
 		missionFactsheetImages[5] = R.drawable.factsheet_crawler_unlocked;
-		
-		
-		
-		//menuFactsLoco.addRule(RelativeLayout.LEFT_OF, menuFactsTank.getId());
-		
-		//menuFactsPlanePropellers.addRule(RelativeLayout.LEFT_OF, menuFactsCrawler.getId());
-		
-		
-		//menuFactsTank.addRule(RelativeLayout.RIGHT_OF, menuFactsLoco.getId());
 	}
-	TextObject textInvisible;
 	
-	
-	float crosshairOffsetX = 0;
-	float crosshairOffsetY = 0;
-	ImageObject menuOverlay;
-	
-	ButtonObject menuContinue;
 	@Override
 	public void sceneInit(Activity aIn, boolean visible) {
 		itemSetup(aIn);
-        
-        //addElementToView(textTitle);
-
 		Bitmap b = Bitmap.createBitmap(Colour.ArrFromRGB(0,0,0,180), 1, 1, Bitmap.Config.ARGB_8888);
 		menuOverlay = new ImageObject(b, aIn, Globals.newId(), false);
-		menuOverlay.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT,
-															RelativeLayout.LayoutParams.FILL_PARENT));
+		menuOverlay.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+															RelativeLayout.LayoutParams.MATCH_PARENT));
 		menuOverlay.getElement().setScaleType(ScaleType.FIT_XY);
 		menuOverlay.getElement().setClickable(false);
 		menuOverlay.setVisibility(View.GONE);
@@ -935,7 +766,6 @@ public class SceneMain extends Scene{
 		menuFactsCrawler.addRule(RelativeLayout.BELOW, menuFactsSylvie.getId());
 		
 		menuContinue = new ButtonObject("CONTINUE\nPLAYING", aIn, Globals.newId());
-		
 		menuContinue.getElement().setTypeface(Globals.Fonts.MajorShift());
 		menuContinue.getLayoutParams().setMargins(0, Globals.screenDimensions.y/36, 0, 0);
 		menuContinue.getElement().setTextSize(Globals.getTextSize()*2.8f);
@@ -948,58 +778,40 @@ public class SceneMain extends Scene{
 		menuGallery.getElement().setTextSize(Globals.getTextSize()*2.8f);
 		menuGallery.getElement().setBackgroundColor(android.graphics.Color.TRANSPARENT);
 		menuGallery.addRule(RelativeLayout.ABOVE, menuFactsLoco.getId());
-		
-		
-		
-		
+
         listMenuScreen.add(menuOverlay);
         listMenuScreen.add(menuGallery);
-        
-        /*
-		listMenuScreen.add(menuFactsLoco);
-		listMenuScreen.add(menuFactsTank);
-		listMenuScreen.add(menuFactsFieldGun);
-		listMenuScreen.add(menuFactsSylvie);
-		listMenuScreen.add(menuFactsPlanePropellers);
-		listMenuScreen.add(menuFactsCrawler);*/
-        
+
         for (int i = 0; i < 6; i++)
-        	listMenuScreen.add(missionFactsheets[i]);
+        	listMenuScreen.add(menuFactsheets[i]);
+        
 		listMenuScreen.add(menuContinue);
 
-        listMainScreen.add(imageClue);
-        listMainScreen.add(textStatus);
-        
-       // listMainScreen.add(imageTransportationRed);
-        listMainScreen.add(imageTransportation);
-        listMainScreen.add(imagePressMe);
-        
-        listMainScreen.add(healthBar);
-        listMainScreen.add(buttonMenu);
-        listMainScreen.add(buttonDebug);
-        listMainScreen.add(buttonToggleClue);
-        listMainScreen.add(textCurrentElapsedTime);
-        
-        
-        
-        
-        listMissionScreen.add(imageMissionGiving);
-        listMissionScreen.add(buttonMissionNext);
-        listMissionScreen.add(textMissionText);
-        listMissionScreen.add(imageCrosshair);
-        listMissionScreen.add(imageCrosshairTarget);
+        listMainScreen.add(mainImageClue);
+        listMainScreen.add(mainTextStatus);
+        listMainScreen.add(mainImageTransportation);
+        listMainScreen.add(mainImagePressMe);
+        listMainScreen.add(mainHealthBar);
+        listMainScreen.add(mainButtonMenu);
+        listMainScreen.add(mainDebug);
+        listMainScreen.add(mainToggleClue);
+        listMainScreen.add(mainElapsedTime);
+
+        listMissionScreen.add(missionBackground);
+        listMissionScreen.add(missionButtonNext);
+        listMissionScreen.add(missionText);
+        listMissionScreen.add(missionCrosshair);
+        listMissionScreen.add(crosshairIndicator);
         listMissionScreen.add(missionGivenStatus);
-        
-        
-        
-        listClueScreen.add(imageClue);
-        listClueScreen.add(textStatus);
-        listClueScreen.add(buttonMenu);
-        listClueScreen.add(buttonDebug);
-        listClueScreen.add(buttonToggleClue);
-        listClueScreen.add(textCurrentElapsedTime);
-        listClueScreen.add(textClue);
-        listClueScreen.add(healthBar);
+
+        listClueScreen.add(mainImageClue);
+        listClueScreen.add(mainTextStatus);
+        listClueScreen.add(mainButtonMenu);
+        listClueScreen.add(mainDebug);
+        listClueScreen.add(mainToggleClue);
+        listClueScreen.add(mainElapsedTime);
+        listClueScreen.add(mainTextClue);
+        listClueScreen.add(mainHealthBar);
         
         for (AbstractElement a : listMainScreen)
         	addElementToView(a);
@@ -1013,11 +825,10 @@ public class SceneMain extends Scene{
         for (AbstractElement a : listMissionScreen)
         	addElementToView(a);
         
-        listMainScreen.add(imageCrosshairTarget);
-        addElementToView(imageCrosshairTarget);
+        listMainScreen.add(crosshairIndicator);
+        addElementToView(crosshairIndicator);
         
         setClickEvents();
-        //estimoteSetup(aIn);
         setScene(ScreenState.MAIN);
         
         super.sceneInit(aIn, visible);
@@ -1028,38 +839,21 @@ public class SceneMain extends Scene{
 		vibrator = (Vibrator)aIn.getSystemService(Context.VIBRATOR_SERVICE);
 		
 		screenState = ScreenState.MISSION;
-        //onLoad();
-		
-		
 		missionSetup();
+
 		
-		//imageMissionGiving.setVisibility(View.GONE);
-		//buttonMissionNext.setVisibility(View.GONE);
-		//textMissionText.setVisibility(View.GONE);
+		crosshairOffsetX = missionCrosshair.getHeight()/2;
+		crosshairOffsetX -= crosshairIndicator.getHeight()/2;
 		
-		crosshairOffsetX = imageCrosshair.getHeight()/2;
-		crosshairOffsetX -= imageCrosshairTarget.getHeight()/2;
+		crosshairOffsetY = missionCrosshair.getWidth()/2;
+		crosshairOffsetY -= crosshairIndicator.getWidth()/2;
 		
-		crosshairOffsetY = imageCrosshair.getWidth()/2;
-		crosshairOffsetY -= imageCrosshairTarget.getWidth()/2;
+		transportOffsetX = mainImageTransportation.getHeight()/2;
+		transportOffsetX -= crosshairIndicator.getHeight()/2;
 		
-		transportOffsetX = imageTransportation.getHeight()/2;
-		transportOffsetX -= imageCrosshairTarget.getHeight()/2;
-		
-		transportOffsetY = imageTransportation.getWidth()/2;
-		transportOffsetY -= imageCrosshairTarget.getWidth()/2;
-		//crosshairOffset += imageCrosshair.getElement().getY();
-		//imageCrosshairTarget.getLayoutParams().setMargins(0, (int)crosshairOffset, 0, 0);
+		transportOffsetY = mainImageTransportation.getWidth()/2;
+
 		handler.postDelayed(runnable, 100);
-		//setScene(ScreenState.MISSION);
-        //listMainScreen.remove(imageMissionGiving);
-        //listMainScreen.remove(buttonMissionNext);
-        //listMainScreen.remove(textMissionText);
-		
-		
-		
 	}
-	
-	float transportOffsetX;
-	float transportOffsetY;
+
 }

@@ -2,9 +2,7 @@ package com.example.classes;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.view.View;
-import android.view.Window;
 import android.widget.RelativeLayout;
 
 public class LayoutManager {

@@ -1,12 +1,8 @@
 package com.example.classes;
 
-import com.example.museum.R;
-
 import android.app.Activity;
-import android.content.pm.ActivityInfo;
 import android.graphics.Point;
 import android.graphics.Typeface;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class Globals {

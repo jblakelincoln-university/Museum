@@ -2,7 +2,6 @@ package com.example.classes.Objects;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
 import android.graphics.PorterDuff.Mode;
 import android.widget.ProgressBar;
 

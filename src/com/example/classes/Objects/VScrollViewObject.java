@@ -1,7 +1,6 @@
 package com.example.classes.Objects;
 
 import android.app.Activity;
-import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 

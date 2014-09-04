@@ -1,32 +1,23 @@
 package com.example.museum;
 
 import com.example.classes.AccelerometerManager;
-import com.example.classes.Colour;
 import com.example.classes.EstimoteManager;
 import com.example.classes.Globals;
-import com.example.classes.Globals.Fonts;
 import com.example.classes.LayoutManager;
 import com.example.classes.Objects.ButtonObject;
 import com.example.classes.Objects.ImageObject;
-import com.example.classes.Objects.ProgressBarObject;
 import com.example.classes.Objects.TextObject;
 import com.example.classes.Objects.VScrollViewObject;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.graphics.Point;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 public class IntroActivity extends Activity {
 	VScrollViewObject scrollView;

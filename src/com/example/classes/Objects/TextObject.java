@@ -1,10 +1,7 @@
 package com.example.classes.Objects;
 
 import android.app.Activity;
-import android.view.View;
 import android.widget.TextView;
-
-
 
 public class TextObject extends AbstractElement<TextView>{
 	TextView textView;

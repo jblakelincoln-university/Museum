@@ -4,11 +4,9 @@ import android.app.Activity;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import com.example.classes.Colour;
 import com.example.classes.Globals;
 import com.example.classes.Scene;
 import com.example.classes.Objects.ImageObject;
-import com.example.classes.Objects.ScrollViewObject;
 import com.example.classes.Objects.TextObject;
 import com.example.classes.Objects.VScrollViewObject;
 
@@ -24,7 +22,6 @@ public class SceneFactsheet extends Scene {
 	}
 	public SceneFactsheet(int idIn, Activity a, boolean visible) {
 		super(idIn, a, visible);
-		// TODO Auto-generated constructor stub
 	}
 	
 	ScreenState screenState;
