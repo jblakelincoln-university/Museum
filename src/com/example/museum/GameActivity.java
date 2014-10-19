@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Window;
@@ -15,7 +16,7 @@ public class GameActivity extends Activity {
 	
 	//public static EstimoteManager estimoteManager;
 	
-	public enum ScreenState{
+	public static enum ScreenState{
 		DEBUG,
 		MAIN,
 		GALLERY,
@@ -35,6 +36,7 @@ public class GameActivity extends Activity {
 			return -1;
 		}
 	}
+
 
 	public void setScreenState(ScreenState s){
 		SetScreenState(s);
@@ -67,6 +69,11 @@ public class GameActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
 
+			this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+			//this.getWindowManager().getDefaultDisplay().getSize(screenDimensions);
+			this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+			
+			
 			layout = new LayoutManager(this);
 			// Create all scenes and then add them to a list;
 			screenState = ScreenState.MAIN;

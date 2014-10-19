@@ -7,6 +7,7 @@ import java.util.Random;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
@@ -351,6 +352,10 @@ public class SceneMain extends Scene{
 	}
 
 	private void setScene(ScreenState sIn){
+		
+		if (activity.screenState != GameActivity.ScreenState.MAIN)
+			activity.setScreenState(GameActivity.ScreenState.MAIN);
+		
 		screenState = sIn;
 		List<AbstractElement> l = listMainScreen;
 
@@ -375,6 +380,7 @@ public class SceneMain extends Scene{
 			missionCrosshair.setVisibility(View.GONE);
 			crosshairIndicator.setVisibility(View.GONE);
 			missionButtonNext.setVisibility(View.VISIBLE);
+			
 		}
 	}
 
@@ -445,7 +451,13 @@ public class SceneMain extends Scene{
 				if (menuOverlay.getElement().getVisibility() == View.VISIBLE)
 					return;
 				
-				if (!missionCompletion[currentMission]){
+				BluetoothAdapter bAdapter = BluetoothAdapter.getDefaultAdapter();
+				
+				if (!bAdapter.isEnabled())
+					mainTextStatus.setText("Your Bluetooth isn't enabled - turn it on to play!");
+				else if (bAdapter == null)
+					mainTextStatus.setText("Unfortunately your device does not support Bluetooth and cannot play this game.");
+				else if (!missionCompletion[currentMission]){
 					if (EstimoteManager.getBeaconList().size() == 0){
 						mainTextStatus.setText("Your Bluetooth may not be turned on, or your device is not supported.");
 					}

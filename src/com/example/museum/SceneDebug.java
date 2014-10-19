@@ -32,6 +32,7 @@ public class SceneDebug extends Scene{
 		
 		
 	}
+	
 	HashMap<String,MyBeacon> beaconList = new HashMap<String,MyBeacon>();
 	public void update(){
 		//textClue.setText("aaaa" + p++);

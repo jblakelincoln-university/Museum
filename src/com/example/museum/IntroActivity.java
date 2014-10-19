@@ -12,6 +12,7 @@ import com.example.classes.Objects.VScrollViewObject;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -24,6 +25,7 @@ public class IntroActivity extends Activity {
 	ButtonObject b;
 	ProgressBar pB;
 
+	TextObject textLoading;
 	private LayoutManager layout;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +54,7 @@ public class IntroActivity extends Activity {
         title.alignToTop();
         title.addView(layout.get());
         title.getElement().setTypeface(Globals.Fonts.ChunkFive());
+        title.getLayoutParams().setMargins(Globals.screenDimensions.x/30, Globals.screenDimensions.y/20, Globals.screenDimensions.x/30, 0);
         
         scrollView = new VScrollViewObject(this, Globals.newId());
         scrollView.addRule(RelativeLayout.BELOW, title.getId());
@@ -90,7 +93,21 @@ public class IntroActivity extends Activity {
         p3.addRule(RelativeLayout.BELOW, i2.getId());
         b.addView(scrollView.getLayout());
         b.addRule(RelativeLayout.BELOW, p3.getId());
+        
+        scrollView.getLayoutParams().bottomMargin += Globals.screenDimensions.y/20;
+        
+        b.getLayoutParams().setMargins(0, 0, 0, Globals.screenDimensions.y/20);
         //setContentView(layout.get(), layout.getParams());  
+        
+        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+            b.getElement().setEnabled(false);
+            b.setText("Device not supported. Update your phone to 4.3 or higher!");
+        }
+        
+        textLoading = new TextObject("Loading\n\t...", this, Globals.newId());
+        textLoading.addView(layout.get());
+        textLoading.getElement().setTextSize(Globals.getTextSize()*2.4f);
+        textLoading.setVisibility(View.GONE);
         
         layout.setContentView();
         b.getElement().setOnClickListener(new View.OnClickListener() {
@@ -98,7 +115,8 @@ public class IntroActivity extends Activity {
 			public void onClick(View v) {
 				scrollView.setVisibility(View.GONE);
 				b.setVisibility(View.GONE);
-				pB.setVisibility(View.VISIBLE);
+				//pB.setVisibility(View.VISIBLE);
+				textLoading.setVisibility(View.VISIBLE);
 				Intent myIntent = new Intent(IntroActivity.this, GameActivity.class);
 				//myIntent.putExtra("key", value); //Optional parameters
 				IntroActivity.this.startActivity(myIntent);
