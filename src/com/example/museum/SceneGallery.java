@@ -8,12 +8,14 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import com.example.classes.Globals;
-import com.example.classes.Scene;
-import com.example.classes.Objects.ImageObject;
-import com.example.classes.Objects.ScrollViewObject;
-import com.example.classes.Objects.TextObject;
+import com.scenelibrary.classes.Globals;
+import com.scenelibrary.classes.Scene;
+import com.scenelibrary.classes.Objects.ImageObject;
+import com.scenelibrary.classes.Objects.ScrollViewObject;
+import com.scenelibrary.classes.Objects.TextObject;
 import com.example.museum.R;
+
+import com.scenelibrary.classes.LayoutManager;
 
 public class SceneGallery extends Scene{
 
@@ -26,8 +28,8 @@ public class SceneGallery extends Scene{
 	private List<String> listDescriptions;
 	
 	private int uniqueImageId = 0;
-	public SceneGallery(int idIn, Activity a, boolean visible) {
-		super(idIn, a, visible);
+	public SceneGallery(int idIn, Activity a, LayoutManager lM, boolean visible) {
+		super(idIn, a, lM, visible);
 	}
 
 	
@@ -44,7 +46,7 @@ public class SceneGallery extends Scene{
 		listDescriptions = new ArrayList<String>();
 		
 		scrollView = new ScrollViewObject(aIn, Globals.newId());
-		scrollView.addView(activity.getLayout().get());
+		scrollView.addView(layoutManager.get());
 		scrollView.getLayoutParams().width = Globals.screenDimensions.x-(Globals.screenDimensions.x/20);
 		scrollView.getLayoutParams().setMarginStart(Globals.screenDimensions.x/40);
 		scrollView.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
@@ -55,7 +57,7 @@ public class SceneGallery extends Scene{
 		
 		imageLarge = new ImageObject(R.drawable.empty, aIn, Globals.newId(), false);
 		//imageLarge.setAbsScaleX(200);
-		imageLarge.addView(activity.getLayout().get());
+		imageLarge.addView(layoutManager.get());
 		//imageLarge.addRule(RelativeLayout.ALIGN_BOTTOM, scrollView.getId());
 		imageLarge.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		
@@ -140,6 +142,6 @@ public class SceneGallery extends Scene{
 		//for (AbstractElement a : listScrollViewElements)
 		//	a.setVisibility(RelativeLayout.GONE);
 		//transitionOut(null);
-		activity.SetScreenState(GameActivity.ScreenState.MAIN);		
+		((GameActivity)activity).SetScreenState(GameActivity.ScreenState.MAIN);		
 	}
 }

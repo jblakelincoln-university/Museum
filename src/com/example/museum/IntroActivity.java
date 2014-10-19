@@ -1,13 +1,13 @@
 package com.example.museum;
 
-import com.example.classes.AccelerometerManager;
-import com.example.classes.EstimoteManager;
-import com.example.classes.Globals;
-import com.example.classes.LayoutManager;
-import com.example.classes.Objects.ButtonObject;
-import com.example.classes.Objects.ImageObject;
-import com.example.classes.Objects.TextObject;
-import com.example.classes.Objects.VScrollViewObject;
+import com.scenelibrary.classes.AccelerometerManager;
+import com.scenelibrary.classes.EstimoteManager;
+import com.scenelibrary.classes.Globals;
+import com.scenelibrary.classes.LayoutManager;
+import com.scenelibrary.classes.Objects.ButtonObject;
+import com.scenelibrary.classes.Objects.ImageObject;
+import com.scenelibrary.classes.Objects.TextObject;
+import com.scenelibrary.classes.Objects.VScrollViewObject;
 
 import android.app.Activity;
 import android.content.Intent;

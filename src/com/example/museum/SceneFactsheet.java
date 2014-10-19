@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import com.example.classes.Globals;
-import com.example.classes.Scene;
-import com.example.classes.Objects.ImageObject;
-import com.example.classes.Objects.TextObject;
-import com.example.classes.Objects.VScrollViewObject;
+import com.scenelibrary.classes.Globals;
+import com.scenelibrary.classes.Scene;
+import com.scenelibrary.classes.Objects.ImageObject;
+import com.scenelibrary.classes.Objects.TextObject;
+import com.scenelibrary.classes.Objects.VScrollViewObject;
+
+import com.scenelibrary.classes.LayoutManager;
 
 public class SceneFactsheet extends Scene {
 
@@ -20,8 +22,8 @@ public class SceneFactsheet extends Scene {
 		PLANE,
 		CRAWLER;
 	}
-	public SceneFactsheet(int idIn, Activity a, boolean visible) {
-		super(idIn, a, visible);
+	public SceneFactsheet(int idIn, Activity a, LayoutManager lM, boolean visible) {
+		super(idIn, a, lM, visible);
 	}
 	
 	ScreenState screenState;
@@ -186,8 +188,8 @@ public class SceneFactsheet extends Scene {
 		
 		//imageLeft.addRule(RelativeLayout.ALIGN_BASELINE, imageRight.getId());
 		
-		activity.getLayout().get().setBackgroundResource(background);
-		activity.getLayout().get().getBackground().setAlpha(255);
+		layoutManager.get().setBackgroundResource(background);
+		layoutManager.get().getBackground().setAlpha(255);
 	}
 	
 	@Override
@@ -195,12 +197,12 @@ public class SceneFactsheet extends Scene {
 		itemSetup(aIn);
 		
 		super.sceneInit(aIn, false);
-		activity.getLayout().get().setBackgroundResource(R.drawable.factsheet_background);
+		((GameActivity)activity).getLayout().get().setBackgroundResource(R.drawable.factsheet_background);
 	}
 
 	@Override
 	public void onBackPressed() {
-		activity.setScreenState(GameActivity.ScreenState.MAIN);
+		((GameActivity)activity).setScreenState(GameActivity.ScreenState.MAIN);
 	}
 
 }

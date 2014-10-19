@@ -7,12 +7,15 @@ import java.util.Map.Entry;
 import android.app.Activity;
 import android.os.Handler;
 
-import com.example.classes.AccelerometerManager;
-import com.example.classes.EstimoteManager;
-import com.example.classes.Globals;
-import com.example.classes.MyBeacon;
-import com.example.classes.Scene;
-import com.example.classes.Objects.*;
+import com.scenelibrary.classes.AccelerometerManager;
+import com.scenelibrary.classes.EstimoteManager;
+import com.scenelibrary.classes.Globals;
+import com.scenelibrary.classes.MyBeacon;
+import com.scenelibrary.classes.Scene;
+import com.scenelibrary.classes.Objects.*;
+import com.scenelibrary.classes.LayoutManager;
+
+import com.example.museum.GameActivity;
 
 public class SceneDebug extends Scene{
 
@@ -26,8 +29,8 @@ public class SceneDebug extends Scene{
 	};
 	
 	private TextObject textBeaconList;
-	public SceneDebug(int idIn, Activity a, boolean visible) {
-		super(idIn, a, visible);
+	public SceneDebug(int idIn, Activity a, LayoutManager lM, boolean visible) {
+		super(idIn, a, lM, visible);
 		
 		
 		
@@ -59,7 +62,7 @@ public class SceneDebug extends Scene{
 		textBeaconList.getElement().append("\n--------------------------------------------------");
 	}
 	
-	public void sceneInit(Activity aIn, boolean visible){
+	public void sceneInit(Activity aIn, LayoutManager lM, boolean visible){
 		textBeaconList = new TextObject("", aIn, Globals.newId());
 		textBeaconList.getElement().setTextSize(Globals.getTextSize()*1.8f);
 		addElementToView(textBeaconList);
@@ -70,7 +73,7 @@ public class SceneDebug extends Scene{
 	}
 	@Override
 	public void onBackPressed() {
-		activity.SetScreenState(GameActivity.ScreenState.MAIN);
+		((GameActivity)activity).SetScreenState(GameActivity.ScreenState.MAIN);
 	}
 
 }

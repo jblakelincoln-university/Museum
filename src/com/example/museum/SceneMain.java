@@ -20,14 +20,16 @@ import android.view.View;
 import android.widget.ImageView.ScaleType;
 import android.widget.RelativeLayout;
 
-import com.example.classes.AccelerometerManager;
-import com.example.classes.Colour;
-import com.example.classes.EstimoteManager;
-import com.example.classes.Globals;
-import com.example.classes.MyBeacon;
-import com.example.classes.Scene;
-import com.example.classes.Objects.*;
+import com.scenelibrary.classes.AccelerometerManager;
+import com.scenelibrary.classes.Colour;
+import com.scenelibrary.classes.EstimoteManager;
+import com.scenelibrary.classes.Globals;
+import com.scenelibrary.classes.MyBeacon;
+import com.scenelibrary.classes.Scene;
+import com.scenelibrary.classes.Objects.*;
 import com.example.museum.R;
+
+import com.scenelibrary.classes.LayoutManager;
 
 @SuppressWarnings("rawtypes")
 public class SceneMain extends Scene{
@@ -285,8 +287,8 @@ public class SceneMain extends Scene{
         mainElapsedTime.setText(String.format("Current elapsed \ntime: %d:%02d", minutes, seconds));
 	}
 
-	public SceneMain(int idIn, Activity a, boolean visible) {
-		super(idIn, a, visible);
+	public SceneMain(int idIn, Activity a, LayoutManager lM, boolean visible) {
+		super(idIn, a, lM, visible);
 	}
 
 	private void missionSetup(){
@@ -353,8 +355,8 @@ public class SceneMain extends Scene{
 
 	private void setScene(ScreenState sIn){
 		
-		if (activity.screenState != GameActivity.ScreenState.MAIN)
-			activity.setScreenState(GameActivity.ScreenState.MAIN);
+		if (((GameActivity)activity).screenState != GameActivity.ScreenState.MAIN)
+			((GameActivity)activity).setScreenState(GameActivity.ScreenState.MAIN);
 		
 		screenState = sIn;
 		List<AbstractElement> l = listMainScreen;
@@ -367,7 +369,7 @@ public class SceneMain extends Scene{
 		}
 		else if (sIn == ScreenState.MISSION){
 			l = listMissionScreen;
-			activity.getLayout().get().getBackground().setAlpha(120);
+			((GameActivity)activity).getLayout().get().getBackground().setAlpha(120);
 		}
 		
 		transitionOut(l);
@@ -391,7 +393,7 @@ public class SceneMain extends Scene{
 			public void onClick(View v) {
 				if (!allMissionsCompleted){
 					mainImageTransportation.getElement().setEnabled(true);
-					activity.getLayout().get().getBackground().setAlpha(255);
+					((GameActivity)activity).getLayout().get().getBackground().setAlpha(255);
 					setScene(ScreenState.MAIN);
 					
 					if (health != 0){
@@ -423,8 +425,8 @@ public class SceneMain extends Scene{
 		menuGallery.getElement().setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				activity.getLayout().get().getBackground().setAlpha(255);
-				activity.SetScreenState(GameActivity.ScreenState.GALLERY);	
+				((GameActivity)activity).getLayout().get().getBackground().setAlpha(255);
+				((GameActivity)activity).SetScreenState(GameActivity.ScreenState.GALLERY);	
 			}
 		});
 		
@@ -441,7 +443,7 @@ public class SceneMain extends Scene{
 				if (menuOverlay.getElement().getVisibility() == View.VISIBLE)
 					return;
 			
-				activity.SetScreenState(GameActivity.ScreenState.DEBUG);
+				((GameActivity)activity).SetScreenState(GameActivity.ScreenState.DEBUG);
 			}
 		});
 		
@@ -478,7 +480,7 @@ public class SceneMain extends Scene{
 			public void onClick(View v) {
 				
 				if (allMissionsCompleted){
-					activity.setScreenState(GameActivity.ScreenState.MAIN);
+					((GameActivity)activity).setScreenState(GameActivity.ScreenState.MAIN);
 					setScene(ScreenState.MISSION);
 					return;
 				}
@@ -493,8 +495,8 @@ public class SceneMain extends Scene{
 				if (missionCompletionTimes[0] == 0)
 					sheetLockedDialog("Loco");
 				else{
-				activity.SetScreenState(GameActivity.ScreenState.FACTSHEET);
-				activity.getFactsheet().setScene(SceneFactsheet.ScreenState.LOCO);
+				((GameActivity)activity).SetScreenState(GameActivity.ScreenState.FACTSHEET);
+				((GameActivity)activity).getFactsheet().setScene(SceneFactsheet.ScreenState.LOCO);
 				}
 			}
 		});		
@@ -505,8 +507,8 @@ public class SceneMain extends Scene{
 				if (missionCompletionTimes[1] == 0)
 					sheetLockedDialog("Tank");
 				else{
-				activity.SetScreenState(GameActivity.ScreenState.FACTSHEET);
-				activity.getFactsheet().setScene(SceneFactsheet.ScreenState.TANK);
+				((GameActivity)activity).SetScreenState(GameActivity.ScreenState.FACTSHEET);
+				((GameActivity)activity).getFactsheet().setScene(SceneFactsheet.ScreenState.TANK);
 				}
 			}
 		});	
@@ -517,8 +519,8 @@ public class SceneMain extends Scene{
 				if (missionCompletionTimes[2] == 0)
 					sheetLockedDialog("Field Gun");
 				else{
-				activity.SetScreenState(GameActivity.ScreenState.FACTSHEET);
-				activity.getFactsheet().setScene(SceneFactsheet.ScreenState.FIELDGUN);
+				((GameActivity)activity).SetScreenState(GameActivity.ScreenState.FACTSHEET);
+				((GameActivity)activity).getFactsheet().setScene(SceneFactsheet.ScreenState.FIELDGUN);
 				}
 			}
 		});	
@@ -529,8 +531,8 @@ public class SceneMain extends Scene{
 				if (missionCompletionTimes[3] == 0)
 					sheetLockedDialog("Sylvie");
 				else{
-				activity.SetScreenState(GameActivity.ScreenState.FACTSHEET);
-				activity.getFactsheet().setScene(SceneFactsheet.ScreenState.SYLVIE);
+				((GameActivity)activity).SetScreenState(GameActivity.ScreenState.FACTSHEET);
+				((GameActivity)activity).getFactsheet().setScene(SceneFactsheet.ScreenState.SYLVIE);
 				}
 			}
 		});	
@@ -541,8 +543,8 @@ public class SceneMain extends Scene{
 				if (missionCompletionTimes[4] == 0)
 					sheetLockedDialog("Plane Propellers");
 				else{
-					activity.SetScreenState(GameActivity.ScreenState.FACTSHEET);
-					activity.getFactsheet().setScene(SceneFactsheet.ScreenState.PLANE);
+					((GameActivity)activity).SetScreenState(GameActivity.ScreenState.FACTSHEET);
+					((GameActivity)activity).getFactsheet().setScene(SceneFactsheet.ScreenState.PLANE);
 				}
 			}
 		});	
@@ -553,8 +555,8 @@ public class SceneMain extends Scene{
 				if (missionCompletionTimes[5] == 0)
 					sheetLockedDialog("Crawler");
 				else{
-					activity.SetScreenState(GameActivity.ScreenState.FACTSHEET);
-					activity.getFactsheet().setScene(SceneFactsheet.ScreenState.CRAWLER);
+					((GameActivity)activity).SetScreenState(GameActivity.ScreenState.FACTSHEET);
+					((GameActivity)activity).getFactsheet().setScene(SceneFactsheet.ScreenState.CRAWLER);
 				}
 			}
 		});	
@@ -576,7 +578,7 @@ public class SceneMain extends Scene{
 	}
 	
 	public void onLoad(){
-		activity.getLayout().get().setBackgroundResource(R.drawable.background_newtoo);
+		((GameActivity)activity).getLayout().get().setBackgroundResource(R.drawable.background_newtoo);
 		setScene(screenState);
 		if (startTime == 0)
 			startTime = System.currentTimeMillis();

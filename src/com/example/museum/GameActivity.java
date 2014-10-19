@@ -9,8 +9,8 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Window;
 
-import com.example.classes.LayoutManager;
-import com.example.classes.Scene;
+import com.scenelibrary.classes.LayoutManager;
+import com.scenelibrary.classes.Scene;
 
 public class GameActivity extends Activity {
 	
@@ -78,13 +78,13 @@ public class GameActivity extends Activity {
 			// Create all scenes and then add them to a list;
 			screenState = ScreenState.MAIN;
 			this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-			sceneDebug = new SceneDebug(0, this, false);
+			sceneDebug = new SceneDebug(0, this, layout, false);
 			listScenes.add(sceneDebug);
-			sceneMain = new SceneMain(1, this, true);
+			sceneMain = new SceneMain(1, this, layout, true);
 	        listScenes.add(sceneMain);
-	        sceneGallery = new SceneGallery(2, this, false);
+	        sceneGallery = new SceneGallery(2, this, layout, false);
 	 		listScenes.add(sceneGallery); 
-	 		sceneFactsheet = new SceneFactsheet(3, this, false);
+	 		sceneFactsheet = new SceneFactsheet(3, this, layout, false);
 	 		listScenes.add(sceneFactsheet);
 	 		
 	 		for (Scene s : listScenes)
