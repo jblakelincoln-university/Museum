@@ -4,15 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Window;
+import android.widget.Toast;
 
 import com.scenelibrary.classes.LayoutManager;
 import com.scenelibrary.classes.Scene;
+import com.scenelibrary.classes.SceneActivity;
 
-public class GameActivity extends Activity {
+public class GameActivity extends SceneActivity {
 	
 	//public static EstimoteManager estimoteManager;
 	
@@ -52,9 +55,11 @@ public class GameActivity extends Activity {
 	
 	private LayoutManager layout;
 	public LayoutManager getLayout() {return layout;}
-	
+	public Toast toast;
+	public Context context;
 	public void SetScreenState(ScreenState s){
 		//listScenes.get(ScreenState.toInt(screenState)).setVisibility(View.GONE);
+		toast.cancel();
 		listScenes.get(ScreenState.toInt(screenState)).transitionOut(null);
 		screenState = s;
 		if (!listScenes.get(ScreenState.toInt(screenState)).initialised){
@@ -68,7 +73,8 @@ public class GameActivity extends Activity {
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
-
+			context = this;
+			toast = Toast.makeText(context, "", Toast.LENGTH_LONG);
 			this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 			//this.getWindowManager().getDefaultDisplay().getSize(screenDimensions);
 			this.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -78,13 +84,13 @@ public class GameActivity extends Activity {
 			// Create all scenes and then add them to a list;
 			screenState = ScreenState.MAIN;
 			this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-			sceneDebug = new SceneDebug(0, this, layout, false);
+			sceneDebug = new SceneDebug(0, this, false);
 			listScenes.add(sceneDebug);
-			sceneMain = new SceneMain(1, this, layout, true);
+			sceneMain = new SceneMain(1, this, true);
 	        listScenes.add(sceneMain);
-	        sceneGallery = new SceneGallery(2, this, layout, false);
+	        sceneGallery = new SceneGallery(2, this, false);
 	 		listScenes.add(sceneGallery); 
-	 		sceneFactsheet = new SceneFactsheet(3, this, layout, false);
+	 		sceneFactsheet = new SceneFactsheet(3, this, false);
 	 		listScenes.add(sceneFactsheet);
 	 		
 	 		for (Scene s : listScenes)
@@ -102,15 +108,11 @@ public class GameActivity extends Activity {
 	@Override
 	public void onResume(){
 		super.onResume();
-		if (sceneMain != null)
-			sceneMain.toggleVibration(true);
 	}  
 	
 	@Override
 	public void onPause(){
 		super.onPause();
-		if (sceneMain != null)
-			sceneMain.toggleVibration(false);
 	} 
 	
 	@Override

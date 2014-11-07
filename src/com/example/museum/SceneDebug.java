@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 
 import android.app.Activity;
 import android.os.Handler;
+import android.widget.RelativeLayout;
 
 import com.scenelibrary.classes.AccelerometerManager;
 import com.scenelibrary.classes.EstimoteManager;
@@ -29,8 +30,8 @@ public class SceneDebug extends Scene{
 	};
 	
 	private TextObject textBeaconList;
-	public SceneDebug(int idIn, Activity a, LayoutManager lM, boolean visible) {
-		super(idIn, a, lM, visible);
+	public SceneDebug(int idIn, Activity a, boolean visible) {
+		super(idIn, a, visible);
 		
 		
 		
@@ -62,7 +63,7 @@ public class SceneDebug extends Scene{
 		textBeaconList.getElement().append("\n--------------------------------------------------");
 	}
 	
-	public void sceneInit(Activity aIn, LayoutManager lM, boolean visible){
+	public void sceneInit(Activity aIn, boolean visible){
 		textBeaconList = new TextObject("", aIn, Globals.newId());
 		textBeaconList.getElement().setTextSize(Globals.getTextSize()*1.8f);
 		addElementToView(textBeaconList);
@@ -74,6 +75,11 @@ public class SceneDebug extends Scene{
 	@Override
 	public void onBackPressed() {
 		((GameActivity)activity).SetScreenState(GameActivity.ScreenState.MAIN);
+	}
+	
+	public void onLoad(){
+		super.onLoad();
+		this.setVisibility(RelativeLayout.VISIBLE);
 	}
 
 }

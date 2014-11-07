@@ -14,11 +14,11 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Handler;
-import android.os.Vibrator;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView.ScaleType;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.scenelibrary.classes.AccelerometerManager;
 import com.scenelibrary.classes.Colour;
@@ -64,7 +64,6 @@ public class SceneMain extends Scene{
 	}
 	
 	private MissionType missionType;
-	
 	
 	
 	//Menu
@@ -116,10 +115,7 @@ public class SceneMain extends Scene{
 	protected List<AbstractElement> listMenuScreen;
 	
 	
-	private long startTime;
-	
-	private Vibrator vibrator;
-	
+	private long startTime;	
 	
 	boolean allMissionsCompleted = false;
 	
@@ -143,14 +139,7 @@ public class SceneMain extends Scene{
 	
 	private int currentMission = -1;
 	private boolean[] missionCompletion = new boolean[6];
-	private int currentVibration = 5;
-	private long vibrationPatterns[][] =  { {0, 1000, 0},  // 0
-											{ 200, 150},  // 20
-											{ 500, 150},  // 50
-											{ 800, 200},  // 80
-											{ 2000, 200} // 100
-											};
-	
+
 	private boolean playing = false;
 	private boolean windowHasFocus = true;
 	private Random random = new Random();
@@ -185,7 +174,7 @@ public class SceneMain extends Scene{
 				if (missionType == MissionType.HORIZONTAL)
 					cY = yy * AccelerometerManager.getY();
 				else{
-					cY = yy * AccelerometerManager.getZ();
+					cY = yy * (AccelerometerManager.getZ()-3.f);
 					cY = -cY;
 				}
 				cY += offsetY + a.getElement().getY();
@@ -219,36 +208,11 @@ public class SceneMain extends Scene{
 	 	   }
 	};
 	
-	private void gameplay(){
-		vibrator.cancel();
-		//Vibration patterns
-		if (windowHasFocus){
-			if (health <= 0 && currentVibration != 0){
-				currentVibration = 0;
-				vibrator.vibrate(vibrationPatterns[0], -1);
-			}
-			if (health > 0 && health <= 20 && currentVibration != 20){
-				currentVibration = 1;
-				vibrator.vibrate(vibrationPatterns[1], 0);
-			}
-			else if (health > 20 && health <= 50 && currentVibration != 50){
-				currentVibration = 50;
-				vibrator.vibrate(vibrationPatterns[2], 0);
-			}
-			else if (health > 50 && health <= 80 && currentVibration != 80){
-				currentVibration = 80;
-				vibrator.vibrate(vibrationPatterns[3], 0);
-			}
-			else if (health > 80 && health <= 100 && currentVibration != 100){
-				currentVibration = 100;
-				vibrator.vibrate(vibrationPatterns[4], 0);
-			}
-		}
-		
+	private void gameplay(){		
 		float y = 0;
 		
 		if (missionType == MissionType.VERTICAL)
-			y = AccelerometerManager.getZ();
+			y = AccelerometerManager.getZ()-3.f;
 		else
 			y = AccelerometerManager.getY();
 		// Health effects
@@ -287,14 +251,13 @@ public class SceneMain extends Scene{
         mainElapsedTime.setText(String.format("Current elapsed \ntime: %d:%02d", minutes, seconds));
 	}
 
-	public SceneMain(int idIn, Activity a, LayoutManager lM, boolean visible) {
-		super(idIn, a, lM, visible);
+	public SceneMain(int idIn, Activity a, boolean visible) {
+		super(idIn, a, visible);
 	}
 
 	private void missionSetup(){
 		playing = false;
-		vibrator.cancel();
-		
+
 		if (currentMission >= 0){
 			missionCompletionTimes[currentMission] = System.currentTimeMillis();
 			menuFactsheets[currentMission].setImage(missionFactsheetImages[currentMission]);
@@ -454,13 +417,20 @@ public class SceneMain extends Scene{
 					return;
 				
 				BluetoothAdapter bAdapter = BluetoothAdapter.getDefaultAdapter();
-				
-				if (!bAdapter.isEnabled())
-					mainTextStatus.setText("Your Bluetooth isn't enabled - turn it on to play!");
-				else if (bAdapter == null)
+				((GameActivity)activity).toast.cancel();
+				if (bAdapter == null){
 					mainTextStatus.setText("Unfortunately your device does not support Bluetooth and cannot play this game.");
+					((GameActivity)activity).toast = Toast.makeText((Context)activity, "Bluetooth not supported", Toast.LENGTH_LONG);
+					((GameActivity)activity).toast.show();
+				}
+				else if (!bAdapter.isEnabled()){
+					mainTextStatus.setText("Your Bluetooth isn't enabled - turn it on to play!");
+					((GameActivity)activity).toast = Toast.makeText((Context)activity, "Your Bluetooth isn't enabled - turn it on to play!", Toast.LENGTH_LONG);
+					((GameActivity)activity).toast.show();
+				}
 				else if (!missionCompletion[currentMission]){
-					if (EstimoteManager.getBeaconList().size() == 0){
+					
+					if (EstimoteManager.getBeaconList().size() < 1){
 						mainTextStatus.setText("Your Bluetooth may not be turned on, or your device is not supported.");
 					}
 					MyBeacon d = EstimoteManager.contains(missionTitles[currentMission].toString());
@@ -469,8 +439,10 @@ public class SceneMain extends Scene{
 						missionSetup();	
 						setScene(ScreenState.MISSION);	
 					}
-					else
+					else{
 						mainTextStatus.setText("Hm, not in the right place. Keep looking!");
+						Toast.makeText((Context)activity, "You're not in the right place! Keep looking!", Toast.LENGTH_LONG).show();
+					}
 				}
 			}
 		});		
@@ -584,13 +556,6 @@ public class SceneMain extends Scene{
 			startTime = System.currentTimeMillis();
 	}
 
-	public void toggleVibration(boolean on){
-		currentVibration = -1;
-		windowHasFocus = on;
-		if (!on)
-			vibrator.cancel();
-	}
-
 	@Override
 	public void onBackPressed() {
 		if (screenState == ScreenState.MAIN)
@@ -627,7 +592,7 @@ public class SceneMain extends Scene{
         mainTextStatus = new TextObject("Mission status text box with long words everywhere", aIn, Globals.newId());
         mainTextStatus.addRule(RelativeLayout.BELOW, mainImageClue.getId());
         mainTextStatus.getElement().setWidth(Globals.screenDimensions.x-(Globals.screenDimensions.x/10));
-        mainTextStatus.getElement().setTextSize(Globals.getTextSize());
+        mainTextStatus.getElement().setTextSize(Globals.getTextSize()*0.9f);
         mainTextStatus.getElement().setGravity(Gravity.CENTER);
         mainTextStatus.getElement().setTypeface(Globals.Fonts.ExoRegular());
 
@@ -638,12 +603,14 @@ public class SceneMain extends Scene{
         mainButtonMenu.getElement().setTextColor(Colour.FromRGB(10, 0, 10));
         mainButtonMenu.getElement().setBackgroundColor(Colour.Transparent);
         mainButtonMenu.getElement().setTypeface(Globals.Fonts.MajorShift());
-        mainButtonMenu.getElement().setTextSize(Globals.getTextSize()*2.2f);
+        mainButtonMenu.getElement().setTextSize(Globals.getTextSize()*1.6f);
         
         mainDebug = new ButtonObject("Debug", aIn, Globals.newId());
         mainDebug.addRule(RelativeLayout.ALIGN_PARENT_TOP);
         mainDebug.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         mainDebug.getLayoutParams().setMargins(0, 0, (Globals.screenDimensions.x/12), Globals.screenDimensions.y/20);
+        //mainDebug.getElement().setEnabled(false);
+        //mainDebug.setVisibility(View.GONE);
         
         mainToggleClue = new ButtonObject("Toggle Clue", aIn, Globals.newId());
         mainToggleClue.addRule(RelativeLayout.ALIGN_TOP, mainTextStatus.getId());
@@ -678,7 +645,7 @@ public class SceneMain extends Scene{
         
         mainTextClue = new TextObject("This is the clue text it is clue text that contains a clue of varying length.", aIn, Globals.newId());
         mainTextClue.addRule(RelativeLayout.ALIGN_TOP, mainToggleClue.getId());
-        mainTextClue.getElement().setTextSize(Globals.getTextSize()*1.4f);
+        mainTextClue.getElement().setTextSize(Globals.getTextSize()*1.1f);
         mainTextClue.setWidth(Globals.screenDimensions.x/2.2f);
         mainTextClue.getLayoutParams().setMargins(0, Globals.screenDimensions.y/10, 0, 0);
         mainTextClue.getElement().setGravity(Gravity.CENTER);
@@ -687,12 +654,12 @@ public class SceneMain extends Scene{
 		missionGivenStatus = new TextObject("", aIn, Globals.newId());
 		missionGivenStatus.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		missionGivenStatus.getLayoutParams().setMargins(0, Globals.screenDimensions.y/20, 0, Globals.screenDimensions.y/20);
-		missionGivenStatus.getElement().setTextSize(Globals.getTextSize()*1.3f);
+		missionGivenStatus.getElement().setTextSize(Globals.getTextSize()*1.1f);
 		missionGivenStatus.getElement().setTypeface(Globals.Fonts.ChunkFive());
 		missionGivenStatus.setTextColour(Colour.FromRGB(255, 20, 20));
 		
 		missionText = new TextObject("Teashdas", aIn, Globals.newId());
-		missionText.getElement().setTextSize(Globals.getTextSize()*1.4f);
+		missionText.getElement().setTextSize(Globals.getTextSize());
 		missionText.addRule(RelativeLayout.BELOW, missionGivenStatus.getId());
 		missionText.getLayoutParams().setMargins(Globals.screenDimensions.x/10, 0, Globals.screenDimensions.x/10, 0);
 		missionText.getElement().setTypeface(Globals.Fonts.ExoRegular());
@@ -782,14 +749,14 @@ public class SceneMain extends Scene{
 		menuContinue = new ButtonObject("CONTINUE\nPLAYING", aIn, Globals.newId());
 		menuContinue.getElement().setTypeface(Globals.Fonts.MajorShift());
 		menuContinue.getLayoutParams().setMargins(0, Globals.screenDimensions.y/36, 0, 0);
-		menuContinue.getElement().setTextSize(Globals.getTextSize()*2.8f);
+		menuContinue.getElement().setTextSize(Globals.getTextSize()*1.4f);
 		menuContinue.getElement().setBackgroundColor(android.graphics.Color.TRANSPARENT);
 		menuContinue.addRule(RelativeLayout.BELOW, menuFactsPlanePropellers.getId());
 		
 		menuGallery = new ButtonObject("VIEW\nGALLERY", aIn, Globals.newId());
 		menuGallery.getElement().setTypeface(Globals.Fonts.MajorShift());
 		menuGallery.getLayoutParams().setMargins(0, 0, 0, Globals.screenDimensions.y/36);
-		menuGallery.getElement().setTextSize(Globals.getTextSize()*2.8f);
+		menuGallery.getElement().setTextSize(Globals.getTextSize()*1.8f);
 		menuGallery.getElement().setBackgroundColor(android.graphics.Color.TRANSPARENT);
 		menuGallery.addRule(RelativeLayout.ABOVE, menuFactsLoco.getId());
 
@@ -807,7 +774,7 @@ public class SceneMain extends Scene{
         listMainScreen.add(mainImagePressMe);
         listMainScreen.add(mainHealthBar);
         listMainScreen.add(mainButtonMenu);
-        listMainScreen.add(mainDebug);
+        //listMainScreen.add(mainDebug);
         listMainScreen.add(mainToggleClue);
         listMainScreen.add(mainElapsedTime);
 
@@ -821,7 +788,7 @@ public class SceneMain extends Scene{
         listClueScreen.add(mainImageClue);
         listClueScreen.add(mainTextStatus);
         listClueScreen.add(mainButtonMenu);
-        listClueScreen.add(mainDebug);
+        //listClueScreen.add(mainDebug);
         listClueScreen.add(mainToggleClue);
         listClueScreen.add(mainElapsedTime);
         listClueScreen.add(mainTextClue);
@@ -850,7 +817,6 @@ public class SceneMain extends Scene{
         
 		Arrays.fill(missionCompletionTimes, 0);
 		Arrays.fill(missionCompletion, false);
-		vibrator = (Vibrator)aIn.getSystemService(Context.VIBRATOR_SERVICE);
 		
 		screenState = ScreenState.MISSION;
 		missionSetup();

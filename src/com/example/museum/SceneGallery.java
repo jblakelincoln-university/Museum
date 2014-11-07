@@ -28,8 +28,8 @@ public class SceneGallery extends Scene{
 	private List<String> listDescriptions;
 	
 	private int uniqueImageId = 0;
-	public SceneGallery(int idIn, Activity a, LayoutManager lM, boolean visible) {
-		super(idIn, a, lM, visible);
+	public SceneGallery(int idIn, Activity a, boolean visible) {
+		super(idIn, a, visible);
 	}
 
 	
@@ -63,7 +63,7 @@ public class SceneGallery extends Scene{
 		
 		textDescription = new TextObject("", aIn, Globals.newId());
 		textDescription.addRule(RelativeLayout.ABOVE, scrollView.getId());
-		textDescription.getElement().setTextSize(Globals.getTextSize()*1.8f);
+		textDescription.getElement().setTextSize(Globals.getTextSize()*1.1f);
 		textDescription.getElement().setTypeface(Globals.Fonts.ExoRegular());
 		textDescription.getLayoutParams().setMargins(Globals.screenDimensions.x/12, 0, Globals.screenDimensions.x/12, Globals.screenDimensions.y/20);
 		textDescription.getElement().setGravity(Gravity.CENTER);
@@ -92,10 +92,10 @@ public class SceneGallery extends Scene{
 			addThumbnailToScrollView(new ImageObject(R.drawable.gallery_six, a, Globals.newId(), true), "Field gun on train");
 			addThumbnailToScrollView(new ImageObject(R.drawable.gallery_seven, a, Globals.newId(), true), "Ruston Loco (place and date unknwon)");
 			addThumbnailToScrollView(new ImageObject(R.drawable.gallery_eight, a, Globals.newId(), true), "Sylvie threshing at Church Farm Museum");
-			addThumbnailToScrollView(new ImageObject(R.drawable.gallery_nine, a, Globals.newId(), true), "Crawler tractor towing plane");
-			addThumbnailToScrollView(new ImageObject(R.drawable.gallery_ten, a, Globals.newId(), true), "Crawler tractor towing plane");
-			addThumbnailToScrollView(new ImageObject(R.drawable.gallery_eleven, a, Globals.newId(), true), "Strutter plane in  factory");
-			addThumbnailToScrollView(new ImageObject(R.drawable.gallery_twelve, a, Globals.newId(), true), "Strutter plane assembly");
+			addThumbnailToScrollView(new ImageObject(R.drawable.gallery_nine, a, Globals.newId(), true), "Crawler tractor towing plane (credit: Peter Green)");
+			addThumbnailToScrollView(new ImageObject(R.drawable.gallery_ten, a, Globals.newId(), true), "Crawler tractor towing plane (credit: Ray Hooley)");
+			addThumbnailToScrollView(new ImageObject(R.drawable.gallery_eleven, a, Globals.newId(), true), "Strutter plane in  factory (credit: Ray Hooley)");
+			addThumbnailToScrollView(new ImageObject(R.drawable.gallery_twelve, a, Globals.newId(), true), "Strutter plane assembly (credit: Ray Hooley)");
 		}
 	}
 	

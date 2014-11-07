@@ -22,8 +22,8 @@ public class SceneFactsheet extends Scene {
 		PLANE,
 		CRAWLER;
 	}
-	public SceneFactsheet(int idIn, Activity a, LayoutManager lM, boolean visible) {
-		super(idIn, a, lM, visible);
+	public SceneFactsheet(int idIn, Activity a, boolean visible) {
+		super(idIn, a, visible);
 	}
 	
 	ScreenState screenState;
@@ -145,6 +145,7 @@ public class SceneFactsheet extends Scene {
 			textBody.getElement().setText(bodies[0]);
 			//imageRight.setVisibility(View.VISIBLE);
 			imageLeft.setImage(locoLeft);
+			imageLeft.setAbsScaleY((int)(Globals.screenDimensions.x/2.1f));
 			//imageRight.setImage(locoRight);
 			break;
 		case TANK:
@@ -152,12 +153,14 @@ public class SceneFactsheet extends Scene {
 			textBody.getElement().setText(bodies[1]);
 			//imageRight.setVisibility(View.GONE);
 			imageLeft.setImage(tank);
+			imageLeft.setAbsScaleX((int)(Globals.screenDimensions.x/1.4f));
 			break;
 		case FIELDGUN:
 			textTitle.setText(titles[2]);
 			textBody.getElement().setText(bodies[2]);
 			//imageRight.setVisibility(View.VISIBLE);
 			imageLeft.setImage(fieldgunLeft);
+			imageLeft.setAbsScaleX((int)(Globals.screenDimensions.x/1.4f));
 			//imageRight.setImage(fieldgunRight);
 			break;
 		case SYLVIE:
@@ -165,6 +168,7 @@ public class SceneFactsheet extends Scene {
 			textBody.getElement().setText(bodies[3]);
 			//imageRight.setVisibility(View.VISIBLE);
 			imageLeft.setImage(sylvieLeft);
+			imageLeft.setAbsScaleX((int)(Globals.screenDimensions.x/1.4f));
 			//imageRight.setImage(sylvieRight);
 			break;
 		case PLANE:
@@ -172,6 +176,7 @@ public class SceneFactsheet extends Scene {
 			textBody.getElement().setText(bodies[4]);
 			//imageRight.setVisibility(View.VISIBLE);
 			imageLeft.setImage(planeLeft);
+			imageLeft.setAbsScaleX((int)(Globals.screenDimensions.x/1.4f));
 			//imageRight.setImage(planeRight);
 			break;
 		case CRAWLER:
@@ -179,11 +184,12 @@ public class SceneFactsheet extends Scene {
 			textBody.getElement().setText(bodies[5]);
 			//imageRight.setVisibility(View.VISIBLE);
 			imageLeft.setImage(crawlerLeft);
+			imageLeft.setAbsScaleX((int)(Globals.screenDimensions.x/1.4f));
 			//imageRight.setImage(crawlerRight);
 			break;
 		}	
 		
-		imageLeft.setAbsScaleX((int)(Globals.screenDimensions.x));
+		//imageLeft.setAbsScaleX((int)(Globals.screenDimensions.x));
 		//imageRight.setAbsScaleX((int)(Globals.screenDimensions.x/2.2f));
 		
 		//imageLeft.addRule(RelativeLayout.ALIGN_BASELINE, imageRight.getId());

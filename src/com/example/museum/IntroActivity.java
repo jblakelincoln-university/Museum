@@ -1,15 +1,20 @@
 package com.example.museum;
 
+import com.example.museum.SceneMain.ScreenState;
 import com.scenelibrary.classes.AccelerometerManager;
 import com.scenelibrary.classes.EstimoteManager;
 import com.scenelibrary.classes.Globals;
 import com.scenelibrary.classes.LayoutManager;
+import com.scenelibrary.classes.MyBeacon;
+import com.scenelibrary.classes.SceneActivity;
 import com.scenelibrary.classes.Objects.ButtonObject;
 import com.scenelibrary.classes.Objects.ImageObject;
 import com.scenelibrary.classes.Objects.TextObject;
 import com.scenelibrary.classes.Objects.VScrollViewObject;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
@@ -19,22 +24,25 @@ import android.view.View;
 import android.view.Window;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
-public class IntroActivity extends Activity {
+public class IntroActivity extends SceneActivity {
 	VScrollViewObject scrollView;
 	ButtonObject b;
 	ProgressBar pB;
 
 	TextObject textLoading;
+	Context context;
+	Toast t;
 	private LayoutManager layout;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+		context = this;
 		Globals.Init(this);
 		AccelerometerManager.Init(this);
 		EstimoteManager.Init(this);
-		
+		t = Toast.makeText(context, "", Toast.LENGTH_LONG);
 		layout = new LayoutManager(this);
 		
 		this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -110,16 +118,31 @@ public class IntroActivity extends Activity {
         textLoading.setVisibility(View.GONE);
         
         layout.setContentView();
+        
         b.getElement().setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				scrollView.setVisibility(View.GONE);
-				b.setVisibility(View.GONE);
-				//pB.setVisibility(View.VISIBLE);
-				textLoading.setVisibility(View.VISIBLE);
-				Intent myIntent = new Intent(IntroActivity.this, GameActivity.class);
-				//myIntent.putExtra("key", value); //Optional parameters
-				IntroActivity.this.startActivity(myIntent);
+				
+				BluetoothAdapter bAdapter = BluetoothAdapter.getDefaultAdapter();
+				
+				if (bAdapter == null){
+					t = Toast.makeText(context, "Unfortunately your device does not support Bluetooth and cannot play this game.", Toast.LENGTH_LONG);
+					t.show();
+				}
+				else if (!bAdapter.isEnabled()){
+					t = Toast.makeText(context, "Your Bluetooth isn't enabled - turn it on to play!", Toast.LENGTH_LONG);
+					t.show();
+				}
+				else{
+					t.cancel();
+					scrollView.setVisibility(View.GONE);
+					b.setVisibility(View.GONE);
+					//pB.setVisibility(View.VISIBLE);
+					textLoading.setVisibility(View.VISIBLE);
+					Intent myIntent = new Intent(IntroActivity.this, GameActivity.class);
+					//myIntent.putExtra("key", value); //Optional parameters
+					IntroActivity.this.startActivity(myIntent);
+				}
 			}
 		});	
 		
