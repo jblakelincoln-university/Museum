@@ -5,7 +5,7 @@
  * should not be modified by hand.
  */
 
-package com.example.museum;
+package com.lincoln.museum;
 
 public final class R {
     public static final class array {

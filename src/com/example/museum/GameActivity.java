@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.Window;
 import android.widget.Toast;
 
+import com.lincoln.museum.R;
 import com.scenelibrary.classes.LayoutManager;
 import com.scenelibrary.classes.Scene;
 import com.scenelibrary.classes.SceneActivity;

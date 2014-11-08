@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import com.lincoln.museum.R;
 import com.scenelibrary.classes.Globals;
 import com.scenelibrary.classes.Scene;
 import com.scenelibrary.classes.Objects.ImageObject;

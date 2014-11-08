@@ -13,7 +13,7 @@ import com.scenelibrary.classes.Scene;
 import com.scenelibrary.classes.Objects.ImageObject;
 import com.scenelibrary.classes.Objects.ScrollViewObject;
 import com.scenelibrary.classes.Objects.TextObject;
-import com.example.museum.R;
+import com.lincoln.museum.R;
 
 import com.scenelibrary.classes.LayoutManager;
 

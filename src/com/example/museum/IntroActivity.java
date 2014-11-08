@@ -1,6 +1,7 @@
 package com.example.museum;
 
 import com.example.museum.SceneMain.ScreenState;
+import com.lincoln.museum.R;
 import com.scenelibrary.classes.AccelerometerManager;
 import com.scenelibrary.classes.EstimoteManager;
 import com.scenelibrary.classes.Globals;
